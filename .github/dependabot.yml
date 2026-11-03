@@ -1,0 +1,10 @@
+# Opens pull requests when a dependency or a CI action has a security fix or a new version. They're reviewed like any other.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule: { interval: weekly }
+    open-pull-requests-limit: 5
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: monthly }

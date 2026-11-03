@@ -1,0 +1,38 @@
+{
+  "hull": {
+    "id": "brown_planks_09",
+    "source": "https://polyhaven.com/a/brown_planks_09",
+    "license": "CC0",
+    "tileM": 1
+  },
+  "deck": {
+    "id": "weathered_brown_planks",
+    "source": "https://polyhaven.com/a/weathered_brown_planks",
+    "license": "CC0",
+    "tileM": 1.7999999523162842
+  },
+  "timber": {
+    "id": "rough_wood",
+    "source": "https://polyhaven.com/a/rough_wood",
+    "license": "CC0",
+    "tileM": 0.5
+  },
+  "panel": {
+    "id": "medieval_wood",
+    "source": "https://polyhaven.com/a/medieval_wood",
+    "license": "CC0",
+    "tileM": 2
+  },
+  "bamboo": {
+    "id": "bamboo_wall",
+    "source": "https://polyhaven.com/a/bamboo_wall",
+    "license": "CC0",
+    "tileM": 2
+  },
+  "cliff": {
+    "id": "rock_boulder_dry",
+    "source": "https://polyhaven.com/a/rock_boulder_dry",
+    "license": "CC0",
+    "tileM": 1.7999999523162842
+  }
+}

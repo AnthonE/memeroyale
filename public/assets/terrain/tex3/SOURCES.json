@@ -1,0 +1,17 @@
+{
+ "note": "Stylized terrain layers generated with GPT image (gpt-image-2) steered by crops of the concept renders; made seamless, with normal/AO/roughness/height maps derived from them.",
+ "layers": [
+  "grass",
+  "jungle",
+  "sand",
+  "path",
+  "cliff",
+  "rock",
+  "cinder",
+  "farm",
+  "lava",
+  "mud",
+  "reef",
+  "basalt"
+ ]
+}

@@ -1,0 +1,590 @@
+// KONG ROYALE authoritative server: lobbies, 60 Hz match loops, binary snapshots with interest management.
+//   npm run server   → ws on :3020 (vite proxies /ws → here), dev
+//   npm run start    → production: serves the built client (dist/) + ws on ONE port (KR_PORT or PORT, default 3020)
+// Hardening: every frame is size-checked and decoded through the sanitising readers (shared/net/proto.ts); per-socket
+// token-bucket rate limit; ws heartbeat + idle timeouts; connection caps (total / per IP); one misbehaving lobby can never
+// take the process down (tick errors are contained). Each client may attach ONE redundant "aux" socket (see net.ts).
+import { addrKey } from "./addr";
+import http from "node:http";
+import fs from "node:fs";
+import path from "node:path";
+import crypto from "node:crypto";
+import { fileURLToPath } from "node:url";
+import { WebSocketServer, WebSocket, type RawData } from "ws";
+import { Terrain } from "../shared/world/terrain";
+import { decodeTerrainFile, generateTerrain, type TerrainData } from "../shared/world/terrain-gen";
+import { buildStaticWorld } from "../shared/sim/static-world";
+import { lootSpots } from "../shared/sim/loot-spots";
+import { Match, Phase } from "../shared/sim/match";
+import { alive } from "../shared/sim/player";
+import { DT, MAX_PLAYERS, SQUAD_SIZE } from "../shared/sim/const";
+import { M, NET_VERSION } from "../shared/net/proto";
+import { MatchHost, matchInfo, type HostPeer } from "../shared/net/host";
+/** commentator seats per lobby (client/src/caster) */
+const MAX_SEATS = 8;
+import { kongbotDb } from "./kongbot";
+import { annotationsApi } from "./annotations";
+import { serveStatic } from "./static";
+import { performanceMetrics } from "./perf";
+// (voice) squad comms + caster listen-in: the WebRTC handshake relay (the audio is peer to peer)
+import { onVoiceJSON, voiceReset, voiceRosters, voiceSeatLeft } from "./voice";
+// (admin lobby) event lobbies the admin runs from /admin + the admin's auth
+import { playerName } from "./names";
+import { EVENT_MODE, assignEventSquads, eventJoin, eventPickTeam, eventRoom, eventSeatOf, eventSeated, eventsDirty, initEvents, type EventMember, type EventState } from "./admin/events";
+import { createAdminHttp } from "./admin/http";
+
+const PORT = Number(process.env.KR_PORT || process.env.PORT || 3020);
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const log = (...a: unknown[]) => console.log(new Date().toISOString().slice(11, 19), ...a);
+
+// ---- limits
+// bytes per ws message: the biggest legit frame is a voice handshake (a WebRTC offer / answer, ~3-6 KB of SDP, caster
+// listen-in + squad comms); everything else is < 200 B
+const MAX_PAYLOAD = 16384;
+// per IP: every player holds 2 sockets (primary + redundant aux) — 120 lets a whole 50-player LAN party share one NAT
+const MAX_CONNS = Number(process.env.KR_MAX_CONNS || 2000), MAX_CONNS_PER_IP = Number(process.env.KR_MAX_PER_IP || 120);
+const MAX_LOBBIES = 400;
+const MAX_LOBBIES_PER_IP = 4;             // lobbies / exhibitions one address may own at once (event mode off)
+const RATE_PER_S = 150, RATE_BURST = 400;  // inputs are 60/s; a TCP stall releases a burst of queued inputs at once
+const MAX_STRIKES = 400;                  // rate-limited or malformed frames before the socket is closed
+const HEARTBEAT_MS = 10_000;              // ws ping cadence (+ the silence check below)
+// a socket is terminated only after this long with NOTHING from it — no message and no pong. ONE missed pong (10-20 s of
+// silence, pongs only) is too strict: a few seconds of bad Wi-Fi / a TCP stall would cut players out of the
+// room and out of matches. KR_HEARTBEAT_TIMEOUT_S overrides (seconds).
+const SILENT_MAX_MS = (Number(process.env.KR_HEARTBEAT_TIMEOUT_S) > 0 ? Number(process.env.KR_HEARTBEAT_TIMEOUT_S) : 30) * 1000;
+const IDLE_NO_LOBBY_MS = 10 * 60_000;     // connected but in no lobby and silent
+const AFK_IN_MATCH_MS = 180_000;          // seated in a running match without sending a single input
+const TRUST_PROXY = process.env.KR_TRUST_PROXY === "1";
+// the proxies allowed to set the client-address headers: loopback (nginx on this machine) plus KR_PROXY_IPS (comma list)
+const PROXY_IPS = new Set((process.env.KR_PROXY_IPS || "").split(",").map((s) => s.trim()).filter(Boolean));
+const ORIGINS = (process.env.KR_ORIGINS || "").split(",").map((s) => s.trim()).filter(Boolean);
+
+// ---- world (identical to the client's)
+const t0 = performance.now();
+// the SAME bytes the client downloads (public/assets/terrain/island.bin); generating is the fallback (identical while
+// the baked file matches the generator). The content hash rides in "welcome" so a stale client can tell.
+let td: TerrainData;
+try { const b = fs.readFileSync(path.join(root, "public/assets/terrain/island.bin")); td = decodeTerrainFile(b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength)); }
+catch (e) { log("island.bin unavailable, generating:", String(e)); td = generateTerrain(); }
+const terrain = new Terrain(td.heights, td.biome);
+const { world, boxes, hash: worldHashV } = await buildStaticWorld(terrain, td);
+log(`world ready: ${terrain.res}² heightfield, ${boxes.length} boxes, terrain hash ${td.hash}, world hash ${worldHashV}, ${Math.round(performance.now() - t0)} ms`);
+// the loot generator's canonical spots (shared/sim/loot-spots.ts): built once here, not at the first START
+{ const ls = lootSpots(world); log(`loot spots: ${ls.spots.length} canonical (${ls.buildings.filter((b) => b.enterable).length} enterable buildings), ${ls.ms} ms`); }
+
+// Exclude world construction from runtime event-loop measurements.
+const perf = performanceMetrics();
+
+// ---- sockets
+interface Sock { ws: WebSocket; ip: string; tokens: number; refill: number; strikes: number; lastMsg: number;
+  /** (admin lobby) round trip of the server's own ws pings, ms (0 = none yet) */
+  rtt: number;
+  /** liveness + the disconnect log: when it opened, its last pong (Date.now ms), and who closed it when the
+   *  SERVER did ("" = nobody yet: then the client did, or the link died) */
+  openedAt: number; lastPong: number; closedBy: string }
+const socks = new Set<Sock>();
+const perIp = new Map<string, number>();
+function allow(s: Sock): boolean {
+  const now = performance.now();
+  s.tokens = Math.min(RATE_BURST, s.tokens + ((now - s.refill) / 1000) * RATE_PER_S); s.refill = now; s.lastMsg = Date.now();
+  if (s.tokens >= 1) { s.tokens -= 1; return true; }
+  strike(s, "rate"); return false;
+}
+/** `weight`: a frame no honest client ever sends (a host-only or malformed event message) costs more than a rate blip */
+function strike(s: Sock, why: string, weight = 1) { s.strikes += weight; if (s.strikes > MAX_STRIKES) { log(`closing a socket: ${why}`); s.closedBy ||= `strikes (${why})`; s.ws.close(1008, why); } }
+/** (admin lobby) hostile-only messages: ~8 of them close the socket */
+const HEAVY = 50;
+const ADMIN_SHAPED = new Set(["act", "admin", "hub-admin", "hub-hello", "kick", "unkick", "ban", "move", "close", "end", "launch", "lock", "teamlock", "casters", "balance", "shuffle", "rename", "cap", "name"]);
+const sendJSON = (ws: WebSocket, o: unknown) => { if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify(o)); };
+
+// ---- clients + lobbies
+export interface Client { uid: number; token: string; name: string; lobby: Lobby | null; pid: number; squad: number; sock: Sock; aux: Sock[]; lastInputAt: number; peer: HostPeer; /** last relayed map marker (ms) */ markAt: number;
+  /** (caster) a commentator seat in its lobby (−1 = a player); the last relayed camera sync (ms) */
+  seat: number; camAt: number;
+  /** (caster) a PROGRAM output window (OBS): a seat that only mirrors the seat on air */
+  program: boolean;
+  /** (admin lobby) a player in an event lobby (server/admin/events.ts), else null */
+  ev: EventMember | null }
+const byToken = new Map<string, Client>();
+/** binary to every socket of a client (primary + aux). One copy per frame: `u8` may be a view over a reused buffer.
+ * Backpressure: a socket with a large send backlog skips snapshots (each one is self-contained) instead of queueing. */
+function sendBin(c: Client, u8: Uint8Array) {
+  let buf: Buffer | null = null;
+  for (let i = -1; i < c.aux.length; i++) {
+    const s = i < 0 ? c.sock : c.aux[i], ws = s.ws;
+    if (ws.readyState !== WebSocket.OPEN) continue;
+    if (u8[0] === M.Snapshot && ws.bufferedAmount > 64 * 1024) continue;
+    if (ws.bufferedAmount > 4 * 1024 * 1024) { s.closedBy ||= "send backlog > 4 MB"; ws.terminate(); continue; }   // hopelessly behind
+    buf ??= Buffer.from(u8);
+    ws.send(buf, { binary: true });
+  }
+}
+
+export class Lobby {
+  /** (admin lobby) an event lobby the admin runs (server/admin/events.ts): no player is ever its host, it stays open
+   *  without players, its teams are explicit. null = a normal lobby */
+  event: EventState | null = null;
+  clients: Client[] = []; match: Match | null = null; host: MatchHost | null = null; timer: NodeJS.Timeout | null = null; acc = 0; last = 0; errors = 0;
+  /** (caster) commentator seats: no player slot, any time (even mid-match), up to MAX_SEATS */
+  casters: Client[] = [];
+  /** (caster) an exhibition: made by a caster to watch bots (humans may still join it); `auto` = START again 12 s after
+   *  each match while a seat is there */
+  exhibit = false; auto = false; private autoTimer: NodeJS.Timeout | null = null;
+  /** (caster) the seat whose camera is ON AIR — what every PROGRAM window shows (−1 = none: the producer's own) */
+  onAir = -1;
+  seed = (Math.random() * 2 ** 31) | 0;
+  constructor(readonly code: string, public owner: Client, public mode: "solo" | "trios") {}
+  broadcastJSON(o: unknown) { const s = JSON.stringify(o); for (const c of this.clients) if (c.sock.ws.readyState === WebSocket.OPEN) c.sock.ws.send(s); for (const c of this.casters) if (c.sock.ws.readyState === WebSocket.OPEN) c.sock.ws.send(s); }
+  /** casters only (seat roster, camera sync) */
+  castJSON(o: unknown, except: Client | null = null) { const s = JSON.stringify(o); for (const c of this.casters) if (c !== except && c.sock.ws.readyState === WebSocket.OPEN) c.sock.ws.send(s); }
+  state() {
+    return { t: "lobby", code: this.code, mode: this.mode, host: this.owner.uid, inMatch: !!this.match, phase: this.match?.phase ?? -1,
+      players: this.clients.map((c) => ({ id: c.uid, name: c.name, squad: c.squad, pid: c.pid, host: c === this.owner })),
+      casters: this.casters.map((c) => ({ id: c.uid, name: c.name, seat: c.seat, host: c === this.owner, program: c.program })), exhibit: this.exhibit, auto: this.auto, onAir: this.onAir,
+      ...(this.event ? { ev: eventRoom(this) } : {}) };
+  }
+  /** the room to everyone. (admin lobby) An event lobby coalesces (≤ 10 / s: a join storm or a team-click storm must not
+   *  be n² roster frames) and tells the admin console */
+  private stateTimer: NodeJS.Timeout | null = null;
+  pushState(now = false) {
+    if (!this.event) { this.broadcastJSON(this.state()); return; }
+    eventsDirty();
+    if (now) { if (this.stateTimer) clearTimeout(this.stateTimer); this.stateTimer = null; this.broadcastJSON(this.state()); return; }
+    if (!this.stateTimer) this.stateTimer = setTimeout(() => { this.stateTimer = null; if (lobbies.get(this.code) === this) this.broadcastJSON(this.state()); }, 100);
+  }
+  /** (caster) take a commentator seat: the match (if one runs) arrives at once, whatever its phase */
+  castJoin(c: Client) {
+    if (this.casters.includes(c)) return;
+    if (this.casters.length >= MAX_SEATS) { sendJSON(c.sock.ws, { t: "error", msg: "ALL CASTER SEATS TAKEN" }); return; }
+    const taken = new Set(this.casters.map((q) => q.seat)); let seat = 0; while (taken.has(seat)) seat++;
+    this.casters.push(c); c.lobby = this; c.seat = seat; c.pid = -1; c.peer.pid = -1; c.peer.caster = true;
+    if (this.match && this.host) { this.host.peers.push(c.peer); sendJSON(c.sock.ws, { ...matchInfo(this.match, this.seed, {}), caster: true, seat }); this.host.sendCastStats(c.peer); }
+    log(`lobby ${this.code}: caster seat ${seat + 1} → ${c.name}`);
+    this.pushState();
+  }
+  castLeave(c: Client) {
+    const i = this.casters.indexOf(c); if (i < 0) return;
+    if (this.onAir === c.seat) this.onAir = -1;
+    voiceSeatLeft(this, c.seat);   // (voice) its listen-ins end
+    this.casters.splice(i, 1); c.lobby = null; c.seat = -1; c.peer.caster = false;
+    if (this.host) { const k = this.host.peers.indexOf(c.peer); if (k >= 0) this.host.peers.splice(k, 1); }
+    if (!this.clients.length && !this.casters.length && !this.event) { this.destroy(); return; }
+    // (admin lobby) an event lobby's owner is the admin's stand-in: it never passes to a player or a seat
+    if (this.owner === c && !this.event) this.owner = this.clients[0] ?? this.casters[0];
+    this.pushState();
+  }
+  /** `final` (START): an event lobby places its unassigned players */
+  assignSquads(final = false) {
+    if (this.event) { assignEventSquads(this, final); return; }
+    const size = SQUAD_SIZE[this.mode]; this.clients.forEach((c, i) => { c.squad = Math.floor(i / size); });
+  }
+  start() {
+    if (this.match) return;
+    if (this.autoTimer) { clearTimeout(this.autoTimer); this.autoTimer = null; }
+    this.assignSquads(true);
+    if (this.event) this.pushState(true);   // (the room shows the final teams before the match frame lands)
+    const seated = this.clients.slice(0, MAX_PLAYERS);
+    const humans = seated.map((c, i) => ({ id: i, name: c.name, team: c.squad }));
+    this.seed = (Math.random() * 2 ** 31) | 0;                  // a new island roll every match
+    const m = this.match = new Match({ seed: this.seed, mode: this.mode, world, humans, botDifficulty: "easy" });   // bots on EASY online
+    m.endAfterResults = true;
+    if (Number(process.env.KR_WARMUP_S) > 0) m.warmupS = Number(process.env.KR_WARMUP_S);   // (test servers only)
+    const h = this.host = new MatchHost(m); h.holdForStream();
+    seated.forEach((c, i) => { c.pid = i; c.peer.pid = i; c.peer.opSeq = -1; c.lastInputAt = Date.now(); h.peers.push(c.peer); });
+    if (this.event) { this.event.seats.clear(); for (const c of seated) eventSeated(this, c); }   // a dropped player's seat
+    for (const c of this.casters) h.peers.push(c.peer);
+    m.onPhase = (ph) => { this.broadcastJSON({ t: "phase", phase: ph, plane: m.plane, time: m.time, tick: m.tick, plan: m.plan }); if (this.event) eventsDirty(); };
+    const info = matchInfo(m, this.seed, Object.fromEntries(seated.map((c) => [c.uid, c.pid])));
+    { const s = JSON.stringify(info); for (const c of this.clients) if (c.sock.ws.readyState === WebSocket.OPEN) c.sock.ws.send(s); }
+    for (const c of this.casters) sendJSON(c.sock.ws, { ...info, pids: {}, caster: true, seat: c.seat });
+    for (const c of seated) h.sendInventory(c.peer);
+    for (const c of this.casters) h.sendCastStats(c.peer);
+    voiceRosters(this);   // (voice) each squad's comms roster for the new match
+    this.last = performance.now(); this.acc = 0;
+    this.timer = setInterval(() => this.pump(), 4);
+    log(`lobby ${this.code}: match started (${seated.length} humans, ${this.casters.length} casters, ${this.mode}${this.exhibit ? ", exhibition" : ""})`);
+  }
+  pump() {
+    const h = this.host; if (!h) return;
+    try {
+      const now = performance.now();
+      this.acc += Math.min(0.25, (now - this.last) / 1000); this.last = now;
+      let n = 0;
+      while (this.acc >= DT && n++ < 6) {
+        this.acc -= DT;
+        const tickStart = perf ? performance.now() : 0;
+        h.tick();
+        if (perf) perf.record(performance.now() - tickStart);
+        if (h.m.over) { log(`lobby ${this.code}: match over → room`); this.endMatch(); return; }
+        if (h.m.tick % 600 === 0) this.housekeeping();
+      }
+      h.frac = this.acc / DT;
+    } catch (e) {
+      log(`lobby ${this.code}: tick error`, e);
+      if (++this.errors > 5) { this.broadcastJSON({ t: "error", msg: "MATCH CRASHED — back to the lobby" }); this.endMatch(); }
+    }
+  }
+  /** every 10 s: lobby roster refresh + AFK seats become bots */
+  housekeeping() {
+    this.pushState();
+    const now = Date.now();
+    for (const c of [...this.clients]) {
+      if (c.pid < 0 || now - c.lastInputAt <= AFK_IN_MATCH_MS) continue;
+      // only a seat still in play can be AFK. One that is out (dead, spectating, eliminated) has nothing
+      // to steer — and its player may be back in the room (BACK TO LOBBY stops the inputs): removing it would take that player
+      // out of the lobby without their screen knowing (a ghost room, left out of the next START)
+      const p = this.match?.players[c.pid]; if (!p || p.eliminated || !alive(p)) continue;
+      // an event lobby keeps its player: a bot plays the seat on, the player waits in the room for the next round
+      if (this.event) { this.unseat(c); sendJSON(c.sock.ws, { t: "error", msg: "REMOVED FOR INACTIVITY", afk: true }); continue; }
+      sendJSON(c.sock.ws, { t: "error", msg: "REMOVED FOR INACTIVITY" }); this.leave(c);
+    }
+  }
+  /** (AFK) out of the match, still in the room: the seat becomes a bot (as when its player leaves) */
+  private unseat(c: Client) {
+    if (this.host) { const k = this.host.peers.indexOf(c.peer); if (k >= 0) this.host.peers.splice(k, 1); }
+    if (this.match && c.pid >= 0) this.match.releaseHuman(c.pid);
+    c.pid = -1; c.peer.pid = -1;
+    log(`lobby ${this.code}: ${c.name} AFK in the match → a bot plays the seat, the player stays in the room`);
+    voiceRosters(this); this.pushState();
+  }
+  join(c: Client) {
+    if (this.clients.includes(c)) return;
+    if (this.clients.length >= MAX_PLAYERS) { sendJSON(c.sock.ws, { t: "error", msg: "LOBBY FULL" }); return; }
+    this.clients.push(c); c.lobby = this; c.pid = -1; c.peer.pid = -1;
+    if (this.match && this.host) {
+      const m = this.match;
+      // back after a dropped link (event lobby, the SAME session token): your own seat again while it still
+      // plays (a bot took it over, not dead, not eliminated, nobody else holds it) — any phase but the results
+      const back = this.event ? eventSeatOf(this, c) : -1;
+      if (back >= 0 && m.phase !== Phase.Results && !this.clients.some((q) => q !== c && q.pid === back) && m.reclaimHuman(back, c.name)) {
+        c.pid = back; log(`event ${this.code}: ${c.name} is back in their match seat (phase ${m.phase})`);
+      }
+      // late joiner: take a bot seat (only while warming up / in plane)
+      else if (m.phase === Phase.Warmup || m.phase === Phase.Plane) {
+        const squadOf = this.clients.filter((q) => q !== c && q.pid >= 0).map((q) => m.teamOf(q.pid));
+        const want = this.mode === "solo" ? -1 : (squadOf.find((t) => this.clients.filter((q) => q.pid >= 0 && m.teamOf(q.pid) === t).length < 3) ?? -1);
+        c.pid = m.claimBot(c.name, want);
+        if (c.pid < 0) sendJSON(c.sock.ws, { t: "error", msg: "MATCH FULL" });
+      } else sendJSON(c.sock.ws, { t: "error", msg: "MATCH IN PROGRESS — wait for the next round" });
+      if (c.pid >= 0) { c.peer.pid = c.pid; c.peer.invSeq = 0; c.peer.opSeq = -1; c.lastInputAt = Date.now(); this.host.peers.push(c.peer); sendJSON(c.sock.ws, matchInfo(m, this.seed, { [c.uid]: c.pid })); this.host.sendInventory(c.peer); voiceRosters(this); eventSeated(this, c); }
+    } else this.assignSquads();
+    // (the joiner sees the room at once; the others with the next coalesced roster)
+    if (this.event) sendJSON(c.sock.ws, this.state());
+    this.pushState();
+  }
+  leave(c: Client) {
+    const i = this.clients.indexOf(c); if (i < 0) return;
+    this.clients.splice(i, 1); c.lobby = null;
+    if (this.host) { const k = this.host.peers.indexOf(c.peer); if (k >= 0) this.host.peers.splice(k, 1); }
+    if (this.match && c.pid >= 0) this.match.releaseHuman(c.pid);
+    c.pid = -1; c.peer.pid = -1;
+    if (!this.clients.length && !this.casters.length && !this.event) { this.destroy(); return; }
+    if (this.owner === c && !this.event) this.owner = this.clients[0] ?? this.casters[0];
+    if (!this.match) this.assignSquads(); else voiceRosters(this);
+    this.pushState();
+  }
+  /** stop the match loop but keep the lobby (crash recovery) */
+  endMatch() {
+    if (this.event) this.event.seats.clear();   // no match, no seat to come back to
+    if (this.timer) clearInterval(this.timer); this.timer = null; this.match = null; this.host = null; for (const c of this.clients) { c.pid = -1; c.peer.pid = -1; c.peer.invSeq = 0; c.peer.opSeq = -1; } this.errors = 0; this.assignSquads(); this.pushState(true); voiceReset(this);
+    // (caster) an exhibition on AUTO rolls the next match while a seat watches
+    if (this.auto && this.casters.length) { if (this.autoTimer) clearTimeout(this.autoTimer); this.autoTimer = setTimeout(() => { this.autoTimer = null; if (lobbies.get(this.code) === this && this.casters.length && !this.match) this.start(); }, 12_000); }
+  }
+  /** an event lobby closes only when the admin says so (`force`) */
+  destroy(force = false) { if (this.event && !force) return; if (this.stateTimer) clearTimeout(this.stateTimer); this.stateTimer = null; if (this.timer) clearInterval(this.timer); this.timer = null; if (this.autoTimer) clearTimeout(this.autoTimer); this.autoTimer = null; this.match = null; this.host = null; lobbies.delete(this.code); log(`lobby ${this.code} closed`); }
+}
+const lobbies = new Map<string, Lobby>();
+const CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+const newCode = (len = 4) => { let c = ""; do { c = ""; for (let i = 0; i < len; i++) c += CODE_CHARS[crypto.randomInt(CODE_CHARS.length)]; } while (lobbies.has(c)); return c; };
+// (names: server/names.ts — cleanName for what the admin types, playerName for what a player picks: never a staff name)
+/** (admin lobby) the admin's stand-in owner of every event lobby: no client is ever it */
+const EVENT_OWNER = { uid: 0, name: "HOST" } as unknown as Client;
+initEvents({
+  lobbies, newCode, log,
+  newLobby: (code, mode) => new Lobby(code, EVENT_OWNER, mode),
+  send: (c, o) => sendJSON(c.sock.ws, o),
+  drop: (c, code, why) => { c.sock.closedBy ||= `server (${why})`; setTimeout(() => { try { c.sock.ws.close(code, why); } catch { /* gone */ } for (const a of c.aux) { a.closedBy ||= "primary closed"; try { a.ws.close(code, why); } catch { /* gone */ } } }, 60); },
+});
+
+// ---- http (health + static client)
+const serve = process.env.KR_SERVE === "1" || process.argv.includes("--serve");
+const dist = path.join(root, "dist");
+// player bug reports (/kongbot in the game's chat bar) → MongoDB
+const kongbot = kongbotDb(root);
+// dev view notes (?dev=annotate) → .kongbot/annotations/*.jsonl (+ Mongo kongbot_annotations)
+const annotations = annotationsApi(root);
+const adminHttp = createAdminHttp({ root, ipOf: (req) => ipOf(req), log });
+const server = http.createServer((req, res) => {
+  const url = (req.url || "/").split("?")[0];
+  // (admin lobby) /admin, /admin/api/*, /api/event/CODE — before anything else (server/admin/http.ts)
+  if (adminHttp.handle(req, res, url)) return;
+  if (url === "/api/kongbot") {
+    // a failed store always answers (the client shows "couldn't send"), never a hung request
+    void kongbot.handle(req, res, ipOf(req)).catch((error) => {
+      log("report request failed", error);
+      if (!res.headersSent) res.writeHead(500, { "content-type": "application/json", "cache-control": "no-store" });
+      if (!res.writableEnded) res.end(JSON.stringify({ ok: false, error: "could not store the report" }));
+    });
+    return;
+  }
+  if (url === "/api/annotations") {
+    void annotations.handle(req, res, ipOf(req)).catch((error) => {
+      log("annotation request failed", error);
+      if (!res.headersSent) res.writeHead(500, { "content-type": "application/json" });
+      if (!res.writableEnded) res.end(JSON.stringify({ ok: false, error: "could not store the note" }));
+    });
+    return;
+  }
+  if (url === "/health") { res.writeHead(200, { "content-type": "application/json", "cache-control": "no-store" }); res.end(JSON.stringify({ ok: true, feedback: kongbot.health(), lobbies: lobbies.size, clients: [...lobbies.values()].reduce((a, l) => a + l.clients.length, 0), sockets: socks.size, ...(perf ? { performance: perf.read() } : {}) })); return; }
+  if (!serve || (req.method !== "GET" && req.method !== "HEAD")) { res.writeHead(404); res.end(); return; }
+  void serveStatic(req, res, url, dist).catch((error) => { log("asset request failed", error); if (!res.headersSent) res.writeHead(500); res.end(); });
+});
+server.headersTimeout = 20_000; server.requestTimeout = 60_000;
+
+// (admin lobby) behind the proxy, never the LEFT-most X-Forwarded-For entry: the client writes that
+// one itself (rotating it would mint a fresh "address" per request and defeat every per-address limit). Cloudflare's
+// CF-Connecting-IP, else nginx's X-Real-IP, else the right-most X-Forwarded-For entry (the one our proxy appended).
+// Those headers are believed only when the connection itself comes from a trusted proxy (this machine, or KR_PROXY_IPS):
+// a client reaching the port directly can't claim to be someone else (or 127.0.0.1).
+const isLoop = (a: string) => a === "::1" || a.startsWith("127.") || a.startsWith("::ffff:127.");
+const ipOf = (req: http.IncomingMessage) => {
+  const peer = req.socket.remoteAddress || "?";
+  if (TRUST_PROXY && (isLoop(peer) || PROXY_IPS.has(peer.replace(/^::ffff:/i, "")))) {
+    const one = (h: string) => { const v = req.headers[h]; return typeof v === "string" ? v.trim() : ""; };
+    const xff = one("x-forwarded-for").split(",").map((s) => s.trim()).filter(Boolean);
+    const ip = one("cf-connecting-ip") || one("x-real-ip") || xff[xff.length - 1];
+    if (ip && ip.length <= 64) return addrKey(ip);
+  }
+  return addrKey(peer);
+};
+// (admin lobby) two socket servers on one port: /ws (players) and /admin/ws (server/admin/http.ts), routed here
+const wss = new WebSocketServer({
+  noServer: true, maxPayload: MAX_PAYLOAD, perMessageDeflate: false,
+  verifyClient: (info: { origin: string; req: http.IncomingMessage }) => {
+    if (ORIGINS.length && !ORIGINS.includes(info.origin)) return false;
+    if (socks.size >= MAX_CONNS) return false;
+    return (perIp.get(ipOf(info.req)) ?? 0) < MAX_CONNS_PER_IP;
+  },
+});
+server.on("upgrade", (req, socket, head) => {
+  if (adminHttp.upgrade(req, socket, head)) return;
+  if ((req.url || "").split("?")[0] === "/ws") { wss.handleUpgrade(req, socket, head, (ws) => wss.emit("connection", ws, req)); return; }
+  try { socket.write("HTTP/1.1 404 Not Found\r\nConnection: close\r\nContent-Length: 0\r\n\r\n"); } catch { /* gone */ }
+  socket.destroy();
+});
+let uidSeq = 1;
+wss.on("connection", (ws, req) => {
+  const ip = ipOf(req);
+  const s: Sock = { ws, ip, tokens: RATE_BURST, refill: performance.now(), strikes: 0, lastMsg: Date.now(), rtt: 0, openedAt: Date.now(), lastPong: Date.now(), closedBy: "" };
+  socks.add(s); perIp.set(ip, (perIp.get(ip) ?? 0) + 1);
+  ws.on("pong", (d: Buffer) => {
+    s.lastPong = Date.now();
+    // (admin lobby) the pings the server times (payload "h<ms>"): the admin console's ping column
+    const t = d.length && d[0] === 104 ? Number(d.subarray(1).toString()) : NaN, rtt = Date.now() - t;
+    if (Number.isFinite(rtt) && rtt >= 0 && rtt < 10_000) s.rtt = s.rtt ? s.rtt * 0.7 + rtt * 0.3 : rtt;
+  });
+  ws.on("error", () => { /* close follows */ });
+  const params = new URL(req.url || "/", "http://x").searchParams;
+  ws.on("close", () => { socks.delete(s); const n = (perIp.get(ip) ?? 1) - 1; if (n > 0) perIp.set(ip, n); else perIp.delete(ip); });
+
+  // ---- a redundant binary channel for an existing client. (admin lobby) Its token is the FIRST
+  // message (`{ t: "aux", token }` within 3 s), never in the URL — URLs end up in access logs. `?aux=` is refused.
+  if (params.has("aux")) { ws.close(1008, "bad aux"); return; }
+  if (params.get("attach") === "1") {
+    const timer = setTimeout(() => ws.close(4008, "no token"), 3000);
+    let c: Client | null = null;
+    ws.on("message", (data: RawData, isBinary: boolean) => {
+      if (!allow(s)) return;
+      if (c) { if (isBinary) onBinary(c, s, data); return; }
+      let m: { t?: unknown; token?: unknown } | null = null;
+      try { m = isBinary ? null : JSON.parse(String(data)); } catch { /* below */ }
+      const owner = m && m.t === "aux" && typeof m.token === "string" ? byToken.get(m.token) : undefined;
+      clearTimeout(timer);
+      if (!owner || owner.aux.length >= 1) { ws.close(1008, "bad aux"); return; }
+      c = owner; owner.aux.push(s);
+      ws.on("close", (code: number, reason: Buffer) => {
+        const i = owner.aux.indexOf(s); if (i >= 0) owner.aux.splice(i, 1);
+        if (s.closedBy !== "primary closed") logClose(owner, s, code, reason, true);
+      });
+    });
+    ws.on("close", () => clearTimeout(timer));
+    return;
+  }
+
+  const c: Client = { uid: uidSeq++, token: crypto.randomBytes(16).toString("hex"), name: "KONG", lobby: null, pid: -1, squad: 0, sock: s, aux: [], lastInputAt: Date.now(), peer: null!, markAt: 0, seat: -1, camAt: 0, program: false, ev: null };
+  c.peer = { pid: -1, invSeq: 0, send: (u8) => sendBin(c, u8), sendResult: (state) => sendJSON(c.sock.ws, { t: "result", state }) };
+  byToken.set(c.token, c);
+  sendJSON(ws, { t: "welcome", uid: c.uid, aux: c.token, terrain: td.hash, world: worldHashV, boxes: boxes.length, net: NET_VERSION });
+  ws.on("message", (data: RawData, isBinary: boolean) => {
+    if (!allow(s)) return;
+    if (isBinary) { onBinary(c, s, data); return; }
+    let msg: { t?: unknown; [k: string]: unknown };
+    try { msg = JSON.parse(String(data)); } catch { strike(s, "bad json"); return; }
+    if (!msg || typeof msg !== "object") { strike(s, "bad json"); return; }
+    try { onJSON(c, msg); } catch (e) { log("json handler error", e); strike(s, "handler"); }
+  });
+  ws.on("close", (code: number, reason: Buffer) => { logClose(c, s, code, reason, false); byToken.delete(c.token); leaveLobby(c); for (const a of c.aux) { a.closedBy ||= "primary closed"; a.ws.close(); } });
+});
+
+/** one line per player socket close: who, where (room / match phase, alive or not), the close code + reason,
+ *  WHO closed it, how old it was and how long it had been silent. No address, no token. */
+function logClose(c: Client, s: Sock, code: number, reason: Buffer, aux: boolean) {
+  const now = Date.now(), l = c.lobby, m = l?.match, p = m && c.pid >= 0 ? m.players[c.pid] : undefined;
+  const where = !l ? "no lobby" : `${l.event ? "event" : "lobby"} ${l.code} · ${c.seat >= 0 ? "caster seat" : !m ? "room" : !p ? `room (a match runs, phase ${m.phase})`
+    : `match phase ${m.phase}, ${p.eliminated ? "eliminated" : alive(p) ? "alive" : "dead"}`}`;
+  const by = s.closedBy || (code === 1006 ? "link lost (no close frame)" : "client");
+  const why = String(reason ?? "").slice(0, 60), sec = (t: number) => `${((now - t) / 1000).toFixed(1)}s`;
+  log(`disconnect${aux ? " (aux)" : ""}: ${c.name} · ${where} · code ${code}${why ? ` "${why}"` : ""} · by ${by} · up ${sec(s.openedAt)} · last msg ${sec(s.lastMsg)} ago, last pong ${sec(s.lastPong)} ago${aux ? "" : ` · aux ${c.aux.length ? "open" : "none"}`}`);
+}
+
+function onBinary(c: Client, s: Sock, data: RawData) {
+  const buf = Array.isArray(data) ? Buffer.concat(data) : Buffer.isBuffer(data) ? data : Buffer.from(data as ArrayBuffer);
+  const u8 = new Uint8Array(buf.buffer, buf.byteOffset, buf.byteLength);
+  const host = c.lobby?.host;
+  if (!host) { if (u8[0] !== M.Input && u8[0] !== M.Ping && u8[0] !== M.InvOp) strike(s, "bad frame"); return; }
+  if (u8[0] === M.Input) c.lastInputAt = Date.now();
+  if (!host.receive(c.peer, u8, (r) => { if (s.ws.readyState === WebSocket.OPEN) s.ws.send(Buffer.from(r), { binary: true }); })) strike(s, "bad frame");
+}
+/** out of whatever lobby the client is in, as a player or as a caster seat */
+function leaveLobby(c: Client) { if (c.seat >= 0) c.lobby?.castLeave(c); else c.lobby?.leave(c); }
+const helloAt = new WeakMap<Client, number>(), helloLater = new WeakMap<Client, NodeJS.Timeout>();
+const ownedLobbies = (ip: string) => { let n = 0; for (const l of lobbies.values()) if (!l.event && l.owner && l.owner.sock?.ip === ip) n++; return n; };
+const lobbyCode = (v: unknown) => String(v ?? "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8);
+function onJSON(c: Client, msg: { t?: unknown; [k: string]: unknown }) {
+  switch (msg.t) {
+    // (admin lobby) in an event lobby a name is set before joining; afterwards only the admin renames
+    case "hello": {
+      if (c.lobby?.event) break;
+      const name = playerName(msg.name); if (name === c.name) break;
+      c.name = name;
+      // a renamed player re-sends the whole room to everyone in it: at most once a second per socket
+      // (a trailing send carries the last name typed inside that second)
+      const wait = 1000 - (Date.now() - (helloAt.get(c) ?? 0));
+      if (wait > 0) {
+        if (!helloLater.has(c)) helloLater.set(c, setTimeout(() => { helloLater.delete(c); helloAt.set(c, Date.now()); c.lobby?.broadcastJSON(c.lobby.state()); }, wait));
+        break;
+      }
+      helloAt.set(c, Date.now()); c.lobby?.broadcastJSON(c.lobby.state()); break;
+    }
+    case "create": {
+      if (EVENT_MODE) { sendJSON(c.sock.ws, { t: "error", msg: "PRIVATE LOBBIES ARE OFF DURING THIS EVENT — USE YOUR HOST'S LINK" }); break; }
+      if (lobbies.size >= MAX_LOBBIES) { sendJSON(c.sock.ws, { t: "error", msg: "SERVER FULL" }); break; }
+      if (ownedLobbies(c.sock.ip) >= MAX_LOBBIES_PER_IP) { sendJSON(c.sock.ws, { t: "error", msg: "TOO MANY LOBBIES FROM YOUR NETWORK — CLOSE ONE FIRST" }); break; }
+      leaveLobby(c); const l = new Lobby(newCode(), c, msg.mode === "trios" ? "trios" : "solo"); lobbies.set(l.code, l); l.join(c); log(`lobby ${l.code} created by ${c.name}`); break;
+    }
+    case "join": {
+      const code = lobbyCode(msg.code);
+      const l = lobbies.get(code); if (!l) { sendJSON(c.sock.ws, { t: "error", msg: "NO SUCH LOBBY" }); break; }
+      if (l === c.lobby && c.seat < 0) break;
+      if (l.event) { leaveLobby(c); eventJoin(l, c, msg.tok); break; }
+      leaveLobby(c); l.join(c); break;
+    }
+    // (admin lobby) a player picks a TRIOS team in an event lobby (−1 = none)
+    case "team": {
+      const team = msg.team;
+      if (!c.lobby?.event || !c.ev || typeof team !== "number" || !Number.isInteger(team) || team < -1 || team >= 64) { strike(c.sock, "bad team", HEAVY); break; }
+      const err = eventPickTeam(c, team); if (err) sendJSON(c.sock.ws, { t: "error", msg: err });
+      break;
+    }
+    // (caster) a commentator seat in an existing lobby (its code), or a new exhibition lobby to cast bots in
+    case "cast": {
+      const code = lobbyCode(msg.code);
+      const l = lobbies.get(code); if (!l) { sendJSON(c.sock.ws, { t: "error", msg: "NO SUCH LOBBY" }); break; }
+      if (l === c.lobby && c.seat >= 0) break;
+      // (admin lobby) commentator seats in an event lobby only while the admin has opened them
+      if (l.event && !l.event.casters) { sendJSON(c.sock.ws, { t: "error", msg: "CASTER SEATS ARE CLOSED IN THIS LOBBY" }); break; }
+      leaveLobby(c); c.program = msg.program === true; l.castJoin(c); break;
+    }
+    case "exhibit": {
+      if (EVENT_MODE) { sendJSON(c.sock.ws, { t: "error", msg: "EXHIBITIONS ARE OFF DURING THIS EVENT" }); break; }
+      if (lobbies.size >= MAX_LOBBIES) { sendJSON(c.sock.ws, { t: "error", msg: "SERVER FULL" }); break; }
+      if (ownedLobbies(c.sock.ip) >= MAX_LOBBIES_PER_IP) { sendJSON(c.sock.ws, { t: "error", msg: "TOO MANY LOBBIES FROM YOUR NETWORK — CLOSE ONE FIRST" }); break; }
+      leaveLobby(c); const l = new Lobby(newCode(), c, msg.mode === "trios" ? "trios" : "solo"); l.exhibit = true; l.auto = msg.auto === true; lobbies.set(l.code, l);
+      log(`lobby ${l.code}: exhibition (${l.mode}) opened by ${c.name}`); l.castJoin(c); break;
+    }
+    // (caster) the owner toggles AUTO (an exhibition starts its next match on its own)
+    case "castopt": if (c.lobby?.event) { strike(c.sock, "not the host", HEAVY); break; } if (c.lobby && c.lobby.owner === c) { c.lobby.auto = msg.auto === true; c.lobby.broadcastJSON(c.lobby.state()); } break;
+    // (caster) the PRODUCER (the lobby's owner) puts a seat's camera on air: every seat + PROGRAM window hears it
+    case "castprog": {
+      const l = c.lobby; if (!l || c.seat < 0 || l.owner !== c) break;
+      const seat = Number(msg.seat); if (!l.casters.some((q) => q.seat === seat && !q.program)) break;
+      l.onAir = seat; l.castJSON({ t: "castprog", seat, by: c.seat }); l.broadcastJSON(l.state());
+      break;
+    }
+    // (caster) "look at this!": one seat's shot offered to the other seats (≤ 1 a second)
+    case "castping": {
+      const l = c.lobby; if (!l || c.seat < 0 || c.program) break;
+      const now = Date.now(); if (now - c.markAt < 1000) break; c.markAt = now;
+      const cam = msg.cam; if (!cam || typeof cam !== "object") break;
+      const note = String(msg.note ?? "").slice(0, 80);
+      if (JSON.stringify(cam).length > 600) break;
+      l.castJSON({ t: "castping", seat: c.seat, name: c.name, cam, note }, c);
+      break;
+    }
+    // (caster) my camera, for the other seats (follow / program feed). Small JSON, ≤ 12 a second, relayed as is with my seat
+    case "castcam": {
+      const l = c.lobby; if (!l || c.seat < 0) break;
+      const now = Date.now(); if (now - c.camAt < 80) break; c.camAt = now;
+      const cam = msg.cam; if (!cam || typeof cam !== "object") break;
+      const out = JSON.stringify(cam); if (out.length > 600) break;
+      l.castJSON({ t: "castcam", seat: c.seat, name: c.name, cam }, c);
+      break;
+    }
+    // (admin lobby) in an event lobby only the admin changes the mode or starts: a player asking is refused (and struck)
+    case "mode": if (c.lobby?.event) { strike(c.sock, "not the host", 10); break; } if (c.lobby && c.lobby.owner === c && !c.lobby.match) { c.lobby.mode = msg.mode === "trios" ? "trios" : "solo"; c.lobby.assignSquads(); c.lobby.broadcastJSON(c.lobby.state()); } break;
+    case "start": if (c.lobby?.event) { strike(c.sock, "not the host", HEAVY); break; } if (c.lobby && c.lobby.owner === c) { if (!c.lobby.match) c.lobby.start(); else c.lobby.match.startNow(); } break;
+    case "leave": leaveLobby(c); break;
+    // the client's island stream (the warm-up waits for it, ≤ 40 s: MatchHost.holdForStream)
+    case "stream": c.peer.streamed = msg.done === true; break;
+    // my map marker / ping → my squadmates only (solo: nobody). ≤ 6 per second per player; coordinates
+    // checked against the island's bounds
+    case "mark": {
+      const l = c.lobby, m = l?.match; if (!l || !m || c.pid < 0) break;
+      const now = Date.now(); if (now - c.markAt < 60) break; c.markAt = now;
+      const clear = msg.clear === true, x = Number(msg.x), z = Number(msg.z);
+      if (!clear && !(Number.isFinite(x) && Number.isFinite(z) && Math.abs(x) < 4000 && Math.abs(z) < 4000)) break;
+      const team = m.teamOf(c.pid), out = JSON.stringify(clear ? { t: "mark", pid: c.pid, clear: true } : { t: "mark", pid: c.pid, x: Math.round(x * 10) / 10, z: Math.round(z * 10) / 10 });
+      for (const q of l.clients) if (q !== c && q.pid >= 0 && m.teamOf(q.pid) === team && q.sock.ws.readyState === WebSocket.OPEN) q.sock.ws.send(out);
+      break;
+    }
+    // (voice) the comms handshake relay, mic state, caster listen-ins (server/voice.ts)
+    case "rtc": case "voice": case "listen": onVoiceJSON(c, c.lobby, msg); break;
+    // (admin lobby) admin actions never travel on a player socket: anything shaped like one is hostile
+    default: strike(c.sock, "unknown msg", typeof msg.t === "string" && ADMIN_SHAPED.has(msg.t) ? HEAVY : 1);
+  }
+}
+
+// heartbeat (dead links) + idle sockets that never joined anything
+// a link is alive while ANYTHING arrives on it — a message (inputs: 60 a second in a match) or a pong (the
+// pings below, + the 3 s timed pings of event-lobby players) — and dead after SILENT_MAX_MS of nothing at all
+const hb = setInterval(() => {
+  const now = Date.now();
+  for (const s of socks) {
+    if (now - Math.max(s.lastMsg, s.lastPong) > SILENT_MAX_MS) { s.closedBy ||= `heartbeat (silent > ${SILENT_MAX_MS / 1000}s)`; s.ws.terminate(); continue; }
+    try { s.ws.ping(); } catch { /* closing */ }
+  }
+  for (const c of byToken.values()) if (!c.lobby && now - c.sock.lastMsg > IDLE_NO_LOBBY_MS) { c.sock.closedBy ||= "idle (in no lobby)"; c.sock.ws.close(1000, "idle"); }
+}, HEARTBEAT_MS);
+// (admin lobby) the admin console's ping column: event-lobby players get a timed ping every 3 s (browsers answer pings
+// by protocol; the pong echoes the payload)
+setInterval(() => {
+  const h = Buffer.from("h" + Date.now());
+  for (const l of lobbies.values()) if (l.event) for (const c of l.clients) if (c.sock.ws.readyState === WebSocket.OPEN) { try { c.sock.ws.ping(h); } catch { /* closing */ } }
+}, 3000).unref();
+
+function shutdown(sig: string) {
+  log(`${sig}: shutting down`);
+  clearInterval(hb);
+  for (const l of [...lobbies.values()]) { l.broadcastJSON({ t: "error", msg: "SERVER RESTARTING" }); l.destroy(true); }
+  adminHttp.shutdown();
+  for (const s of socks) { s.closedBy ||= "server restart"; s.ws.close(1001, "restart"); }
+  void kongbot.close(); void annotations.close();   // (stops its timers; an in-flight queue import finishes first)
+  server.close(() => process.exit(0));
+  setTimeout(() => process.exit(0), 2000).unref();
+}
+process.on("SIGINT", () => shutdown("SIGINT")); process.on("SIGTERM", () => shutdown("SIGTERM"));
+process.on("uncaughtException", (e) => log("uncaught", e));
+process.on("unhandledRejection", (e) => log("unhandled rejection", e));
+const HOST = process.env.KR_HOST || (serve ? "0.0.0.0" : "127.0.0.1");
+if (serve && !TRUST_PROXY) log("note: KR_TRUST_PROXY is off — behind nginx / Cloudflare every player shares one address (set KR_TRUST_PROXY=1)");
+server.listen(PORT, HOST, () => log(`KONG ROYALE server on ${HOST}:${PORT} (${serve ? "serving dist/ + /ws" : "ws only"})${EVENT_MODE ? " · EVENT MODE (players join by link only)" : ""} · admin ${process.env.KR_ADMIN_KEY_SHA256 ? "key set" : "OFF (no KR_ADMIN_KEY_SHA256)"}`));

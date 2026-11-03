@@ -1,0 +1,32 @@
+{
+  "wall": {
+    "id": "worn_planks",
+    "source": "https://polyhaven.com/a/worn_planks",
+    "license": "CC0",
+    "tileM": 1.4000000953674316
+  },
+  "deck": {
+    "id": "weathered_brown_planks",
+    "source": "https://polyhaven.com/a/weathered_brown_planks",
+    "license": "CC0",
+    "tileM": 1.7999999523162842
+  },
+  "roof": {
+    "id": "weathered_plank_siding",
+    "source": "https://polyhaven.com/a/weathered_plank_siding",
+    "license": "CC0",
+    "tileM": 1.5700000524520874
+  },
+  "bark": {
+    "id": "bark_brown_02",
+    "source": "https://polyhaven.com/a/bark_brown_02",
+    "license": "CC0",
+    "tileM": 0.9999990463256836
+  },
+  "dark": {
+    "id": "weathered_planks",
+    "source": "https://polyhaven.com/a/weathered_planks",
+    "license": "CC0",
+    "tileM": 2
+  }
+}

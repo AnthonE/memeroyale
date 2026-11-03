@@ -1,0 +1,59 @@
+# Runs on every pull request (including ones from forks) and on every change to main.
+# Safe for strangers' pull requests: it can only read the code, it has no secrets, and every action is pinned.
+name: checks
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: checks-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: build and test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm run build
+      - run: npm test
+
+  secrets:
+    name: no secrets
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: no key or environment files
+        run: |
+          found=$(git ls-files | grep -E '(^|/)(\.env($|\.)|\.admin-key|id_rsa|id_ed25519)|\.(pem|key|p12)$' || true)
+          if [ -n "$found" ]; then echo "These files must never be committed:"; echo "$found"; exit 1; fi
+      - name: gitleaks (secret scanner)
+        run: |
+          V=8.28.0
+          curl -sSLO "https://github.com/gitleaks/gitleaks/releases/download/v$V/gitleaks_${V}_linux_x64.tar.gz"
+          curl -sSLO "https://github.com/gitleaks/gitleaks/releases/download/v$V/gitleaks_${V}_checksums.txt"
+          grep " gitleaks_${V}_linux_x64.tar.gz\$" "gitleaks_${V}_checksums.txt" | sha256sum -c
+          tar xzf "gitleaks_${V}_linux_x64.tar.gz" gitleaks
+          ./gitleaks dir . --no-banner --redact
+          # a pull request: also every commit in it (a key added then deleted would still be in its history)
+          if [ -n "$BASE" ]; then ./gitleaks git . --no-banner --redact --log-opts="$BASE..$HEAD_SHA"; fi
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}

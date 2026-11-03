@@ -1,0 +1,54 @@
+{
+  "name": "kong-royale",
+  "private": true,
+  "version": "0.2.0",
+  "type": "module",
+  "description": "KONG ROYALE — 50-player battle royale in the browser",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MaximilianHansen/kongroyale.git"
+  },
+  "homepage": "https://kongroyale.com",
+  "bugs": {
+    "url": "https://github.com/MaximilianHansen/kongroyale/issues"
+  },
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "dev": "vite --host --port 5317",
+    "server": "tsx watch server/index.ts",
+    "build": "vite build && node tools/performance/precompress.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "node tools/run-tests.mjs",
+    "shot": "node tools/shot.mjs",
+    "start": "KR_SERVE=1 tsx server/index.ts",
+    "netlab": "tsx tools/netlab.mts",
+    "sim": "tsx tools/sim-smoke.mts",
+    "kongbot": "tsx tools/kongbot/cli.mts",
+    "kongbot:db": "bash tools/kongbot/mongod.sh",
+    "bench:splat-viewport": "tsx tools/performance/splat-viewport.mts",
+    "bench:host": "tsx tools/performance/host.mts",
+    "bench:server": "node tools/performance/server-bench.mjs",
+    "bench:verify": "tsx tools/performance/wire-parity.mts && tsx tools/performance/matrix-parity.mts && tsx tools/performance/geometry-parity.mts && tsx tools/performance/static-http.mts && tsx tools/performance/splat-viewport.mts"
+  },
+  "dependencies": {
+    "mongodb": "^7.7.0",
+    "n8ao": "2.0.1",
+    "postprocessing": "6.39.5",
+    "three": "0.186.0",
+    "three-mesh-bvh": "0.9.15",
+    "ws": "8.21.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/three": "0.186.0",
+    "@types/ws": "^8.5.13",
+    "playwright": "1.62.1",
+    "sharp": "0.35.5",
+    "tsx": "4.23.15",
+    "typescript": "~5.9.0",
+    "vite": "^7.3.7"
+  }
+}

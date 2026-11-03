@@ -1,0 +1,21 @@
+name: Bug
+description: Something in the game is broken
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What you did, what happened, and what you expected instead.
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: Browser and computer
+      placeholder: Chrome 140 on Windows 11, RTX 3060
+  - type: textarea
+    id: shot
+    attributes:
+      label: Screenshot or clip
+      description: Optional, but it helps a lot.

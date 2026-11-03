@@ -1,0 +1,17 @@
+name: Idea
+description: Suggest a feature, weapon, mode, map area or balance change (please do this before building something big)
+labels: [idea]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: The idea
+      description: What would change for players, and why it would make the game better.
+    validations:
+      required: true
+  - type: checkboxes
+    id: build
+    attributes:
+      label: Would you build it?
+      options:
+        - label: I'd like to make the pull request for this myself

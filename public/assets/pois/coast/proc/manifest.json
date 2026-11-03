@@ -1,0 +1,172 @@
+{
+ "plaster": {
+  "repeat": true,
+  "n": true,
+  "r": false
+ },
+ "siding:0.35": {
+  "repeat": true,
+  "n": true,
+  "r": false
+ },
+ "siding:1": {
+  "repeat": true,
+  "n": true,
+  "r": false
+ },
+ "deck": {
+  "repeat": true,
+  "n": true,
+  "r": false
+ },
+ "wood": {
+  "repeat": true,
+  "n": true,
+  "r": false
+ },
+ "corr:0.35": {
+  "repeat": true,
+  "n": true,
+  "r": true
+ },
+ "corr:1": {
+  "repeat": true,
+  "n": true,
+  "r": true
+ },
+ "clay": {
+  "repeat": true,
+  "n": true,
+  "r": false
+ },
+ "stone": {
+  "repeat": true,
+  "n": true,
+  "r": false
+ },
+ "brick": {
+  "repeat": true,
+  "n": true,
+  "r": false
+ },
+ "concrete": {
+  "repeat": true,
+  "n": true,
+  "r": false
+ },
+ "pavers": {
+  "repeat": true,
+  "n": true,
+  "r": false
+ },
+ "pmetal": {
+  "repeat": true,
+  "n": true,
+  "r": true
+ },
+ "rock": {
+  "repeat": true,
+  "n": true,
+  "r": false
+ },
+ "asphalt": {
+  "repeat": true,
+  "n": true,
+  "r": true
+ },
+ "dirtroad": {
+  "repeat": true,
+  "n": true,
+  "r": false
+ },
+ "sandy": {
+  "repeat": true,
+  "n": true,
+  "r": false
+ },
+ "bleaf": {
+  "repeat": false,
+  "n": true,
+  "r": false
+ },
+ "btrunk2": {
+  "repeat": true,
+  "n": true,
+  "r": false
+ },
+ "crinkle": {
+  "repeat": true,
+  "n": true,
+  "r": false
+ },
+ "logo:flat": {
+  "repeat": false,
+  "n": false,
+  "r": false
+ },
+ "logo:badge": {
+  "repeat": false,
+  "n": false,
+  "r": false
+ },
+ "logo:single2": {
+  "repeat": false,
+  "n": false,
+  "r": false
+ },
+ "screens": {
+  "repeat": false,
+  "n": false,
+  "r": false
+ },
+ "crate": {
+  "repeat": false,
+  "n": true,
+  "r": false
+ },
+ "paint": {
+  "repeat": true,
+  "n": false,
+  "r": false
+ },
+ "blob": {
+  "repeat": false,
+  "n": false,
+  "r": false
+ },
+ "glow": {
+  "repeat": false,
+  "n": false,
+  "r": false
+ },
+ "litwin": {
+  "repeat": false,
+  "n": false,
+  "r": false
+ },
+ "ivy": {
+  "repeat": true,
+  "n": true,
+  "r": false
+ },
+ "lookoutYard": {
+  "repeat": false,
+  "n": true,
+  "r": false
+ },
+ "plRoad": {
+  "repeat": true,
+  "n": true,
+  "r": false
+ },
+ "plYard": {
+  "repeat": false,
+  "n": true,
+  "r": false
+ },
+ "bagCrinkle": {
+  "repeat": true,
+  "n": true,
+  "r": false
+ }
+}

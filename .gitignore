@@ -1,0 +1,17 @@
+node_modules/
+dist/
+dist-admin/
+shots/
+reports/
+.kongbot/
+refs
+
+.env
+.env.*
+.admin-key
+.admin-key.*
+*.pem
+*.key
+
+.DS_Store
+*.log

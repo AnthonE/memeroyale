@@ -1,0 +1,19 @@
+{
+ "hash": 3139013544,
+ "view": {
+  "pos": [
+   492,
+   3.0300000429153444,
+   -529
+  ],
+  "target": [
+   392.54781046317265,
+   26.030000042915344,
+   -539.4528463267653
+  ],
+  "fov": 60,
+  "rel": false,
+  "t": 12,
+  "note": "water area: solved on the live terrain (az -84°, score 17.8, shelf 28/28 rise 9 ahead 4 head 2 sun 3)"
+ }
+}

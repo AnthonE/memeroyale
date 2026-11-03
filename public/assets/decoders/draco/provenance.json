@@ -1,0 +1,139 @@
+{
+  "pins": [
+    {
+      "url": "https://www.gstatic.com/draco/versioned/decoders/1.5.7/draco_wasm_wrapper.js",
+      "file": "draco_wasm_wrapper.js",
+      "sha256": "e8049906ef3f8f75d3456c22a3f31bfdfe5b5b5bd09ccdec613b9e9a49d554d8",
+      "bytes": 58763,
+      "status": 200,
+      "downloadedAt": "2026-10-03T11:08:07.373Z",
+      "headers": {
+        "accept-ranges": "bytes",
+        "access-control-allow-origin": "*",
+        "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+        "cache-control": "public, max-age=31536000",
+        "content-encoding": "gzip",
+        "content-length": "11848",
+        "content-security-policy": "require-trusted-types-for 'script'; report-uri https://csp.withgoogle.com/csp/draco",
+        "content-type": "text/javascript",
+        "cross-origin-opener-policy": "same-origin; report-to=\"draco\"",
+        "cross-origin-resource-policy": "cross-origin",
+        "date": "Sat, 03 Oct 2026 11:08:07 GMT",
+        "expires": "Sun, 03 Oct 2027 11:08:07 GMT",
+        "last-modified": "Wed, 17 Jan 2024 22:03:17 GMT",
+        "report-to": "{\"group\":\"draco\",\"max_age\":2592000,\"endpoints\":[{\"url\":\"https://csp.withgoogle.com/csp/report-to/draco\"}]}",
+        "server": "sffe",
+        "vary": "Accept-Encoding",
+        "x-content-type-options": "nosniff",
+        "x-xss-protection": "0"
+      }
+    },
+    {
+      "url": "https://www.gstatic.com/draco/versioned/decoders/1.5.7/draco_decoder.wasm",
+      "file": "draco_decoder.wasm",
+      "sha256": "2516a4e43526d71787bf2f678f951329f7f858f8f15f42d4bc9e370b31a0da3a",
+      "bytes": 285948,
+      "status": 200,
+      "downloadedAt": "2026-10-03T11:08:07.500Z",
+      "headers": {
+        "accept-ranges": "bytes",
+        "access-control-allow-origin": "*",
+        "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+        "cache-control": "public, max-age=31536000",
+        "content-encoding": "gzip",
+        "content-length": "88859",
+        "content-security-policy": "require-trusted-types-for 'script'; report-uri https://csp.withgoogle.com/csp/draco",
+        "content-type": "application/wasm",
+        "cross-origin-opener-policy": "same-origin; report-to=\"draco\"",
+        "cross-origin-resource-policy": "cross-origin",
+        "date": "Sat, 03 Oct 2026 11:08:07 GMT",
+        "expires": "Sun, 03 Oct 2027 11:08:07 GMT",
+        "last-modified": "Wed, 17 Jan 2024 22:03:07 GMT",
+        "report-to": "{\"group\":\"draco\",\"max_age\":2592000,\"endpoints\":[{\"url\":\"https://csp.withgoogle.com/csp/report-to/draco\"}]}",
+        "server": "sffe",
+        "vary": "Accept-Encoding",
+        "x-content-type-options": "nosniff",
+        "x-xss-protection": "0"
+      }
+    },
+    {
+      "url": "https://www.gstatic.com/draco/versioned/decoders/1.5.7/draco_decoder.js",
+      "file": "draco_decoder.js",
+      "sha256": "5656ccaf1f50300e3c318e15c3313430483f3866cd9c25f22fbf9d6f229e6728",
+      "bytes": 720148,
+      "status": 200,
+      "downloadedAt": "2026-10-03T11:14:02.935946+00:00",
+      "headers": {
+        "Accept-Ranges": "bytes",
+        "Vary": "Accept-Encoding",
+        "Content-Type": "text/javascript",
+        "Access-Control-Allow-Origin": "*",
+        "Content-Security-Policy": "require-trusted-types-for 'script'; report-uri https://csp.withgoogle.com/csp/draco",
+        "Cross-Origin-Resource-Policy": "cross-origin",
+        "Cross-Origin-Opener-Policy": "same-origin; report-to=\"draco\"",
+        "Report-To": "{\"group\":\"draco\",\"max_age\":2592000,\"endpoints\":[{\"url\":\"https://csp.withgoogle.com/csp/report-to/draco\"}]}",
+        "Content-Length": "720148",
+        "Date": "Sat, 03 Oct 2026 11:14:02 GMT",
+        "Expires": "Sun, 03 Oct 2027 11:14:02 GMT",
+        "Cache-Control": "public, max-age=31536000",
+        "Last-Modified": "Wed, 17 Jan 2024 22:03:03 GMT",
+        "X-Content-Type-Options": "nosniff",
+        "Server": "sffe",
+        "X-XSS-Protection": "0",
+        "Alt-Svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+        "Connection": "close"
+      }
+    },
+    {
+      "url": "https://raw.githubusercontent.com/google/draco/1.5.7/LICENSE",
+      "file": "LICENSE",
+      "sha256": "d3709b0fb4b8a94bbb1d02b8a2e484f258b0d9c5c5a01f940391f3fe662cd1a4",
+      "bytes": 13898,
+      "status": 200,
+      "downloadedAt": "2026-10-03T11:14:03.033667+00:00",
+      "headers": {
+        "Connection": "close",
+        "Content-Length": "13898",
+        "Cache-Control": "max-age=300",
+        "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; sandbox",
+        "Content-Type": "text/plain; charset=utf-8",
+        "ETag": "\"914e548cdf496f951273cd2109a5917e82e87003cf8a692dc47e46496d565f85\"",
+        "Strict-Transport-Security": "max-age=31536000",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "deny",
+        "X-XSS-Protection": "1; mode=block",
+        "X-GitHub-Request-Id": "A8B8:2FD9:10F859:1FEB9F:6AC0E37A",
+        "x-github-edge-region": "iad",
+        "Accept-Ranges": "bytes",
+        "Date": "Sat, 03 Oct 2026 11:14:03 GMT",
+        "Via": "1.1 varnish",
+        "X-Served-By": "cache-iad-kiad7000121-IAD",
+        "X-Cache": "MISS",
+        "X-Cache-Hits": "0",
+        "X-Timer": "S1791026043.004728,VS0,VE10",
+        "Vary": "Authorization,Accept-Encoding",
+        "Access-Control-Allow-Origin": "*",
+        "Cross-Origin-Resource-Policy": "cross-origin",
+        "X-Fastly-Request-ID": "2eece497ba48b0b2bbdf15a9ba9617e971e1ba4d",
+        "Expires": "Sat, 03 Oct 2026 11:19:03 GMT",
+        "Source-Age": "0"
+      }
+    }
+  ],
+  "loader": {
+    "path": "node_modules/three/examples/jsm/loaders/DRACOLoader.js",
+    "sha256": "fdafdf4aa11bbc65d89adb338efd844bedf94073702f9049240ff1f1ea48ad5f"
+  },
+  "scope": "Unmodified Draco 1.5.7 decoder bytes: two exact captured production WASM dependencies plus same-version JavaScript fallback and upstream LICENSE. No runtime upgrade.",
+  "capturedCaller": {
+    "path": "client/src/engine/assets.ts",
+    "sha256": "631265cab13bcde12c856ec98751bda0043a1e1fde597f18952e31ac00c683c6",
+    "reason": "Assets constructor .setDecoderPath exact version1.5.7 prefix; Three DRACOLoader WASM branch loads these2 files and generates Blob worker."
+  },
+  "caller": {
+    "path": "client/src/engine/assets.ts",
+    "sha256": "cd44a42ddb2ba6250f298b99dd87abe0fb197e10bebce920a7c0a3854aaa100d",
+    "reason": "Same string decoderPath and installed Three loader; only URL prefix becomes assetUrl deployment base."
+  },
+  "fallbackReason": "Installed DRACOLoader automatically fetches draco_decoder.js when WebAssembly is unavailable. Keeping all three files preserves the existing delivery contract."
+}
