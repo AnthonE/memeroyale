@@ -18,6 +18,7 @@ const tmp = (f) => path.join(os.tmpdir(), `kong-royale-${f}`);
 const checks = [
   { id: "types", name: "types", cmd: "npx", args: ["tsc", "--noEmit"] },
   { id: "lint", name: "lint", cmd: "npx", args: ["tsx", "tools/lint/check.mts"] },
+  { id: "gate", name: "verifier flag and empty-input gates", cmd: "npx", args: ["tsx", "tools/gate.test.mts"] },
   { id: "movement", name: "movement", cmd: "npx", args: ["tsx", "tools/gameplay/movetest.mts"] },
   { id: "swimming", name: "swimming", cmd: "npx", args: ["tsx", "tools/swim/simtest.mts"] },
   { id: "face", name: "kong face", cmd: "npx", args: ["tsx", "tools/actors/face-test.mts"] },
