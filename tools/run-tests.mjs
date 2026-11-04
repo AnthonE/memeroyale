@@ -18,7 +18,7 @@ const checks = [
   ["path solver", "npx", ["tsx", "tools/play/solver-tests.mts", "--json", tmp("solver-tests.json")]],
   ["glass", "npx", ["tsx", "tools/glass/test.mts"]],
   ["wire / matrix / geometry / http / splat parity", "npm", ["run", "bench:verify"]],
-  ["headless match (seed 42)", "npm", ["run", "sim"]],
+  ["headless match (seed 42)", "npx", ["tsx", "tools/sim-smoke.mts", "trios", "42", "--check"]],
   ["admin lobby red team", "node", ["tools/admin-lobby/redteam.mjs", "--md", tmp("redteam.md")]],
 ];
 
