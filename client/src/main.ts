@@ -75,6 +75,8 @@ for (const [id, load] of entries) {
   imports.set(id, p);
 }
 const gameImport = gameMode ? import("./game/index") : null;
+let postBuild = null as typeof import("./post-build") | null;
+const postBuildImport = import("./post-build").then((m) => (postBuild = m), (e) => { report("post-build", e); return null; });
 gameImport?.catch(() => { /* reported by the game stage */ });
 if (gameMode) { startStaticWorld(); startLootSpotsWorker(); } // (perf: the loot spots off the main thread too)
 
@@ -307,10 +309,15 @@ if (streamOn && READY_BY > 0) {
   const want = done.reduce((a, id) => a + est(id), 0), got = done.reduce((a, id) => a + buildMs[id], 0);
   const factor = Math.min(3, Math.max(0.8, want > 0 ? got / want : 1));
   kr.bootFactor = +factor.toFixed(2);
-  const rest = (n: number) => (EXPECT.afterBuild + EXPECT.game + EXPECT.settle + 120 * n) * factor;
+  const postEst = (q.get("readyest") === "1" ? await postBuildImport : postBuild)?.postBuildEstimate(factor);
+  if (postEst) kr.postBuildEstimate = { ms: Math.round(postEst.ms), stored: postEst.stored };
+  const rest = postEst && q.get("readyest") === "1"
+    ? (_n: number, preMs: number) => postEst.rest(preMs)
+    : (n: number) => (EXPECT.afterBuild + EXPECT.game + EXPECT.settle + 120 * n) * factor;
   const plan = (t: number, ids: string[]) => {
     const out: string[] = [];
-    for (const id of [...ids].sort((a, b) => est(b) - est(a))) if (t + est(id) * factor + rest(out.length + 1) <= READY_BY) { out.push(id); t += est(id) * factor; }
+    let preMs = 0;
+    for (const id of [...ids].sort((a, b) => est(b) - est(a))) if (t + est(id) * factor + rest(out.length + 1, preMs + est(id) * factor) <= READY_BY) { out.push(id); t += est(id) * factor; preMs += est(id) * factor; }
     return out;
   };
   const planned = plan(performance.now(), streamList);
@@ -318,7 +325,7 @@ if (streamOn && READY_BY > 0) {
   kr.preReadyPlan = planned.slice();
   const pre: string[] = [];
   for (const id of planned) {
-    if (performance.now() + est(id) * factor + rest(pre.length + 1) > READY_BY) continue;
+    if (performance.now() + est(id) * factor + rest(pre.length + 1, pre.reduce((a, p) => a + buildMs[p], 0) + est(id) * factor) > READY_BY) continue;
     streamList.splice(streamList.indexOf(id), 1);
     pre.push(id);
     await buildOne(id, false);
@@ -327,6 +334,7 @@ if (streamOn && READY_BY > 0) {
 }
 kr.programsAfterTitleModules = engine.renderer.info.programs?.length;
 enterStep("afterBuild");
+const postMeasure = postBuild?.measurePostBuild(noFrameWaitCount);
 // (before the game's prewarm: the post chain it compiles is the one the settings ask for)
 try { display?.apply(); } catch (e) { report("display", e); }
 for (const m of [...loaded]) await runAfterBuild(m, false);
@@ -402,6 +410,7 @@ const SETTLE = gameMode ? 6 : 20;
 while (!kr.bootError && engine.frames - settleFrom < SETTLE) await new Promise((r) => requestAnimationFrame(r));
 kr.programsAtReady = engine.renderer.info.programs?.length;
 kr.noFrameWaits = noFrameWaitCount();
+postMeasure?.stop();
 if (kr.bootError) {
   // a failed boot never becomes a playable "ready" title (the loading screen shows the reload card)
   kr.stage = "failed";
@@ -410,6 +419,7 @@ if (kr.bootError) {
   bootReady = true;
   kr.stage = "ready";
   kr.readyAt = Math.round(performance.now());
+  postMeasure?.finish(kr, gameMode && streamOn);
   kr.ready = true;
   document.documentElement.dataset.ready = "1";
 }
