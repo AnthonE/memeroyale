@@ -12,6 +12,7 @@ import { onStructure, ownVisible, activeGates, type Gate } from "./scene-hooks";
 import { installShaderRecorder } from "./shader-src";
 import { installDitherChunks } from "./dither";
 import { flag } from "../flags";
+import { afterPaint } from "./frame";
 const STREAM_SLICE_MS: readonly number[] = flag("streamslice") ?? [];
 
 // engine fades dissolve instead of scaling — three's shared chunks are patched before the first compile
@@ -53,6 +54,8 @@ export interface WorldCtx {
    * render (and the loading bar repaint) first. Cheap enough to call thousands of times per build.
    */
   yield(): Promise<void>;
+  /** a task boundary after the next paint, without waiting for a frame the browser isn't painting (engine/frame.ts) */
+  afterPaint(): Promise<void>;
   /** the current slice budget in ms (read-only for modules; the boot sets it) */
   readonly sliceMs: number;
   /**
@@ -284,11 +287,11 @@ export class Engine implements WorldCtx {
   }
   yield(): Promise<void> {
     if (performance.now() - this.sliceT0 < this.sliceMs) return RESOLVED;
-    // let the next frame (or the loading screen) paint, then continue in a fresh task right after it
-    return new Promise<void>((resolve) => {
-      requestAnimationFrame(() => { setTimeout(() => { this.sliceT0 = performance.now(); resolve(); }, 0); });
-    });
+    // let the next frame (or the loading screen) paint, then continue in a fresh task right after it (engine/frame.ts:
+    // without waiting for a frame the browser isn't painting)
+    return afterPaint().then(() => { this.sliceT0 = performance.now(); });
   }
+  afterPaint() { return afterPaint(); }
 
   // ---- module streaming
   get streaming() { return this.streamOpen && !this.streamEnded; }

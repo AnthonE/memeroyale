@@ -35,10 +35,9 @@ import { onStructure, gate, ungate } from "./engine/scene-hooks";
 import { POIS } from "../../shared/world/map";
 import { Display, bootQuality } from "./engine/display";
 import { WARMUP_S } from "../../shared/sim/const";
+import { afterPaint as nextFrame, noFrameWaitCount } from "./engine/frame";
 import { flag } from "./flags";
 
-/** a real task boundary after the next paint (the loading screen / title repaint between two long builds) */
-const nextFrame = () => new Promise<void>((r) => requestAnimationFrame(() => setTimeout(r, 0)));
 const shot = flag("shot");
 const errors: string[] = [];
 const report = (where: string, e: unknown) => {
@@ -76,6 +75,8 @@ for (const [id, load] of entries) {
   imports.set(id, p);
 }
 const gameImport = gameMode ? import("./game/index") : null;
+let postBuild = null as typeof import("./post-build") | null;
+const postBuildImport = import("./post-build").then((m) => (postBuild = m), (e) => { report("post-build", e); return null; });
 gameImport?.catch(() => { /* reported by the game stage */ });
 if (gameMode) { startStaticWorld(); startLootSpotsWorker(); } // (perf: the loot spots off the main thread too)
 
@@ -308,10 +309,15 @@ if (streamOn && READY_BY > 0) {
   const want = done.reduce((a, id) => a + est(id), 0), got = done.reduce((a, id) => a + buildMs[id], 0);
   const factor = Math.min(3, Math.max(0.8, want > 0 ? got / want : 1));
   kr.bootFactor = +factor.toFixed(2);
-  const rest = (n: number) => (EXPECT.afterBuild + EXPECT.game + EXPECT.settle + 120 * n) * factor;
+  const postEst = (flag("readyest") ? await postBuildImport : postBuild)?.postBuildEstimate(factor);
+  if (postEst) kr.postBuildEstimate = { ms: Math.round(postEst.ms), stored: postEst.stored };
+  const rest = postEst && flag("readyest")
+    ? (_n: number, preMs: number) => postEst.rest(preMs)
+    : (n: number) => (EXPECT.afterBuild + EXPECT.game + EXPECT.settle + 120 * n) * factor;
   const plan = (t: number, ids: string[]) => {
     const out: string[] = [];
-    for (const id of [...ids].sort((a, b) => est(b) - est(a))) if (t + est(id) * factor + rest(out.length + 1) <= READY_BY) { out.push(id); t += est(id) * factor; }
+    let preMs = 0;
+    for (const id of [...ids].sort((a, b) => est(b) - est(a))) if (t + est(id) * factor + rest(out.length + 1, preMs + est(id) * factor) <= READY_BY) { out.push(id); t += est(id) * factor; preMs += est(id) * factor; }
     return out;
   };
   const planned = plan(performance.now(), streamList);
@@ -319,7 +325,7 @@ if (streamOn && READY_BY > 0) {
   kr.preReadyPlan = planned.slice();
   const pre: string[] = [];
   for (const id of planned) {
-    if (performance.now() + est(id) * factor + rest(pre.length + 1) > READY_BY) continue;
+    if (performance.now() + est(id) * factor + rest(pre.length + 1, pre.reduce((a, p) => a + buildMs[p], 0) + est(id) * factor) > READY_BY) continue;
     streamList.splice(streamList.indexOf(id), 1);
     pre.push(id);
     await buildOne(id, false);
@@ -328,6 +334,7 @@ if (streamOn && READY_BY > 0) {
 }
 kr.programsAfterTitleModules = engine.renderer.info.programs?.length;
 enterStep("afterBuild");
+const postMeasure = postBuild?.measurePostBuild(noFrameWaitCount);
 // (before the game's prewarm: the post chain it compiles is the one the settings ask for)
 try { display?.apply(); } catch (e) { report("display", e); }
 for (const m of [...loaded]) await runAfterBuild(m, false);
@@ -382,7 +389,18 @@ if (gameMode) {
 const MATCH_ONLY_HOLDS = /^ui:map/;
 const blocking = () => engine.pendingHolds().filter((h) => !(gameMode && MATCH_ONLY_HOLDS.test(h)));
 kr.settleHolds = engine.pendingHolds();
-while (!kr.bootError && blocking().length && performance.now() - t0 < 90_000) await new Promise((r) => setTimeout(r, 50));
+// the 90 s budget counts only time the browser paints (a frame within the last 5 s): frame hooks release some holds
+// (veg-impostors on view pages), and Safari paints nothing while its window is off screen — the player who comes back should find the
+// load going on, not the reload card. A slow renderer (frames seconds apart) still counts.
+let settling = true, paintedAt = performance.now(), heldMs = 0;
+const watchPaint = () => { paintedAt = performance.now(); if (settling) requestAnimationFrame(watchPaint); };
+requestAnimationFrame(watchPaint);
+while (!kr.bootError && blocking().length && heldMs < 90_000) {
+  const t = performance.now();
+  await new Promise((r) => setTimeout(r, 50));
+  if (performance.now() - paintedAt < 5_000) heldMs += performance.now() - t;
+}
+settling = false;
 if (!kr.bootError && blocking().length) bootFail("ready", `timed out waiting for: ${blocking().join(", ")}`);
 kr.settleHoldsMs = Math.round(performance.now() - t0);
 const settleFrom = engine.frames;
@@ -391,6 +409,8 @@ const settleFrom = engine.frames;
 const SETTLE = gameMode ? 6 : 20;
 while (!kr.bootError && engine.frames - settleFrom < SETTLE) await new Promise((r) => requestAnimationFrame(r));
 kr.programsAtReady = engine.renderer.info.programs?.length;
+kr.noFrameWaits = noFrameWaitCount();
+postMeasure?.stop();
 if (kr.bootError) {
   // a failed boot never becomes a playable "ready" title (the loading screen shows the reload card)
   kr.stage = "failed";
@@ -399,6 +419,7 @@ if (kr.bootError) {
   bootReady = true;
   kr.stage = "ready";
   kr.readyAt = Math.round(performance.now());
+  postMeasure?.finish(kr, gameMode && streamOn);
   kr.ready = true;
   document.documentElement.dataset.ready = "1";
 }
