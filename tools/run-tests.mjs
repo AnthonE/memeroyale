@@ -18,15 +18,19 @@ const tmp = (f) => path.join(os.tmpdir(), `kong-royale-${f}`);
 const checks = [
   { id: "types", name: "types", cmd: "npx", args: ["tsc", "--noEmit"] },
   { id: "lint", name: "lint", cmd: "npx", args: ["tsx", "tools/lint/check.mts"] },
-  { id: "flags", name: "feature flags", cmd: "npx", args: ["tsx", "tools/flags/test.mts"] },
+  { id: "gate", name: "verifier flag and empty-input gates", cmd: "npx", args: ["tsx", "tools/gate.test.mts"] },
+  { id: "size", name: "download size (against tools/size-budgets.json)", cmd: "npx", args: ["tsx", "tools/check-size.mts", "--budgets", "tools/size-budgets.json"] },
+  { id: "assets", name: "asset sources (against tools/verify-assets.baseline.json)", cmd: "npx", args: ["tsx", "tools/verify-assets.mts", "--baseline", "tools/verify-assets.baseline.json"] },
   { id: "movement", name: "movement", cmd: "npx", args: ["tsx", "tools/gameplay/movetest.mts"] },
   { id: "swimming", name: "swimming", cmd: "npx", args: ["tsx", "tools/swim/simtest.mts"] },
   { id: "face", name: "kong face", cmd: "npx", args: ["tsx", "tools/actors/face-test.mts"] },
   { id: "anim", name: "kong animation", cmd: "npx", args: ["tsx", "tools/actors/anim-test.mts"] },
   { id: "walkgraph", name: "building walk graph", cmd: "npx", args: ["tsx", "tools/buildings/walkgraph.test.mts"] },
+  { id: "flags", name: "feature flags", cmd: "npx", args: ["tsx", "tools/flags/test.mts"] },
   { id: "solver", name: "path solver", slow: true, cmd: "npx", args: ["tsx", "tools/play/solver-tests.mts", "--json", tmp("solver-tests.json")] },
   { id: "glass", name: "glass", slow: true, cmd: "npx", args: ["tsx", "tools/glass/test.mts"] },
   { id: "res", name: "resource scopes", cmd: "npx", args: ["tsx", "tools/res/test.mts"] },
+  { id: "raycast", name: "raycast ties", cmd: "npx", args: ["tsx", "tools/world/raycast-test.mts"] },
   { id: "parity", name: "wire / matrix / geometry / http / splat parity", slow: true, cmd: "npm", args: ["run", "bench:verify"] },
   { id: "sim", name: "headless match (seed 42)", slow: true, cmd: "npx", args: ["tsx", "tools/sim-smoke.mts", "trios", "42", "--check"] },
   { id: "redteam", name: "admin lobby red team", slow: true, cmd: "node", args: ["tools/admin-lobby/redteam.mjs", "--md", tmp("redteam.md")] },
@@ -64,7 +68,13 @@ const failed = [];
 for (const { name, cmd, args } of selected) {
   const t = Date.now();
   console.log(`\n▶ ${name}`);
-  const r = spawnSync(cmd, args, { stdio: "inherit" });
+  // npm and npx are .cmd scripts on Windows, which Node only spawns through a shell. The shell gets one command line
+  // with every argument quoted, because the temp folder in the report paths can contain spaces. The command name stays
+  // bare: cmd.exe starting a quoted "npx" from PATH makes %~dp0 in npx.cmd point at the current folder instead of the
+  // Node install. node is a real executable, so it skips cmd.exe and its %VAR% expansion
+  const r = process.platform === "win32" && cmd !== "node"
+    ? spawnSync([cmd, ...args.map((a) => `"${a}"`)].join(" "), { stdio: "inherit", shell: true })
+    : spawnSync(cmd, args, { stdio: "inherit" });
   const ok = r.status === 0;
   console.log(`${ok ? "✔" : "✘"} ${name} (${((Date.now() - t) / 1000).toFixed(1)} s)`);
   if (!ok) failed.push(name);
