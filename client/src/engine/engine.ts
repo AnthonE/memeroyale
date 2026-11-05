@@ -11,6 +11,7 @@ import { StaticCache } from "./static-cache";
 import { onStructure, ownVisible, activeGates, type Gate } from "./scene-hooks";
 import { installShaderRecorder } from "./shader-src";
 import { installDitherChunks } from "./dither";
+import { afterPaint } from "./frame";
 
 // engine fades dissolve instead of scaling — three's shared chunks are patched before the first compile
 installDitherChunks();
@@ -51,6 +52,8 @@ export interface WorldCtx {
    * render (and the loading bar repaint) first. Cheap enough to call thousands of times per build.
    */
   yield(): Promise<void>;
+  /** a task boundary after the next paint, without waiting for a frame the browser isn't painting (engine/frame.ts) */
+  afterPaint(): Promise<void>;
   /** the current slice budget in ms (read-only for modules; the boot sets it) */
   readonly sliceMs: number;
   /**
@@ -283,11 +286,11 @@ export class Engine implements WorldCtx {
   }
   yield(): Promise<void> {
     if (performance.now() - this.sliceT0 < this.sliceMs) return RESOLVED;
-    // let the next frame (or the loading screen) paint, then continue in a fresh task right after it
-    return new Promise<void>((resolve) => {
-      requestAnimationFrame(() => { setTimeout(() => { this.sliceT0 = performance.now(); resolve(); }, 0); });
-    });
+    // let the next frame (or the loading screen) paint, then continue in a fresh task right after it (engine/frame.ts:
+    // without waiting for a frame the browser isn't painting)
+    return afterPaint().then(() => { this.sliceT0 = performance.now(); });
   }
+  afterPaint() { return afterPaint(); }
 
   // ---- module streaming
   get streaming() { return this.streamOpen && !this.streamEnded; }
@@ -368,10 +371,10 @@ export class Engine implements WorldCtx {
    * first sees the content. Synchronous: no frame runs while visibility is forced. Compile first (compileObjects), or
    * this draw compiles synchronously. Objects behind a visibility gate (far-POI merge) keep their state.
    */
-  warmDraw(roots: THREE.Object3D[]) {
+  warmDraw(roots: THREE.Object3D[], depthOnly = false) {
     if (!roots.length) return;
     if (!this.depthVariantsWarm && this.warmShadowOn) this.warmDepthVariants();
-    const LAYER = 30;
+    const LAYER = 30, DEPTH_LAYER = 28, ROOT_LAYER = depthOnly ? DEPTH_LAYER : LAYER;
     const r = this.renderer;
     const touched: Array<[THREE.Object3D, boolean, number, boolean]> = [];
     const mats = new Map<THREE.Material, boolean>();
@@ -392,7 +395,7 @@ export class Engine implements WorldCtx {
       const gs = (o as unknown as { __krGates?: Array<{ active: boolean }> }).__krGates;
       if (gs && gs.some((g) => g.active)) return;
       touched.push([o, o.visible, o.layers.mask, o.frustumCulled]);
-      o.visible = true; o.layers.enable(LAYER); o.frustumCulled = false;
+      o.visible = true; o.layers.enable(ROOT_LAYER); o.frustumCulled = false;
       const mm = (o as THREE.Mesh).material as THREE.Material | THREE.Material[] | undefined;
       if (mm) for (const m of Array.isArray(mm) ? mm : [mm]) if (m && !mats.has(m)) { mats.set(m, m.visible); m.visible = true; }
     });
@@ -425,8 +428,9 @@ export class Engine implements WorldCtx {
           done = true;
           // (throwing here would leave three's render-state stack unpopped: report and go on)
           const cc = rr.getClearColor(this.warmClear), ca = rr.getClearAlpha();
-          try { sm.needsUpdate = true; L.shadow.needsUpdate = true; sm.render([L], scene, cam); }
+          try { sm.needsUpdate = true; L.shadow.needsUpdate = true; cam.layers.set(ROOT_LAYER); sm.render([L], scene, cam); }
           catch (e) { console.warn("[engine] warmDraw shadow", e); }
+          finally { cam.layers.set(LAYER); }
           rr.setClearColor(cc, ca);   // (the depth pass leaves a white clear colour behind)
         };
       }
@@ -478,7 +482,7 @@ export class Engine implements WorldCtx {
       const inst = new THREE.InstancedMesh(geo, m, 1);
       const instC = new THREE.InstancedMesh(geo, m, 1); instC.setColorAt(0, new THREE.Color(1, 1, 1));
       const skin = new THREE.SkinnedMesh(sgeo, m); const b = new THREE.Bone(); skin.add(b); skin.bind(new THREE.Skeleton([b]));
-      for (const o of [plain, inst, instC, skin]) { o.castShadow = true; o.frustumCulled = false; o.layers.set(LAYER); g.add(o); }
+      for (const o of [plain, inst, instC, skin]) { o.castShadow = true; o.frustumCulled = false; o.layers.disableAll(); g.add(o); }
     }
     this.scene.add(g);
     g.updateMatrixWorld(true);
@@ -486,7 +490,7 @@ export class Engine implements WorldCtx {
     cam.copy(this.camera, false); cam.layers.set(LAYER); cam.updateMatrixWorld(true);
     const au = sm.autoUpdate, nu = sm.needsUpdate;
     // (through warmDraw: the depth draw needs a live scene render — see there)
-    try { this.warmDraw([g]); }
+    try { this.warmDraw([g], true); }
     catch (e) { console.warn("[engine] depth variants", e); }
     finally {
       sm.autoUpdate = au; sm.needsUpdate = nu;
