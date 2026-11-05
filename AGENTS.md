@@ -29,7 +29,7 @@ pieces fit; read it before changing networking, the simulation or world loading.
 
 | Command | What it does |
 |---|---|
-| `npm ci` | Install exact dependency versions. Node 22.12 or newer. |
+| `npm ci` | Install exact dependency versions. Node 22.12 or newer. `bun install --frozen-lockfile` also works (same versions, from `package-lock.json`); run everything on Node, not Bun. |
 | `npm run dev` | Dev client on <http://localhost:5317/>. It listens on your network too (`--host`). Hot reload is off: reload the page after a change. |
 | `npm run server` | Game server on port 3020, restarted when a file changes. Add `KR_EVENT_MODE=0` to allow creating rooms. |
 | `npm run build` | Production build into `dist/` and `dist-admin/`, then precompression. About 15 s. |
