@@ -105,6 +105,7 @@ const FLAGS = {
   offinstant: { kind: on, owner: "engine", purpose: "culled detail switches off at once instead of fading out" },
   outfits: { kind: text, owner: "actors", purpose: "kong outfit dev view (=N picks the count; empty = 1)" },
   painttex: { kind: present, owner: "pois", purpose: "paint coast textures at load instead of loading the baked ones" },
+  planefree: { kind: on, owner: "actors", purpose: "the plane's painted canvases and their GPU copies are freed after the drop and repainted when the match ends; =0 keeps them" },
   playtest: { kind: text, owner: "ui", purpose: "playtest title with one Play button: present or =1 on, =0 off" },
   prepare: { kind: text, owner: "boot", purpose: "=full builds everything behind the match card instead of streaming" },
   prewarm: { kind: text, owner: "game", purpose: "=full prewarms every prefab before ready instead of after" },
