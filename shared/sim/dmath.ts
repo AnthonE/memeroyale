@@ -2,7 +2,7 @@
  * Deterministic Math for shared/: the same bits on every CPU, OS and JS engine.
  * A port of V8's src/base/ieee754.cc (fdlibm) and its Torque Math.hypot, using only + - * /, Math.sqrt and exact bit
  * moves, which IEEE 754 fixes everywhere. Built-ins differ by an ulp between engines and between compilers (V8 on
- * arm64 is built with fused multiply-add), which split the headless match between Macs and Linux (RAY-152).
+ * arm64 is built with fused multiply-add), which split the headless match between Macs and Linux.
  *
  * ====================================================
  * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
