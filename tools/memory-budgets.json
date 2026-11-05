@@ -1,0 +1,22 @@
+{
+  "about": "memory.mts --budgets: what the game holds at the playable title on SwiftShader (the CI no-GPU boot smoke job runs it after boot). A number over its budget fails; a number more than underPct under fails until the budget is lowered (the failure names the new value, measured plus headroomPct), so budgets only go down. Set 2026-11-05 with every PR of this batch merged in order: three runs on 4 vCPUs gave WebGL 1418.1 MB (textures 1261.1 MB in 246, buffers 136.3), geometry CPU 169.3-169.6 MB, texture CPU 427.6 MB.",
+  "config": {
+    "url": "/?seed=42&vegsplat=0",
+    "profile": "nogpu",
+    "viewport": "640x360",
+    "dpr": 1,
+    "seed": 42
+  },
+  "underPct": 5,
+  "headroomPct": 2,
+  "budgets": {
+    "title": {
+      "webglMB": 1447,
+      "textureMB": 1287,
+      "bufferMB": 140,
+      "textureCount": 252,
+      "geometryCpuMB": 175,
+      "textureCpuMB": 440
+    }
+  }
+}
