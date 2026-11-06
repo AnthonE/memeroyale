@@ -505,8 +505,15 @@ export async function startGame(engine: Engine, boot: GameBoot) {
 
   // ---- keys: map, pause
   let resultsOpen = false;
+  // padLayer and gameplayAllowed run every frame: live class lists instead of document.querySelector, whose
+  // selectors walk the DOM on every call
+  const videoMenus = document.getElementsByClassName("kr-video"), guides = document.getElementsByClassName("kr-guide");
+  function openVideoMenu(): HTMLElement | null {
+    for (let i = 0; i < videoMenus.length; i++) if (videoMenus[i].classList.contains("on")) return videoMenus[i] as HTMLElement;
+    return null;
+  }
   /** only live gameplay moves, aims or fires: never behind the map, the inventory, pause, results or the video menu */
-  const videoMenuOpen = () => !!document.querySelector(".kr-video.on");
+  const videoMenuOpen = () => !!openVideoMenu();
   input.gameplayAllowed = () => inMatch && !paused && !resultsOpen && !hud.mapOpen && !inv.open && !shop.open && !videoMenuOpen() && !spectating();
   // ---- spectating: out for good and watching someone. The cursor is free (the bar's ◀ ▶ and the
   // player list are clicked; a drag on the game looks around, the wheel zooms); ← / → (and the strafe keys) cycle,
@@ -656,10 +663,14 @@ export async function startGame(engine: Engine, boot: GameBoot) {
       first: () => video.querySelector<HTMLElement>(".preference-tabs button[aria-pressed=true]"),
     };
   }
+  function openGuide(): HTMLElement | null {
+    for (let i = 0; i < guides.length; i++) if (!(guides[i] as HTMLElement).hidden) return guides[i] as HTMLElement;
+    return null;
+  }
   function padLayer(): PadLayer | null {
-    const video = document.querySelector<HTMLElement>(".kr-video.on");
+    const video = openVideoMenu();
     if (video) return settingsLayer(video);
-    const guide = document.querySelector<HTMLElement>(".kr-guide:not([hidden])");
+    const guide = openGuide();
     if (guide) return { root: guide, back: () => guide.querySelector<HTMLButtonElement>(".close")?.click() };
     if (inMatch) {
       if (resultsOpen) return { root: results.el, back: () => {}, noBack: true };
