@@ -37,6 +37,7 @@ import { WARMUP_S } from "../../shared/sim/const";
 import { resources, type Scope } from "./engine/res/scope";
 import { flag } from "./flags";
 import { afterPaint as nextFrame, noFrameWaitCount } from "./engine/frame";
+import { diagOn, startBeat } from "./playtest/beat";
 import { asOwner, contextEpoch, onRestore } from "./engine/res/restore";
 
 const shot = flag("shot");
@@ -64,6 +65,8 @@ const bootFail = (where: string, e: unknown) => { report(where, e); if (gameMode
 
 const viewId = flag("view"), camArg = flag("cam");
 const gameMode = !viewId && !camArg;
+// diagnostics: the crash heartbeat's first beat, before the world loads (playtest/beat.ts)
+if (gameMode && !shot && diagOn()) startBeat();
 const streamOn = gameMode && !flag("nostream");
 const only = flag("modules");
 const entries = MODULES.filter(([id]) => !only || only.some((o) => id === o || id.startsWith(o)));
