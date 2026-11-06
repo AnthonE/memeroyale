@@ -1,6 +1,7 @@
-// Which GitHub repository the dashboard describes: build.mts reads its pull requests, commits and releases from it.
-// The default is the checkout's origin remote, so the same tool works on any clone; --repo owner/name overrides it.
-// The configured URL is read as written, before any url.insteadOf rewrite.
+// Which GitHub repository the dashboard describes: build.mts reads its pull requests, commits and releases from it,
+// and publish.mts pushes the page to its gh-pages branch. The default is the checkout's origin remote, so the same
+// tool works on any clone; --repo owner/name overrides it. The configured URL is read as written, before any
+// url.insteadOf rewrite.
 import { execFileSync } from "node:child_process";
 
 /** owner/name for a GitHub https or ssh remote URL, lower-cased, or undefined for anything else. */
