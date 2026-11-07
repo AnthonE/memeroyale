@@ -1,17 +1,20 @@
 # Credits
 
-Kong Royale is made by Max Blade and its contributors, with a lot of help from AI agents.
+Meme Royale is a fork of [Kong Royale](https://github.com/MaximilianHansen/kongroyale), made by Max Blade and its
+contributors, with a lot of help from AI agents, under the MIT licence (LICENSE keeps their notice). The game, its
+code and its own art are theirs; the changes here are the reskin.
 
-## Community work used with permission
+## Not shipped here
 
-These were made for Kong Royale by members of the community. Their creators keep their rights, so they're **not
-covered by the MIT licence**: you can play and modify the game with them, but ask their creators (open an issue
-here and we'll pass it on) before reusing them anywhere else.
+Kong Royale's community work belongs to its creators and was licensed to Kong Royale alone, so this fork leaves it out:
+KONG FM 99.8, the tuk-tuk radio (Witzner), and the Toon UI's KONG / ROYALE wordmarks and shield hit icons (RET). The
+Kong Royale name and logo are not reused either.
 
-| What | Who | Files |
+## Ours
+
+| What | Licence | Files |
 |---|---|---|
-| KONG FM 99.8, the tuk-tuk radio (DJ Silverback Steve, "Storm Chaser", "Coconut Moon", "Banana in the Tank") | Witzner (Robzgg) | `public/assets/audio/kr/radio/` |
-| Toon UI design system, the KONG / ROYALE wordmarks and the shield hit icons | RET | `public/assets/ui/toon/*.svg` |
+| The Meme Royale lockup, wordmarks, badge and shield icons, drawn by `tools/brand/logos.mjs` | MIT | `public/assets/ui/brand/` |
 
 ## Other people's work under open licences
 

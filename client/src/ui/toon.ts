@@ -1,4 +1,4 @@
-// KONG ROYALE · Toon design system foundation.
+// MEME ROYALE · Toon design system foundation.
 // Every screen builds on these tokens and `tn-` primitives: no raw hex values,
 // radii, outlines or shadows in screen code.
 //
@@ -43,16 +43,16 @@ export const TOON = {
 /** n design px (1920×1080 canvas) → a CSS length on the current Toon canvas */
 export const T = (n: number) => `calc(${n} * var(--tu))`;
 
-/** Toon logo / icon files (public/assets/ui/toon). Lockup on lobby + loading, compact wordmark in settings, brow icon
- *  under 160 px. These are auto-traced exports (TODO: replace with vector masters). */
+/** Logo / icon files (public/assets/ui/brand, drawn by tools/brand/logos.mjs). Lockup on lobby + loading, compact
+ *  wordmark in settings, the badge under 160 px. */
 export const TOON_LOGO = {
-  lockup: uiAsset("toon/kong-royale-lockup.svg"),
-  lockupNavy: uiAsset("toon/kong-royale-lockup-navy.svg"),
-  wordmark: uiAsset("toon/kong-wordmark-saffron.svg"),
-  wordmarkIvory: uiAsset("toon/kong-wordmark-ivory.svg"),
-  brow: uiAsset("toon/kong-brow-icon.svg"),
-  shieldHit: uiAsset("toon/kong-shield-hit.svg"),
-  shieldBreak: uiAsset("toon/kong-shield-break.svg"),
+  lockup: uiAsset("brand/meme-royale-lockup.svg"),
+  lockupNavy: uiAsset("brand/meme-royale-lockup-navy.svg"),
+  wordmark: uiAsset("brand/meme-wordmark-saffron.svg"),
+  wordmarkIvory: uiAsset("brand/meme-wordmark-ivory.svg"),
+  brow: uiAsset("brand/meme-badge.svg"),
+  shieldHit: uiAsset("brand/shield-hit.svg"),
+  shieldBreak: uiAsset("brand/shield-break.svg"),
 } as const;
 
 /** an ivory keycap (`accent`: yellow, `unbound`: red). Text must come from the real bindings (settings/labels.ts) */

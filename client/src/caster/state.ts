@@ -315,7 +315,7 @@ export class CasterState {
 }
 
 function makeP(id: number): CPlayer {
-  return { id, name: `KONG ${id + 1}`, team: 0, bot: true, x: 0, y: 0, z: 0, yaw: 0, pitch: 0, vx: 0, vz: 0, st: 0, crouch: false, hp: 100, shield: 0, held: 0xff, live: false,
+  return { id, name: `MEMER ${id + 1}`, team: 0, bot: true, x: 0, y: 0, z: 0, yaw: 0, pitch: 0, vx: 0, vz: 0, st: 0, crouch: false, hp: 100, shield: 0, held: 0xff, live: false,
     alive: false, eliminated: false, resurging: false, respawnIn: -1, inPlane: false, winner: false, kills: 0, damage: 0, cash: 0, placement: 0, redeploys: 0, stat: null,
     heat: 0, lastShotAt: -1e9, lastHitAt: -1e9, lastHurtAt: -1e9, lastKillAt: -1e9, lastDownAt: -1e9, fight: -1 };
 }

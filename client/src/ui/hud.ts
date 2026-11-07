@@ -250,7 +250,7 @@ export function createHud(terrain: Terrain, pois: typeof POIS): Hud {
   const vehAltN = el("b", "", vehAlt);
   const vehAltL = el("small", "", vehAlt); vehAltL.textContent = "M";
   const vehCar = el("div", "car", vehPnl);
-  // the cab from above, nose up — a tuk-tuk's tub, or KONG AIR's cabin under its rotor disc (pilot ahead, the door gun
+  // the cab from above, nose up — a tuk-tuk's tub, or MEME AIR's cabin under its rotor disc (pilot ahead, the door gun
   // on the left, the passenger on the right: the same three seat dots)
   const CAB_TUK = `<rect x="36" y="1" width="12" height="17" rx="4" fill="#15110a" stroke="rgba(251,243,201,.35)"/>
     <rect x="5" y="80" width="12" height="24" rx="4" fill="#15110a" stroke="rgba(251,243,201,.35)"/><rect x="67" y="80" width="12" height="24" rx="4" fill="#15110a" stroke="rgba(251,243,201,.35)"/>
@@ -770,7 +770,7 @@ export function createHud(terrain: Terrain, pois: typeof POIS): Hud {
       if (rev !== last.vehRev) { last.vehRev = rev; veh.classList.toggle("rev", rev); }
       const cls = V.burning ? "fire" : hull < 34 ? "low" : hull < 67 ? "mid" : "";
       if (V.kind !== last.vehKind) { last.vehKind = V.kind; vehCab.innerHTML = V.kind === 1 ? CAB_HELI : CAB_TUK; vehAlt.classList.toggle("kr-hide", V.kind !== 1); last.vehCls = "\0"; }
-      if (cls !== last.vehCls) { last.vehCls = cls; veh.classList.toggle("fire", cls === "fire"); veh.classList.toggle("low", cls === "low"); veh.classList.toggle("mid", cls === "mid"); vehName.textContent = cls === "fire" ? (V.kind === 1 ? "ENGINE FIRE — BAIL OUT" : "ON FIRE — BAIL OUT") : V.kind === 1 ? "KONG AIR" : "TUK-TUK"; }
+      if (cls !== last.vehCls) { last.vehCls = cls; veh.classList.toggle("fire", cls === "fire"); veh.classList.toggle("low", cls === "low"); veh.classList.toggle("mid", cls === "mid"); vehName.textContent = cls === "fire" ? (V.kind === 1 ? "ENGINE FIRE — BAIL OUT" : "ON FIRE — BAIL OUT") : V.kind === 1 ? "MEME AIR" : "TUK-TUK"; }
       if (V.kind === 1) {
         const climb = V.climb ?? 0, altTxt = `${Math.round(V.alt ?? 0)}|${climb > 0.6 ? "▲" : climb < -0.6 ? "▼" : ""}${(V.spool ?? 1) < 0.8 ? " SPOOL" : ""}`;
         if (altTxt !== last.vehAlt) { last.vehAlt = altTxt; const [a, b] = altTxt.split("|"); vehAltN.textContent = a; vehAltL.textContent = `M ${b}`.trim(); }

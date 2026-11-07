@@ -203,14 +203,14 @@ export class Director {
     // the match is won: the winners, slowly orbited
     if (phase === 3) {
       const win = s.players.filter((p) => p.winner && p.live && p.alive);
-      if (win.length) { const w = win.find((p) => !p.bot) ?? win[0]; return [{ key: "win", kind: "endgame", score: 100, shot: { mode: "orbit", target: w.id, group: win.map((p) => p.id), fight: -1 }, line: `${this.teamName(w.team)} <i>WIN KONG ROYALE</i>` }]; }
+      if (win.length) { const w = win.find((p) => !p.bot) ?? win[0]; return [{ key: "win", kind: "endgame", score: 100, shot: { mode: "orbit", target: w.id, group: win.map((p) => p.id), fight: -1 }, line: `${this.teamName(w.team)} <i>WIN MEME ROYALE</i>` }]; }
     }
     // the plane: a chase on the bus until kongs are diving; then the hot drop
     const air = s.players.filter((p) => p.live && p.alive && (p.st === PS.Freefall || p.st === PS.Glide));
     const aboard = s.players.filter((p) => p.live && p.alive && (p.inPlane || p.st === PS.Plane));
     if (phase === 1 && aboard.length && air.length < 3) {
       const rider = aboard.find((p) => !p.bot) ?? aboard[0];
-      out.push({ key: "plane", kind: "plane", score: 25, shot: { mode: "drone", target: rider.id, group: [rider.id], fight: -1 }, line: `THE PLANE — <i>${aboard.length}</i> kongs aboard` });
+      out.push({ key: "plane", kind: "plane", score: 25, shot: { mode: "drone", target: rider.id, group: [rider.id], fight: -1 }, line: `THE PLANE — <i>${aboard.length}</i> players aboard` });
     }
     if (air.length >= 3) this.hotDrop(air, out);
     // fights
@@ -294,7 +294,7 @@ export class Director {
       // after the opening drop these are redeploys (resurgence): still a story, a smaller one
       const opening = (this.cm?.phase ?? 1) === 1 || (this.cm?.time ?? 0) < 75;
       out.push({ key: `d${i}`, kind: "drop", score: (10 + ps.length * 3 + teams * 3) * (opening ? 1 : 0.6), shot: { mode: "drone", target: ps[0].id, group: ps.map((p) => p.id), fight: -1 },
-        line: opening ? `HOT DROP — <i>${ps.length}</i> kongs${teams > 1 ? ` from ${teams} ${this.state.mode === "solo" ? "" : "squads "}` : " "}into ${POIS[i].name}` : `REDEPLOYS — <i>${ps.length}</i> kongs gliding back into ${POIS[i].name}` });
+        line: opening ? `HOT DROP — <i>${ps.length}</i> players${teams > 1 ? ` from ${teams} ${this.state.mode === "solo" ? "" : "squads "}` : " "}into ${POIS[i].name}` : `REDEPLOYS — <i>${ps.length}</i> players gliding back into ${POIS[i].name}` });
     }
   }
 
@@ -349,7 +349,7 @@ export class Director {
       const tp = f.joins.length ? f.joins[f.joins.length - 1] : null;
       const left = (team: number) => s.teams.get(team)?.members.filter((id) => s.players[id].alive).length ?? 0;
       let head: string;
-      if (f.teams.length > 3) head = `<i>BRAWL</i> — ${f.teams.length} ${s.mode === "solo" ? "kongs" : "squads"}${tp && now() - tp.at < 20 ? `, ${this.teamName(tp.team)} the latest in` : ""}`;
+      if (f.teams.length > 3) head = `<i>BRAWL</i> — ${f.teams.length} ${s.mode === "solo" ? "players" : "squads"}${tp && now() - tp.at < 20 ? `, ${this.teamName(tp.team)} the latest in` : ""}`;
       else if (tp && now() - tp.at < 20 && f.teams.length === 3) {
         const others = f.teams.filter((x) => x !== tp.team).map((x) => this.teamName(x)).join(" vs ");
         head = `${this.teamName(tp.team)} <i>third-partying</i> ${others}`;

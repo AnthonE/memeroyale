@@ -1,8 +1,7 @@
-# Kong Royale
+# Meme Royale
 
-A 50-player banana battle royale that runs in your browser. Play it at [kongroyale.com](https://kongroyale.com).
-
-![The Kong Royale title screen](.github/assets/title.jpg)
+A 50-player banana battle royale that runs in your browser: a reskin of Max Blade's
+[Kong Royale](https://github.com/MaximilianHansen/kongroyale) (MIT), which you can play at [kongroyale.com](https://kongroyale.com).
 
 You drop from the Banana Co. plane onto a jungle island, loot chests, and fight 49 other kongs while the storm closes
 in. Play solo or in trios; bots fill any empty seats.

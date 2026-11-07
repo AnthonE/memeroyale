@@ -40,7 +40,7 @@ const mmss = (s: number) => { s = Math.max(0, Math.floor(s)); return `${Math.flo
 /** kills / damage / status for everyone, sorted; click a row to follow */
 export function leaderboardHtml(s: CasterState, target: number): string {
   const rows = s.players.filter((p) => p.stat || p.live).sort((a, b) => b.kills - a.kills || b.damage - a.damage || Number(b.alive) - Number(a.alive)).slice(0, 18);
-  return `<table class="kp-lb"><tr><th>#</th><th>KONG</th><th class="num">K</th><th class="num">DMG</th><th class="num"></th></tr>${rows.map((p, i) => {
+  return `<table class="kp-lb"><tr><th>#</th><th>PLAYER</th><th class="num">K</th><th class="num">DMG</th><th class="num"></th></tr>${rows.map((p, i) => {
     const look = teamLook(p.team), status = p.alive ? (p.fight >= 0 ? "⚔" : "") : p.resurging ? `BACK ${Math.ceil(Math.max(0, p.respawnIn))}s` : p.placement ? `#${p.placement}` : "✕";
     return `<tr data-pid="${p.id}" class="${p.alive || p.resurging ? "" : "dead"} ${p.id === target ? "sel" : ""}"><td>${i + 1}</td><td class="n" style="--tc:${look.color}">${esc(p.name)}</td><td class="num">${p.kills}</td><td class="num">${p.damage}</td><td class="num">${status}</td></tr>`;
   }).join("")}</table>`;

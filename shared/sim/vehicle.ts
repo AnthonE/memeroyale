@@ -21,7 +21,7 @@ import { Biome } from "../world/map";
 import { makeHit, type StaticWorld } from "./world";
 import * as dmath from "./dmath";
 
-/** what kind of machine a vehicle slot holds: BANANA CO.'s tuk-tuk, or KONG AIR's helicopter (shared/sim/heli.ts) */
+/** what kind of machine a vehicle slot holds: BANANA CO.'s tuk-tuk, or MEME AIR's helicopter (shared/sim/heli.ts) */
 export const enum VKind { Tuk = 0, Heli = 1 }
 
 export const TUK = {

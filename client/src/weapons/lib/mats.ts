@@ -150,54 +150,26 @@ export function paintBunch(x: CanvasRenderingContext2D, cx: number, cy: number, 
   x.restore();
 }
 
-/** KONG face emblem (the target art's medallion / stencil: a gruff gorilla head, front view) painted into a canvas at
- *  (cx, cy), size s ≈ half the head height. fg = the face colour, dark = the cut lines / features, light = the muzzle
- *  (defaults to fg). Head dome + heavy V brow, deep-set eyes, big rounded muzzle with flared nostrils, a flat frown,
- *  side ears; optional 3-point crown. Reads as a GORILLA at 40 px (not a pig nose or a sad helmet face). */
-export function paintKong(x: CanvasRenderingContext2D, cx: number, cy: number, s: number, fg: string, dark: string, o: { light?: string; crown?: boolean; line?: number } = {}) {
-  // the target art's emblem is NEGATIVE-SPACE line art — a thick head OUTLINE band
-  // (flat-topped crest → flared cheeks), a dark forehead, a heavy M-shaped BROW, glaring eye slits in dark sockets, a
-  // nose bridge ending in two big nostrils, a HUGE rounded muzzle (the lower half of the face) with a flat mouth line,
-  // C-shaped ears. fg = the emblem colour, dark = the ground / cut colour, light = the muzzle (defaults to fg).
-  const P = (u: number, v: number): [number, number] => [cx + u * s, cy + v * s];
-  const lw = (o.line ?? 0.07) * s;
-  x.save(); x.lineJoin = "round"; x.lineCap = "round";
-  const poly = (pts: Array<[number, number]>) => { x.beginPath(); pts.forEach(([u, v], i) => { const [px, py] = P(u, v); i ? x.lineTo(px, py) : x.moveTo(px, py); }); x.closePath(); };
-  const bz = (c1: [number, number], c2: [number, number], e: [number, number]) => { const [a, b] = P(...c1), [c, d] = P(...c2), [e1, e2] = P(...e); x.bezierCurveTo(a, b, c, d, e1, e2); };
-  const ell = (u: number, v: number, rx: number, ry: number, rot = 0) => { x.beginPath(); const [a, b] = P(u, v); x.ellipse(a, b, rx * s, ry * s, rot, 0, Math.PI * 2); };
-  /** head silhouette scaled by k about (0, 0.1): flat-topped crest, temples, flared cheeks, jaw into the muzzle */
-  const head = (k: number) => {
-    const Q = (u: number, v: number): [number, number] => [u * k, 0.1 + (v - 0.1) * k];
-    x.beginPath(); { const [a, b] = P(...Q(-0.3, -0.98)); x.moveTo(a, b); }
-    { const [a, b] = P(...Q(0.3, -0.98)); x.lineTo(a, b); }
-    bz(Q(0.52, -0.94), Q(0.7, -0.62), Q(0.76, -0.3)); bz(Q(0.84, 0.02), Q(0.86, 0.34), Q(0.7, 0.56));
-    bz(Q(0.4, 0.84), Q(-0.4, 0.84), Q(-0.7, 0.56)); bz(Q(-0.86, 0.34), Q(-0.84, 0.02), Q(-0.76, -0.3));
-    bz(Q(-0.7, -0.62), Q(-0.52, -0.94), Q(-0.3, -0.98)); x.closePath();
-  };
-  // ears: fg C shapes outside the outline
-  for (const sx of [-1, 1]) { x.fillStyle = fg; ell(sx * 0.88, 0.02, 0.17, 0.24); x.fill(); x.fillStyle = dark; ell(sx * 0.9, 0.04, 0.08, 0.14); x.fill(); }
-  // outline band: the head in fg, the inside cut back to dark
-  x.fillStyle = fg; head(1); x.fill();
-  x.fillStyle = dark; head(0.8); x.fill();
-  // heavy M brow (fg), spanning the head
-  x.fillStyle = fg;
-  poly([[-0.66, -0.12], [-0.5, -0.38], [-0.26, -0.47], [-0.06, -0.36], [0, -0.3], [0.06, -0.36], [0.26, -0.47], [0.5, -0.38], [0.66, -0.12], [0.5, -0.1], [0.3, -0.22], [0.1, -0.16], [0, -0.1], [-0.1, -0.16], [-0.3, -0.22], [-0.5, -0.1]]); x.fill();
-  // glaring eye slits (fg) in the dark sockets under the brow
-  for (const sx of [-1, 1]) { poly([[sx * 0.14, -0.06], [sx * 0.28, -0.13], [sx * 0.44, -0.07], [sx * 0.3, -0.01]]); x.fill(); }
-  // nose bridge (fg) from between the eyes, widening to the nostril pad
-  poly([[-0.07, -0.08], [0.07, -0.08], [0.12, 0.04], [0.26, 0.16], [0.24, 0.26], [-0.24, 0.26], [-0.26, 0.16], [-0.12, 0.04]]); x.fill();
-  // muzzle: a huge rounded lower face (bulges past the outline band like the target art's)
-  x.fillStyle = o.light ?? fg; ell(0, 0.56, 0.58, 0.4); x.fill();
-  // cuts: nostrils, the nose/muzzle split, the mouth
-  x.fillStyle = dark;
-  for (const sx of [-1, 1]) { ell(sx * 0.11, 0.17, 0.075, 0.05, sx * 0.35); x.fill(); }
-  x.strokeStyle = dark; x.lineWidth = lw;
-  x.beginPath(); { const [a, b] = P(-0.3, 0.3); x.moveTo(a, b); } bz([-0.12, 0.25], [0.12, 0.25], [0.3, 0.3]); x.stroke();
-  x.beginPath(); { const [a, b] = P(-0.4, 0.66); x.moveTo(a, b); } bz([-0.15, 0.6], [0.15, 0.6], [0.4, 0.66]); x.stroke();
+/** The Meme Royale emblem (the badge in public/assets/ui/brand, drawn by tools/brand/logos.mjs): a grinning face in a
+ *  disc, painted into a canvas at (cx, cy), size s ≈ half the face's height. fg = the face colour, dark = the outline
+ *  and features, light = the grin (defaults to fg); optional 3-point crown. Reads as a face at 40 px. */
+export function paintEmblem(x: CanvasRenderingContext2D, cx: number, cy: number, s: number, fg: string, dark: string, o: { light?: string; crown?: boolean; line?: number } = {}) {
+  const lw = (o.line ?? 0.07) * s * 1.6;
+  const r = s * 0.95;
+  x.save(); x.lineJoin = "round"; x.lineCap = "round"; x.strokeStyle = dark; x.lineWidth = lw;
   if (o.crown) {
-    x.fillStyle = fg;
-    poly([[-0.34, -1.06], [-0.42, -1.5], [-0.18, -1.26], [0, -1.56], [0.18, -1.26], [0.42, -1.5], [0.34, -1.06]]); x.fill();
+    x.beginPath();
+    x.moveTo(cx - r * 0.62, cy - r * 0.72); x.lineTo(cx - r * 0.66, cy - r * 1.32); x.lineTo(cx - r * 0.3, cy - r * 1.0);
+    x.lineTo(cx, cy - r * 1.42); x.lineTo(cx + r * 0.3, cy - r * 1.0); x.lineTo(cx + r * 0.66, cy - r * 1.32); x.lineTo(cx + r * 0.62, cy - r * 0.72);
+    x.closePath(); x.fillStyle = fg; x.fill(); x.stroke();
   }
+  x.beginPath(); x.arc(cx, cy, r, 0, Math.PI * 2); x.fillStyle = fg; x.fill(); x.stroke();
+  // shut, laughing eyes: two arches
+  for (const sx of [-1, 1]) { x.beginPath(); x.arc(cx + sx * r * 0.36, cy - r * 0.18, r * 0.17, Math.PI * 1.1, Math.PI * 1.9); x.stroke(); }
+  // the grin: a wide half-disc, its lower lip a softer curve inside it
+  x.beginPath(); x.moveTo(cx - r * 0.62, cy + r * 0.08); x.quadraticCurveTo(cx, cy + r * 0.98, cx + r * 0.62, cy + r * 0.08); x.closePath();
+  x.fillStyle = o.light ?? fg; x.fill(); x.stroke();
+  x.lineWidth = lw * 0.55; x.beginPath(); x.moveTo(cx - r * 0.34, cy + r * 0.42); x.quadraticCurveTo(cx, cy + r * 0.56, cx + r * 0.34, cy + r * 0.42); x.stroke();
   x.restore();
 }
 

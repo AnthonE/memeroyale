@@ -25,7 +25,7 @@ const BASE_HEADERS = {
 const PAGE = `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow"><meta name="referrer" content="no-referrer"><meta name="color-scheme" content="dark">
-<title>Kong Royale · ADMIN</title><link rel="icon" href="data:,"></head>
+<title>Meme Royale · ADMIN</title><link rel="icon" href="data:,"></head>
 <body class="kr-admin"><div id="kr-admin"></div><noscript>The admin console needs JavaScript.</noscript><script src="admin/login.js"></script></body></html>
 `;
 

@@ -122,7 +122,7 @@ const CSS = `
 let styled = false;
 const GLYPH: Record<string, "person" | "skull" | "bullet"> = { buyback: "person", bounty: "skull", ammo: "bullet" };
 /** what the shopkeeper says: welcome / short of Bucks / thanks (after a purchase) */
-const LINES = { hi: "WHAT'LL IT BE, KONG?", broke: "NO BUCKS, NO BANANAS! LOOT SOME CASH.", thanks: "PLEASURE DOING BUSINESS!" };
+const LINES = { hi: "WHAT'LL IT BE, MEMER?", broke: "NO BUCKS, NO BANANAS! LOOT SOME CASH.", thanks: "PLEASURE DOING BUSINESS!" };
 
 export function createShop(): ShopScreen {
   if (!styled) { injectStyles(); injectBucksCss(); const st = document.createElement("style"); st.textContent = CSS; document.head.appendChild(st); styled = true; }

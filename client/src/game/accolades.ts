@@ -51,7 +51,7 @@ export class AccoladeTracker {
     else if (cause === KILL_BOMB) out.push({ id: "bananasplit", sub: "BANANA BOMB KILL" });
     else if (gun && v && p.seat !== 0) {
       if (v.kind === VKind.Tuk && Math.abs(v.vf) >= DRIVE_BY_V) out.push({ id: "driveby", sub: "FROM A MOVING TUK-TUK" });
-      else if (v.kind === VKind.Heli && ((v.flags & VF.AIR) !== 0 || Math.abs(v.vf) >= DRIVE_BY_V)) out.push({ id: "flyby", sub: "FROM KONG AIR" });
+      else if (v.kind === VKind.Heli && ((v.flags & VF.AIR) !== 0 || Math.abs(v.vf) >= DRIVE_BY_V)) out.push({ id: "flyby", sub: "FROM MEME AIR" });
     }
     if (gun && L && L.zone === 1) out.push({ id: "headshot", sub: "RIGHT BETWEEN THE EARS" });
     if (gun && L && L.dist >= LONG_SHOT_M) out.push({ id: "longshot", sub: `${Math.round(L.dist)} M` });

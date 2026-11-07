@@ -41,7 +41,7 @@ export function createSettingsShell(engine: Engine, display: Display): SettingsS
   root.setAttribute("role", "dialog"); root.setAttribute("aria-modal", "true"); root.setAttribute("aria-label", "Settings");
   root.innerHTML = `<div class="tn-set-scrim"></div>
     <div class="tn-set-in">
-      <div class="tn-set-top"><img class="tn-logo tn-set-logo" src="${TOON_LOGO.wordmark}" alt="Kong Royale"><button type="button" class="close tn-set-back" data-a="close" tabindex="-1"></button></div>
+      <div class="tn-set-top"><img class="tn-logo tn-set-logo" src="${TOON_LOGO.wordmark}" alt="Meme Royale"><button type="button" class="close tn-set-back" data-a="close" tabindex="-1"></button></div>
       <h1 class="tn-title tn-set-title">Settings</h1>
       <nav class="tn-set-cats" role="tablist" aria-label="Settings categories"></nav>
       <div class="tn-set-sub" role="tablist" aria-label="Sections"></div>

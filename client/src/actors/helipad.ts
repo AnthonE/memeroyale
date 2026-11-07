@@ -1,5 +1,5 @@
-// THE HELIPAD — where a KONG AIR helicopter waits (shared/sim/heli-spots.ts): a round of dark tarmac hugging the ground,
-// a banana-yellow ring, a big H and KONG AIR round the top. Paint only: it has no collider (the sim's pad is the level
+// THE HELIPAD — where a MEME AIR helicopter waits (shared/sim/heli-spots.ts): a round of dark tarmac hugging the ground,
+// a banana-yellow ring, a big H and MEME AIR round the top. Paint only: it has no collider (the sim's pad is the level
 // ground itself) and it is drawn once per world.
 import * as THREE from "three";
 import { patch } from "../world/pois/_kit/coast-kit";
@@ -20,7 +20,7 @@ function padMaterial(): THREE.MeshStandardMaterial {
     g.fillStyle = "#ffd400"; g.font = `900 ${S * 0.42}px 'Barlow Condensed', 'Arial Narrow', Impact, sans-serif`; g.textAlign = "center"; g.textBaseline = "middle";
     g.fillText("H", cx, cy + S * 0.02);
     g.font = `800 ${S * 0.085}px 'Barlow Condensed', 'Arial Narrow', Impact, sans-serif`; g.fillStyle = "#fff0d2";
-    const word = "KONG AIR", r = S * 0.455;
+    const word = "MEME AIR", r = S * 0.455;
     for (let i = 0; i < word.length; i++) { const a = -Math.PI / 2 + (i - (word.length - 1) / 2) * 0.16; g.save(); g.translate(cx + Math.cos(a) * r, cy + Math.sin(a) * r); g.rotate(a + Math.PI / 2); g.fillText(word[i], 0, 0); g.restore(); }
     tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8;
   }

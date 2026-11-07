@@ -29,7 +29,7 @@ async function startServer(env: Record<string, string>): Promise<{ port: number;
   const port = await freePort(); let out = "";
   const proc = spawn(process.execPath, [path.join(root, "node_modules/tsx/dist/cli.mjs"), "server/index.ts"], { cwd: root, env: { ...process.env, KR_HOST: "127.0.0.1", KR_PORT: String(port), KR_EVENT_MODE: "0", KR_PLAYTEST_BUNDLES: "0", ...env }, stdio: ["ignore", "pipe", "pipe"] });
   proc.stdout!.on("data", (d) => { out += d; }); proc.stderr!.on("data", (d) => { out += d; });
-  if (!(await waitFor(() => /KONG ROYALE server on/.test(out), 60_000))) throw new Error("server did not start:\n" + out);
+  if (!(await waitFor(() => /MEME ROYALE server on/.test(out), 60_000))) throw new Error("server did not start:\n" + out);
   return { port, proc };
 }
 type Health = { transports: { clients: Record<string, number>; settled: { wt: number; ws: Record<string, number> }; webtransport: { off?: string; open?: number } } };

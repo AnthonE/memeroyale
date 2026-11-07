@@ -1,4 +1,4 @@
-// The KONG ROYALE sky: where every cumulus sits. Deterministic (same sky on every client / every capture).
+// The MEME ROYALE sky: where every cumulus sits. Deterministic (same sky on every client / every capture).
 //
 // Composed by what each view camera (`?view=<id>`) SEES: every hero cloud is placed by its screen position in that
 // view (u, v of its base centre, 0..1 from the top-left), its screen width (fraction of the frame) and a base

@@ -180,7 +180,7 @@ class CreateView {
     const nRow = h("div", "tn-tile tn-adm-row tn-adm-row--stack");
     const nLab = h("label", "tn-label", "Lobby name");
     this.name.id = "tn-adm-cname"; nLab.htmlFor = this.name.id;
-    this.name.maxLength = EVENT_NAME_MAX; this.name.placeholder = "Kong Royale Event"; this.name.autocomplete = "off"; this.name.spellcheck = false;
+    this.name.maxLength = EVENT_NAME_MAX; this.name.placeholder = "Meme Royale Event"; this.name.autocomplete = "off"; this.name.spellcheck = false;
     nRow.append(nLab, this.name);
     // mode
     const mRow = h("div", "tn-tile tn-adm-row");

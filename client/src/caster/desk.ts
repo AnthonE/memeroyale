@@ -343,7 +343,7 @@ export class CasterDesk {
     // kong the shot is on, then to the wide shot itself — never "NO TARGET" under a live picture
     if (!p || (this.rig.mode === "drone" && f) || this.rig.mode === "free") {
       const wide = this.rig.mode === "drone" || this.rig.mode === "overhead";
-      const html = f ? `<div class="who"><b>${esc(f.where)}</b><span style="--tc:#ff6b4b">LIVE FIGHT · ${f.teams.length} SQUADS</span></div><div class="hs"></div><div></div>` : `<div class="who"><b>${this.rig.mode === "free" ? "FREE CAMERA" : wide ? "WIDE SHOT" : "NO TARGET"}</b><span>CLICK A KONG TO FOLLOW</span></div><div></div><div></div>`;
+      const html = f ? `<div class="who"><b>${esc(f.where)}</b><span style="--tc:#ff6b4b">LIVE FIGHT · ${f.teams.length} SQUADS</span></div><div class="hs"></div><div></div>` : `<div class="who"><b>${this.rig.mode === "free" ? "FREE CAMERA" : wide ? "WIDE SHOT" : "NO TARGET"}</b><span>CLICK A PLAYER TO FOLLOW</span></div><div></div><div></div>`;
       if (c.dataset.h !== html) { c.dataset.h = html; c.innerHTML = html; c.style.setProperty("--tc", "#ffd400"); }
       return;
     }

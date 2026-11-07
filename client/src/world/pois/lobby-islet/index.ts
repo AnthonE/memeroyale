@@ -1,4 +1,4 @@
-// POI lobby-islet — the KONG ROYALE pre-match lobby. Everything is driven by the ONE
+// POI lobby-islet — the MEME ROYALE pre-match lobby. Everything is driven by the ONE
 // layout table in shared/pois/lobby-islet.ts (colliders come from the same table):
 //   tiki bar + stools (tiki.ts), trampoline / punching bag / target dummies / volleyball net (toys.ts), dock (dock.ts),
 //   crates / barrels / pallets / deck chair / windsock (props.ts), runway (runway.ts), rock outcrop (rock.ts),

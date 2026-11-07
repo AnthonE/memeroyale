@@ -368,7 +368,7 @@ html.kr-calm .kr-swimair.low .bub { animation: none; }
 .kr-center { position: absolute; left: 50%; top: 50%; width: ${T(600)}; height: ${T(600)}; transform: translate(-50%,-50%); }
 .kr-center canvas { width: 100%; height: 100%; }
 
-/* ---------- aboard a tuk-tuk / KONG AIR: a Toon panel (speed · the cab and its seats · hull · radio), keys above ---------- */
+/* ---------- aboard a tuk-tuk / MEME AIR: a Toon panel (speed · the cab and its seats · hull · radio), keys above ---------- */
 .kr-veh { position: absolute; left: 50%; bottom: ${T(40)}; transform: translateX(-50%); }
 .kr-veh .pnl { position: relative; display: flex; align-items: stretch; height: ${T(104)}; background: var(--kong-gradient-panel);
   border: var(--kong-outline-md) solid var(--kong-outline); border-radius: var(--kong-radius-panel); box-shadow: var(--kong-drop-card); }

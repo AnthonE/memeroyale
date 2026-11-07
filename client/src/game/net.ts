@@ -150,7 +150,7 @@ export class OfflineLink implements Link {
     if (this.closed) return;
     const m = o as { t: string; mode?: string; name?: string };
     switch (m.t) {
-      case "hello": this.name = String(m.name || "KONG"); break;
+      case "hello": this.name = String(m.name || "MEMER"); break;
       case "mode": this.mode = m.mode === "trios" ? "trios" : "solo"; this.emit(this.room(this.mode, !!this.match)); break;
       case "create": case "practice": case "exhibit": {
         const mode = m.mode === "trios" ? "trios" : "solo"; this.mode = mode;

@@ -1,4 +1,4 @@
-// Water area — the sea, reef, lagoon and harbor water of KONG ROYALE.
+// Water area — the sea, reef, lagoon and harbor water of MEME ROYALE.
 // The surface: a camera-following stitched clipmap (1 m cells near the camera → 128 m far) + a horizon skirt, drawn in
 // three passes of one geometry (shader.ts): a depth pre-pass, a MULTIPLY pass (dst *= per-channel transmission ×
 // caustics × reef × wet sand — the floor seen through the water without copying the framebuffer) and the main

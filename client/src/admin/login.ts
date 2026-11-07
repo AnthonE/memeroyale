@@ -22,7 +22,7 @@ function boot(): void {
   const top = h("div", "tn-adm-ltop");
   top.append(adminChip());
   const logo = h("img", "tn-logo tn-adm-llogo");
-  logo.src = TOON_LOGO.lockup; logo.alt = "Kong Royale"; logo.draggable = false;
+  logo.src = TOON_LOGO.lockup; logo.alt = "Meme Royale"; logo.draggable = false;
   const head = h("h1", "tn-title tn-adm-lhead", "Admin");
   head.id = "tn-adm-lhead";
   const intro = h("p", "tn-body tn-adm-lintro", "Create event lobbies, share the link, run the match.");

@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>KONG ROYALE</title>
-<meta name="description" content="KONG ROYALE — a 50-player banana battle royale in the browser. Solo and trios, resurgence, one gorgeous island." />
+<title>MEME ROYALE</title>
+<meta name="description" content="MEME ROYALE — a 50-player banana battle royale in the browser. Solo and trios, resurgence, one gorgeous island." />
 <meta name="theme-color" content="#0e2a3e" />
 <meta property="og:type" content="website" />
-<meta property="og:site_name" content="KONG ROYALE" />
-<meta property="og:title" content="KONG ROYALE" />
+<meta property="og:site_name" content="MEME ROYALE" />
+<meta property="og:title" content="MEME ROYALE" />
 <meta property="og:description" content="A 50-player banana battle royale in the browser. Solo and trios, resurgence, one gorgeous island." />
 <meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="KONG ROYALE" />
+<meta name="twitter:title" content="MEME ROYALE" />
 <meta name="twitter:description" content="A 50-player banana battle royale in the browser. Solo and trios, resurgence, one gorgeous island." />
 <link rel="icon" href="data:," />
 <!-- the loading screen's first frame: its art (the 4K copy only where the CSS below swaps to it) and the Toon type -->
@@ -86,7 +86,7 @@
   @keyframes kr-drift { from { transform: scale(1.0) translate(0, 0); } to { transform: scale(1.06) translate(-1.2%, -0.8%); } }
   #kr-loading .shade { position: absolute; inset: 0; background: var(--kong-ld-shade); }
 
-  /* brand: the KONG ROYALE lockup, 3px outline + one hard 6px drop (toon.ts .tn-logo) */
+  /* brand: the MEME ROYALE lockup, 3px outline + one hard 6px drop (toon.ts .tn-logo) */
   #kr-loading .logo { position: absolute; left: calc(64 * var(--tu)); top: calc(48 * var(--tu)); width: calc(320 * var(--tu)); height: auto;
     -webkit-user-drag: none; pointer-events: none;
     filter: drop-shadow(calc(3 * var(--tu)) 0 0 var(--kong-outline)) drop-shadow(calc(-3 * var(--tu)) 0 0 var(--kong-outline))
@@ -236,7 +236,7 @@
 <div id="ui"></div>
 <div id="kr-loading">
   <div class="bg"></div><div class="shade"></div>
-  <img class="logo" src="/assets/ui/toon/kong-royale-lockup.svg" alt="Kong Royale" width="320" height="119" draggable="false" />
+  <img class="logo" src="/assets/ui/brand/meme-royale-lockup.svg" alt="Meme Royale" width="320" height="119" draggable="false" />
   <div class="dock">
     <div class="copy">
       <p class="eyebrow mode">Battle royale · 50 players</p>
@@ -266,10 +266,10 @@
   </div>
 </div>
 <div id="kr-desktop-only" hidden>
-  <img src="/assets/ui/toon/kong-royale-lockup.svg" alt="Kong Royale" width="320" height="119" draggable="false" />
+  <img src="/assets/ui/brand/meme-royale-lockup.svg" alt="Meme Royale" width="320" height="119" draggable="false" />
   <p class="eyebrow">Battle royale · 50 players</p>
   <h1>Desktop only, for now</h1>
-  <p class="body">Kong Royale needs a mouse and keyboard and doesn't run on phones or tablets yet. Open this link on a computer to play.</p>
+  <p class="body">Meme Royale needs a mouse and keyboard and doesn't run on phones or tablets yet. Open this link on a computer to play.</p>
   <button type="button">Copy link</button>
   <p class="fine" role="status" aria-live="polite"></p>
 </div>
@@ -539,16 +539,16 @@
     addEventListener("error", function (e) { if (!done && ((e.target && e.target.tagName === "SCRIPT") || (!window.__kr && e.error))) fail(); }, true);
     addEventListener("unhandledrejection", function () { if (!done && !window.__kr) fail(); });
     var names = { boot: "Loading the island", terrain: "Raising the island", atmos: "Painting the sky", water: "Filling the lagoon", veg: "Growing the jungle",
-      "lobby-islet": "Building the lobby island", afterBuild: "Settling the sand", showcase: "Waking the Kongs", "weapons-showcase": "Peeling the bananas",
-      "gameplay-stage": "Loading the island", game: "Waking the Kongs", settle: "Almost there", ready: "Ready" };
+      "lobby-islet": "Building the lobby island", afterBuild: "Settling the sand", showcase: "Waking the Memes", "weapons-showcase": "Peeling the bananas",
+      "gameplay-stage": "Loading the island", game: "Waking the Memes", settle: "Almost there", ready: "Ready" };
     // the game's own boot steps (client/src/game/index.ts gameStage)
     var gameNames = { world: "Building the collision world", kits: "Unpacking the crates", "prewarm:assets": "Stocking the chests",
-      "prewarm:compile": "Warming up the shaders", "prewarm:compile-wait": "Warming up the shaders", "prewarm:frames": "Waking the Kongs",
-      "prewarm:kongs": "Waking the Kongs", "prewarm:stage": "Stocking the chests", "prewarm:look-around": "Waking the Kongs",
+      "prewarm:compile": "Warming up the shaders", "prewarm:compile-wait": "Warming up the shaders", "prewarm:frames": "Waking the Memes",
+      "prewarm:kongs": "Waking the Memes", "prewarm:stage": "Stocking the chests", "prewarm:look-around": "Waking the Memes",
       "prewarm:first-use": "Almost there", title: "Lighting the title", done: "Almost there" };
     function label(kr) {
       var st = String(kr.stage || "boot");
-      if (st === "game" && kr.gameStage) { var g = String(kr.gameStage), k = g.split(":")[0] === "kits" ? "kits" : g.replace(/:\d+$/, ""); return gameNames[g] || gameNames[k] || (g.indexOf("prewarm") === 0 ? "Warming up the shaders" : "Waking the Kongs"); }
+      if (st === "game" && kr.gameStage) { var g = String(kr.gameStage), k = g.split(":")[0] === "kits" ? "kits" : g.replace(/:\d+$/, ""); return gameNames[g] || gameNames[k] || (g.indexOf("prewarm") === 0 ? "Warming up the shaders" : "Waking the Memes"); }
       var id = st.replace(/^(after)?[Bb]uild:/, "").replace(/^poi:/, "");
       if (st.indexOf("afterBuild") === 0) return names.afterBuild;
       if (names[id]) return names[id];

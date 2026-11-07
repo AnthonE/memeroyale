@@ -11,7 +11,7 @@ export function prepareCard(kr: Record<string, unknown>) {
     const k = kr.streamed ? (kr.warmDone === true ? 1 : 0.95) : Math.min(0.94, 1 - left / (total + 1));
     bar.style.transform = `scaleX(${k.toFixed(3)})`;
     const cur = String(kr.streamStage ?? "").replace(/^(build|integrate):(poi:)?/, "").replace(/-/g, " ").toUpperCase();
-    txt.textContent = kr.streamed ? "WAKING THE KONGS" : cur ? `BUILDING ${cur}` : "";
+    txt.textContent = kr.streamed ? "WAKING THE MEMES" : cur ? `BUILDING ${cur}` : "";
   };
   set();
   return { set, remove: () => el.remove() };

@@ -14,7 +14,7 @@ export function adminUrl(path: string): string {
 export function ensureToon(): void {
   if (!document.getElementById("kr-toon")) injectToon();
   addStyle("kr-admin-base", BASE_CSS);
-  document.title = "Kong Royale · ADMIN";
+  document.title = "Meme Royale · ADMIN";
 }
 
 export function addStyle(id: string, css: string): void {
