@@ -54,7 +54,7 @@ const HEARTBEAT_MS = 10_000;              // ws ping cadence (+ the silence chec
 // room and out of matches. KR_HEARTBEAT_TIMEOUT_S overrides (seconds).
 const SILENT_MAX_MS = (Number(process.env.KR_HEARTBEAT_TIMEOUT_S) > 0 ? Number(process.env.KR_HEARTBEAT_TIMEOUT_S) : 30) * 1000;
 const IDLE_NO_LOBBY_MS = 10 * 60_000;     // connected but in no lobby and silent
-const AFK_IN_MATCH_MS = 180_000;          // seated in a running match without sending a single input
+const AFK_IN_MATCH_MS = Number(process.env.KR_AFK_S) > 0 ? Number(process.env.KR_AFK_S) * 1000 : 180_000;   // seated in a running match without sending a single input (KR_AFK_S: test servers only)
 const TRUST_PROXY = process.env.KR_TRUST_PROXY === "1";
 // the proxies allowed to set the client-address headers: loopback (nginx on this machine) plus KR_PROXY_IPS (comma list)
 const PROXY_IPS = new Set((process.env.KR_PROXY_IPS || "").split(",").map((s) => s.trim()).filter(Boolean));
@@ -99,7 +99,10 @@ const ADMIN_SHAPED = new Set(["act", "admin", "hub-admin", "hub-hello", "kick", 
 const sendJSON = (ws: WebSocket, o: unknown) => { if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify(o)); };
 
 // ---- clients + lobbies
-export interface Client { uid: number; token: string; name: string; lobby: Lobby | null; pid: number; squad: number; sock: Sock; aux: Sock[]; lastInputAt: number; peer: HostPeer; /** last relayed map marker (ms) */ markAt: number;
+export interface Client { uid: number; token: string; name: string; lobby: Lobby | null; pid: number; squad: number; sock: Sock; aux: Sock[]; lastInputAt: number;
+  /** removed from its match for inactivity and not seated since (housekeeping): a host role it holds goes to the first
+   *  room member who presses START (Lobby.claimHost) */
+  away: boolean; peer: HostPeer; /** last relayed map marker (ms) */ markAt: number;
   /** (caster) a commentator seat in its lobby (−1 = a player); the last relayed camera sync (ms) */
   seat: number; camAt: number;
   /** (caster) a PROGRAM output window (OBS): a seat that only mirrors the seat on air */
@@ -141,7 +144,7 @@ export class Lobby {
   /** casters only (seat roster, camera sync) */
   castJSON(o: unknown, except: Client | null = null) { const s = JSON.stringify(o); for (const c of this.casters) if (c !== except && c.sock.ws.readyState === WebSocket.OPEN) c.sock.ws.send(s); }
   state() {
-    return { t: "lobby", code: this.code, mode: this.mode, host: this.owner.uid, inMatch: !!this.match, phase: this.match?.phase ?? -1,
+    return { t: "lobby", code: this.code, mode: this.mode, host: this.owner.uid, hostAway: this.owner.away, inMatch: !!this.match, phase: this.match?.phase ?? -1,
       players: this.clients.map((c) => ({ id: c.uid, name: c.name, squad: c.squad, pid: c.pid, host: c === this.owner })),
       casters: this.casters.map((c) => ({ id: c.uid, name: c.name, seat: c.seat, host: c === this.owner, program: c.program })), exhibit: this.exhibit, auto: this.auto, onAir: this.onAir,
       ...(this.event ? { ev: eventRoom(this) } : {}) };
@@ -194,7 +197,7 @@ export class Lobby {
     if (Number(process.env.KR_WARMUP_S) > 0) m.warmupS = Number(process.env.KR_WARMUP_S);   // (test servers only)
     this.inputGaps = trackInputGaps(m);
     const h = this.host = new MatchHost(m); h.holdForStream();
-    seated.forEach((c, i) => { c.pid = i; c.peer.pid = i; c.peer.opSeq = -1; c.lastInputAt = Date.now(); h.peers.push(c.peer); });
+    seated.forEach((c, i) => { c.pid = i; c.away = false; c.peer.pid = i; c.peer.opSeq = -1; c.lastInputAt = Date.now(); h.peers.push(c.peer); });
     if (this.event) { this.event.seats.clear(); for (const c of seated) eventSeated(this, c); }   // a dropped player's seat
     for (const c of this.casters) h.peers.push(c.peer);
     m.onPhase = (ph) => { this.broadcastJSON({ t: "phase", phase: ph, plane: m.plane, time: m.time, tick: m.tick, plan: m.plan }); if (this.event) eventsDirty(); };
@@ -235,12 +238,16 @@ export class Lobby {
     for (const c of [...this.clients]) {
       if (c.pid < 0 || now - c.lastInputAt <= AFK_IN_MATCH_MS) continue;
       // only a seat still in play can be AFK. One that is out (dead, spectating, eliminated) has nothing
-      // to steer — and its player may be back in the room (BACK TO LOBBY stops the inputs): removing it would take that player
-      // out of the lobby without their screen knowing (a ghost room, left out of the next START)
+      // to steer — and its player may be back in the room already (BACK TO LOBBY stops the inputs)
       const p = this.match?.players[c.pid]; if (!p || p.eliminated || !alive(p)) continue;
-      // an event lobby keeps its player: a bot plays the seat on, the player waits in the room for the next round
-      if (this.event) { this.unseat(c); sendJSON(c.sock.ws, { t: "error", msg: "REMOVED FOR INACTIVITY", afk: true }); continue; }
-      sendJSON(c.sock.ws, { t: "error", msg: "REMOVED FOR INACTIVITY" }); this.leave(c);
+      // the lobby keeps its player: a bot plays the seat on, and the player waits in the room for the next match (afk: the
+      // client goes back to the room and keeps the reason on screen). A normal lobby's host role passes on, so the others
+      // can START without them: at once to a seated player who is playing (an input in the AFK window), else the role stays
+      // with the away host and the first room member to press START takes it (claimHost). Who else is idle is not known
+      // here, so the sweep never guesses
+      c.away = true;
+      if (!this.event && this.owner === c) this.owner = this.clients.find((o) => o !== c && o.pid >= 0 && now - o.lastInputAt <= AFK_IN_MATCH_MS) ?? c;
+      this.unseat(c); sendJSON(c.sock.ws, { t: "error", msg: "REMOVED FOR INACTIVITY", afk: true });
     }
   }
   /** (AFK) out of the match, still in the room: the seat becomes a bot (as when its player leaves) */
@@ -251,10 +258,16 @@ export class Lobby {
     log(`lobby ${this.code}: ${c.name} AFK in the match → a bot plays the seat, the player stays in the room`);
     voiceRosters(this); this.pushState();
   }
+  /** (normal lobby) START from a room member while the host is away (removed for inactivity, not seated since): the role
+   *  passes to that member, so an idle host never locks the room */
+  claimHost(c: Client) {
+    if (this.event || this.owner === c || !this.owner.away || !this.clients.includes(c)) return;
+    this.owner = c; this.pushState();
+  }
   join(c: Client) {
     if (this.clients.includes(c)) return;
     if (this.clients.length >= MAX_PLAYERS) { sendJSON(c.sock.ws, { t: "error", msg: "LOBBY FULL" }); return; }
-    this.clients.push(c); c.lobby = this; c.pid = -1; c.peer.pid = -1;
+    this.clients.push(c); c.lobby = this; c.pid = -1; c.away = false; c.peer.pid = -1;
     if (this.match && this.host) {
       const m = this.match;
       // back after a dropped link (event lobby, the SAME session token): your own seat again while it still
@@ -415,7 +428,7 @@ wss.on("connection", (ws, req) => {
     return;
   }
 
-  const c: Client = { uid: uidSeq++, token: crypto.randomBytes(16).toString("hex"), name: "KONG", lobby: null, pid: -1, squad: 0, sock: s, aux: [], lastInputAt: Date.now(), peer: null!, markAt: 0, seat: -1, camAt: 0, program: false, ev: null };
+  const c: Client = { uid: uidSeq++, token: crypto.randomBytes(16).toString("hex"), name: "KONG", lobby: null, pid: -1, squad: 0, sock: s, aux: [], lastInputAt: Date.now(), away: false, peer: null!, markAt: 0, seat: -1, camAt: 0, program: false, ev: null };
   c.peer = { pid: -1, invSeq: 0, send: (u8) => sendBin(c, u8), sendResult: (state) => sendJSON(c.sock.ws, { t: "result", state }) };
   byToken.set(c.token, c);
   sendJSON(ws, { t: "welcome", uid: c.uid, aux: c.token, terrain: td.hash, world: worldHashV, boxes: boxes.length, net: NET_VERSION });
@@ -536,7 +549,7 @@ function onJSON(c: Client, msg: { t?: unknown; [k: string]: unknown }) {
     }
     // (admin lobby) in an event lobby only the admin changes the mode or starts: a player asking is refused (and struck)
     case "mode": if (c.lobby?.event) { strike(c.sock, "not the host", 10); break; } if (c.lobby && c.lobby.owner === c && !c.lobby.match) { c.lobby.mode = msg.mode === "trios" ? "trios" : "solo"; c.lobby.assignSquads(); c.lobby.broadcastJSON(c.lobby.state()); } break;
-    case "start": if (c.lobby?.event) { strike(c.sock, "not the host", HEAVY); break; } if (c.lobby && c.lobby.owner === c) { if (!c.lobby.match) c.lobby.start(); else c.lobby.match.startNow(); } break;
+    case "start": if (c.lobby?.event) { strike(c.sock, "not the host", HEAVY); break; } c.lobby?.claimHost(c); if (c.lobby && c.lobby.owner === c) { if (!c.lobby.match) c.lobby.start(); else c.lobby.match.startNow(); } break;
     case "leave": leaveLobby(c); break;
     // the client's island stream (the warm-up waits for it, ≤ 40 s: MatchHost.holdForStream)
     case "stream": c.peer.streamed = msg.done === true; break;
