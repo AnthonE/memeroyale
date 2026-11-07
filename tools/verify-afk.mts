@@ -47,7 +47,7 @@ function connect(name: string): Peer {
 }
 
 try {
-  await until(() => /KONG ROYALE server on/.test(log), "server start");
+  await until(() => /MEME ROYALE server on/.test(log), "server start");
   const B = connect("B"); await until(() => B.uid > 0, "B welcome");
   B.ws.send(JSON.stringify({ t: "hello", name: "AFK B" })); B.ws.send(JSON.stringify({ t: "create", mode: "trios" }));
   await until(() => !!B.code, "B's lobby");

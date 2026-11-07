@@ -46,7 +46,7 @@ function bindExtra(action: PadAction): string | null {
   const share = shares.length ? ` Shares the button with ${shares.join(", ")}.` : "";
   if (action === "interact") return "Takes or opens what you look at; with nothing to take it reloads. Hold it to reload next to loot.";
   if (action === "reload") return "Optional: the interact button already reloads.";
-  if (action === "radio") return `Kong FM, from any seat.${share}`;
+  if (action === "radio") return `The radio, from any seat.${share}`;
   if (action === "rideView") return `Driver: behind the tuk-tuk or from the saddle.${share}`;
   return null;
 }

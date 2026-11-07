@@ -77,9 +77,9 @@ export function createCasterApp(d: CasterDeps): CasterApp {
     const owner = l ? (seats.find((c) => c.id === l.host) ?? players.find((p) => p.id === l.host)) : null;
     const iOwn = !!l && l.host === myUid;
     // a PROGRAM window shows a standby slate until the match (OBS captures it)
-    if (program && !error) { panel.innerHTML = `<div class="kb-slate"><div><b>KONG ROYALE</b><span>LIVE${l ? ` · ${esc(l.code)}` : ""}</span><em>${busy ? "CONNECTING…" : l ? "THE MATCH STARTS SOON" : "STAND BY"}</em></div></div>`; return; }
+    if (program && !error) { panel.innerHTML = `<div class="kb-slate"><div><b>MEME ROYALE</b><span>LIVE${l ? ` · ${esc(l.code)}` : ""}</span><em>${busy ? "CONNECTING…" : l ? "THE MATCH STARTS SOON" : "STAND BY"}</em></div></div>`; return; }
     panel.innerHTML = `<div class="kcl-card">
-      <div class="kcl-brand"><b>KONG ROYALE</b><span>CASTER DESK</span></div>
+      <div class="kcl-brand"><b>MEME ROYALE</b><span>CASTER DESK</span></div>
       <label class="kcl-name">YOUR CASTER NAME <input data-k="name" maxlength="14" value="${esc(myName)}"></label>
       ${inLobby ? `
         <div class="kcl-lobby">
@@ -299,7 +299,7 @@ export function createCasterApp(d: CasterDeps): CasterApp {
     if (k === "KeyX" && look) { desk.toast(look.cycleXray()); return; }
     if (k === "KeyI" && look) { look.setPlates(!look.plates); look.teamRings = look.plates; desk.toast(look.plates ? "NAMEPLATES ON" : "NAMEPLATES OFF"); return; }
     // (voice) L = listen in on the watched kong's squad (again = stop)
-    if (k === "KeyL") { const p = r.target >= 0 ? s.players[r.target] : r.fight >= 0 ? s.players[s.fight(r.fight)?.players[0] ?? -1] : undefined; if (p) comms?.toggle(p.team); else desk.toast("FOLLOW A KONG — L LISTENS TO ITS SQUAD"); return; }
+    if (k === "KeyL") { const p = r.target >= 0 ? s.players[r.target] : r.fight >= 0 ? s.players[s.fight(r.fight)?.players[0] ?? -1] : undefined; if (p) comms?.toggle(p.team); else desk.toast("FOLLOW A PLAYER — L LISTENS TO ITS SQUAD"); return; }
     if (k === "Slash" || k === "F1") { desk.toggleHelp(); e.preventDefault(); return; }
     if (k === "Escape") { desk.closeOverlay(); return; }
   });

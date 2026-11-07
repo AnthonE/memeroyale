@@ -1,4 +1,4 @@
-// THE HELICOPTER — KONG AIR's BANANA CO. door-gun ship (the look; shared/sim/heli.ts is what it does). The model is
+// THE HELICOPTER — MEME AIR's BANANA CO. door-gun ship (the look; shared/sim/heli.ts is what it does). The model is
 // Tripo-generated from a target-art image and assembled in Blender into public/assets/vehicles/heli/kong-air.glb:
 // a glossy banana-yellow cabin with a chocolate stripe, a glass bubble canopy, open doors both sides, a banana crate,
 // the door minigun with banana-yellow barrels at the left door, a four-blade rotor with yellow tips, a ducted tail fan,

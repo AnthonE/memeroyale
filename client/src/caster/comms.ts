@@ -36,7 +36,7 @@ let cssOn = false;
 
 type Kind = "spot" | "hit" | "low" | "hurtdir" | "crack" | "push" | "knock" | "kill" | "wipe" | "mate" | "last" | "third" | "storm" | "reload" | "shields" | "drop" | "win";
 const LINES: Record<Kind, string[]> = {
-  spot: ["Enemy {dir}, {d} meters!", "Got eyes on one, {dir}, {d} out!", "Contact {dir}!", "One {dir}, {d} meters.", "Kong {dir}, {d}!"],
+  spot: ["Enemy {dir}, {d} meters!", "Got eyes on one, {dir}, {d} out!", "Contact {dir}!", "One {dir}, {d} meters.", "Player {dir}, {d}!"],
   hit: ["I'm hit!", "Taking damage!", "Ow, I'm hit!", "They're on me!"],
   hurtdir: ["Taking fire {dir}!", "Shots from {dir}!", "I'm getting shot from {dir}!"],
   low: ["I'm low!", "I'm one shot, cover me!", "Need a heal, I'm low!", "Low, low, low!"],
@@ -52,7 +52,7 @@ const LINES: Record<Kind, string[]> = {
   reload: ["Reloading!", "Reloading, cover me!", "I'm reloading!"],
   shields: ["Anyone got shields?", "I need shields.", "No shields on me."],
   drop: ["Dropping {place}!", "We're going {place}!", "I'm landing {place}!"],
-  win: ["We won! GG!", "Let's go! GG!", "Kong Royale! Let's go!"],
+  win: ["We won! GG!", "Let's go! GG!", "Meme Royale! Let's go!"],
 };
 const COOL: Record<Kind, number> = { spot: 14, hit: 6, hurtdir: 9, low: 10, crack: 7, push: 8, knock: 3, kill: 3, wipe: 5, mate: 4, last: 30, third: 25, storm: 40, reload: 12, shields: 45, drop: 60, win: 60 };
 const PRIO: Record<Kind, number> = { win: 9, wipe: 8, knock: 7, kill: 7, mate: 7, last: 7, third: 6, low: 6, push: 5, spot: 5, hurtdir: 4, crack: 4, hit: 3, storm: 3, reload: 2, shields: 1, drop: 4 };

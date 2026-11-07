@@ -169,7 +169,7 @@ export class GameRender implements EventSink {
   names: string[] = [];
   /** spectating: who can be watched, the kill tallies, the HUD view */
   readonly spec = new SpectateTracker();
-  myName = "KONG";
+  myName = "MEMER";
   bobT = 0; landDip = 0; wasGrounded = true; wasSt = 0; lastUseT = 0;
   /** traversal feel: last slide timer, mantle camera sway 1 → 0, slide lean */
   lastMvT = 0; mantleK = 0; slideLean = 0;
@@ -697,7 +697,7 @@ export class GameRender implements EventSink {
         if (this.deadAt >= 0 && this.resCountdown != null && !this.range && this.cm.phase !== 0) this.resCountdown = null;
         break;
       }
-      case ANN.Victory: { const win = a === this.cm.pred.team; if (win) { this.announce("KONG ROYALE VICTORY", "#1", "victory"); this.sfx("ui:victory"); this.placement = 1; this.victoryAt = performance.now(); void fullKongMaps(); this.onVictory?.(); } else if (this.deadAt < 0) { this.placement = 2; this.onEliminated?.(); } else if (this.spec.active(this.cm)) this.spectatorVictory(a); break; }
+      case ANN.Victory: { const win = a === this.cm.pred.team; if (win) { this.announce("MEME ROYALE VICTORY", "#1", "victory"); this.sfx("ui:victory"); this.placement = 1; this.victoryAt = performance.now(); void fullKongMaps(); this.onVictory?.(); } else if (this.deadAt < 0) { this.placement = 2; this.onEliminated?.(); } else if (this.spec.active(this.cm)) this.spectatorVictory(a); break; }
       // (economy) bounties and buy-backs: a / b carry teams (or kong ids) — this squad's news only
       case ANN_ECON.Bounty: { const t = this.cm.pred.team; if (a === (t & 0xff)) { this.announce("BOUNTY CONTRACT ACTIVE", "the marked squad is on your map — 90 s", "kill"); this.sfx("ui:countdown"); } else if (b === (t & 0xff)) { this.announce("YOU HAVE A BOUNTY", "a squad is hunting you — survive 90 s for $500", "warn"); this.sfx("storm:shrink"); } break; }
       case ANN_ECON.BountyDone: { const t = this.cm.pred.team; if (a === (t & 0xff)) { this.announce("BOUNTY COMPLETE", "+$1,500 each · the reward dropped where they fell", "victory"); this.sfx("ui:victory"); } else if (b === (t & 0xff)) this.announce("YOUR BOUNTY WAS CLAIMED", "the hunters got one of you", "warn"); break; }
@@ -712,7 +712,7 @@ export class GameRender implements EventSink {
     const cm = this.cm, w = cm.spectate >= 0 && cm.remotes[cm.spectate]?.team === team ? cm.spectate : cm.remotes.findIndex((r) => r.team === team && r.n > 0 && !r.deadNow);
     if (w < 0) return;
     const who = this.name(w).toUpperCase();
-    this.announce(cm.mode === "trios" ? `${who}'S SQUAD WINS` : `${who} WINS`, "KONG ROYALE VICTORY", "victory");
+    this.announce(cm.mode === "trios" ? `${who}'S SQUAD WINS` : `${who} WINS`, "MEME ROYALE VICTORY", "victory");
   }
   /** the results card is up: no banners behind it (they would print through the card) */
   muteAnnounce = false;
@@ -854,7 +854,7 @@ export class GameRender implements EventSink {
   private stopLoop(id: string) { if (!this.loops.has(id)) return; this.loops.delete(id); this.kits.audio.stopLoop(id); }
   private stopAllLoops() { for (const l of [...this.loops]) this.stopLoop(l); this.humLoop = -1; this.mythHum = -1; }
   private addTrauma(t: number) { this.trauma = Math.min(1, this.trauma + t); gamepads.rumble(Math.min(1, t * 1.1), Math.min(1, t * 0.8), 90 + t * 320); }
-  name(id: number) { return id === this.cm.me ? this.myName : (this.names[id] ?? `KONG-${id}`); }
+  name(id: number) { return id === this.cm.me ? this.myName : (this.names[id] ?? `MEMER-${id}`); }
 
   // ---- interact highlight: what the E prompt points at gets an outline + rim (client/src/game/highlight.ts)
   private readonly hl: InteractHighlight;
@@ -1994,7 +1994,7 @@ export class GameRender implements EventSink {
     if (sim.st === VS.Tipped) { P.label = "FLIP TUK-TUK"; if (Math.hypot(sim.vx, sim.vz) > TUK.FLIP_V) P.blocked = "STILL SLIDING"; else P.detail = "HEAVE IT BACK ONTO ITS WHEELS"; return P; }
     const seat = freeSeat(sim, cm.pred.team, (i) => (i === cm.me ? cm.pred.team : cm.remotes[i]?.team ?? -1));
     if (seat < 0) { P.label = name; P.blocked = sim.seats.some((i) => i >= 0 && i !== cm.me && cm.remotes[i]?.team !== cm.pred.team) ? "ANOTHER SQUAD IS ABOARD" : "FULL"; return P; }
-    if (heli) { P.label = seat === 0 ? "FLY HELICOPTER" : seat === HELI.GUN_SEAT ? "MAN THE MINIGUN" : "RIDE SHOTGUN"; P.detail = seat === 0 ? "KONG AIR · 3 SEATS" : seat === HELI.GUN_SEAT ? `${TOP_BANANA.name} · ${sim.gunBelt} ROUNDS ON THE BELT` : "IN THE RIGHT DOOR · YOUR OWN GUNS"; }
+    if (heli) { P.label = seat === 0 ? "FLY HELICOPTER" : seat === HELI.GUN_SEAT ? "MAN THE MINIGUN" : "RIDE SHOTGUN"; P.detail = seat === 0 ? "MEME AIR · 3 SEATS" : seat === HELI.GUN_SEAT ? `${TOP_BANANA.name} · ${sim.gunBelt} ROUNDS ON THE BELT` : "IN THE RIGHT DOOR · YOUR OWN GUNS"; }
     else { P.label = seat === 0 ? "DRIVE TUK-TUK" : "RIDE TUK-TUK"; P.detail = seat === 0 ? "BANANA CO. TAXI · 3 SEATS" : "ON THE BENCH · SHOOT FROM THE BACK"; }
     P.change = `HULL ${Math.max(0, Math.round((sim.hp / specOf(sim.kind).HP) * 100))}%`;
     return P;

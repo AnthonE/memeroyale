@@ -9,7 +9,7 @@ const good = {
   mark: true,
   timeline: { fields: ["t", "fps", "p95Ms"], rows: [[1, 60, 17.5], [2, 58, 21]], dropped: 0 },
   flags: { perfhud: "", seed: "42" },
-  replay: { version: 1, opts: { seed: 42, mode: "solo" }, warmupS: 20, endAfterResults: true, ticks: 600, events: [[3, 1, 0, 1, 0, 1, 0.5, 0, 0, 0, 0, 0, 0], [9, 3, "KONG", 0]] },
+  replay: { version: 1, opts: { seed: 42, mode: "solo" }, warmupS: 20, endAfterResults: true, ticks: 600, events: [[3, 1, 0, 1, 0, 1, 0.5, 0, 0, 0, 0, 0, 0], [9, 3, "MEMER", 0]] },
   extra: "dropped",
 };
 
@@ -75,7 +75,7 @@ assert.equal(bundleDir(root, path.join(root, "elsewhere")), path.join(root, "els
   assert.equal(again.write({ at, id: "KB-6", json: {}, shot: null, shotMime: null }), null, "a second writer on the same folder sees the same cap");
   for (const f of fs.readdirSync(dir)) fs.rmSync(path.join(dir, f), { recursive: true });
   assert.ok(w.write({ at, id: "KB-7", json: {}, shot: null, shotMime: null }), "clearing the folder lets writing resume");
-  assert.ok(parseBundle({ ...good, replay: { ...good.replay, opts: { seed: 1, botAimRange: "Infinity", humans: [{ id: 0, name: "KONG", team: 0 }] } } }).ok);
+  assert.ok(parseBundle({ ...good, replay: { ...good.replay, opts: { seed: 1, botAimRange: "Infinity", humans: [{ id: 0, name: "MEMER", team: 0 }] } } }).ok);
 }
 
 {

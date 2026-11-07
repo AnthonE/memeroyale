@@ -1,6 +1,6 @@
 // The BROADCAST layer: what stays on screen on the clean feed (H) and is all a PROGRAM window (?cast=CODE&program — the
 // OBS output) shows. TV-grade and readable on a 1080p stream:
-//   top-left    — KONG ROYALE bug, LIVE, the match clock (REPLAY when a replay runs: `replay` flag)
+//   top-left    — MEME ROYALE bug, LIVE, the match clock (REPLAY when a replay runs: `replay` flag)
 //   top-centre  — ALIVE / SQUADS / STORM counters, one pip per squad in its colour (dimmed when out), and the FIGHT banner
 //                 ("TEAM RED vs TEAM BLUE · MANGO MARKET") whenever the camera is on a fight
 //   top-right   — the kill feed (killer ▸ weapon icon ▸ victim, team colours, squads out in red), 5 lines, 9 s each
@@ -34,7 +34,7 @@ export class Broadcast {
   constructor(private readonly state: CasterState, private readonly rig: CasterRig, private readonly cm: ClientMatch, parent: HTMLElement) {
     const root = this.el = el("div", "kb bc", parent);
     const bug = el("div", "kb-bug slab", root);
-    el("div", "logo", bug, "KONG ROYALE"); el("div", "live", bug, "<i></i>LIVE");
+    el("div", "logo", bug, "MEME ROYALE"); el("div", "live", bug, "<i></i>LIVE");
     this.clock = el("div", "clock", bug); this.replayEl = el("div", "replay", bug, "REPLAY");
     const count = el("div", "kb-count", root), row = el("div", "row slab", count);
     const cell = (cls: string, label: string) => { const c = el("div", `cell ${cls}`, row); const b = el("b", "", c); const s = el("span", "", c, label); return [b, s, c] as const; };

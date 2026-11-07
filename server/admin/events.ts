@@ -174,7 +174,7 @@ export function adminAction(act: Record<string, unknown>): Res {
   if (a === "create") {
     if (eventLobbies().length >= MAX_EVENT_LOBBIES) return no(`AT MOST ${MAX_EVENT_LOBBIES} LOBBIES`);
     if (!isMode(act.mode)) return no("PICK SOLO OR TRIOS");
-    const name = cleanEventName(act.name) || "KONG ROYALE EVENT";
+    const name = cleanEventName(act.name) || "MEME ROYALE EVENT";
     let code = ""; do code = host.newCode(6); while (host.lobbies.has(code));
     const l = host.newLobby(code, act.mode);
     l.event = { name, cap: clampCap(act.cap), locked: false, teamsLocked: false, casters: false, createdAt: Date.now(), round: 0, known: new Map(), kicked: [], seats: new Map() };

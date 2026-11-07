@@ -1,4 +1,4 @@
-// HELICOPTERS — KONG AIR's three-seater. One kong flies it, two sit in the open doors with their feet on the skids
+// HELICOPTERS — MEME AIR's three-seater. One kong flies it, two sit in the open doors with their feet on the skids
 // and shoot at whatever goes past. Three wait on helipads round the island (shared/sim/heli-spots.ts); one more stands
 // on the warm-up islet and one at the firing range.
 //

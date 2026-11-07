@@ -1,4 +1,4 @@
-// KONG ROYALE audio engine — implements the GameAudio contract (./api.ts).
+// MEME ROYALE audio engine — implements the GameAudio contract (./api.ts).
 //
 // Sample-based, layered, spatial. Every Sfx is an EventDef in ./bank.ts: round-robin variants + random pitch/gain so no
 // two shots are identical; distance crossfades (body → tail → far report), speed-of-sound delay, air absorption,

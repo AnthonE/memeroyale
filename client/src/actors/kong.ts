@@ -1015,7 +1015,7 @@ export function kongManager(ctx: WorldCtx): Promise<KongManager> {
   return (manager ??= (async () => {
     const release = ctx.hold("kong-asset");
     try {
-      const [asset, acc] = await Promise.all([loadKongAsset(ctx.renderer), loadAccessories().catch((e) => { console.warn("[kong] accessories unavailable:", e); return null; })]);
+      const [asset, acc] = await Promise.all([loadKongAsset(ctx.renderer), (KONG_VER === "tt" ? Promise.resolve(null) : loadAccessories().catch((e) => { console.warn("[kong] accessories unavailable:", e); return null; }))]);
       return new KongManager(ctx, asset, asset ? acc : null);
     } finally { release(); }
   })());

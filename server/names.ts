@@ -7,7 +7,7 @@
 //   letter). The long staff words are refused ANYWHERE in the name (THEADMIN, ADMIN BOB); the short ones (and the env
 //   list) only as a whole word or as the whole name, so DEVIN, MODEL, HOSTILE, BOBBY stay legal. A reserved name a
 //   player picks becomes FALLBACK_NAME; the admin's own renames are never refused.
-export const FALLBACK_NAME = "KONG";
+export const FALLBACK_NAME = "MEMER";
 export const cleanName = (v: unknown) => String(v ?? "").normalize("NFKC").toUpperCase().replace(/[^A-Z0-9 _.!?'-]/g, "").replace(/\s+/g, " ").trim().slice(0, 14) || FALLBACK_NAME;
 
 /** refused anywhere in the name */
@@ -22,7 +22,7 @@ const deleet = (s: string) => s.replace(/[0-9!]/g, (ch) => LEET[ch] ?? ch);
 /** a matcher for the staff words + `extra` (whole-word terms) */
 export function reservedMatcher(extra: string[] = []): (name: string) => boolean {
   const contain = CONTAIN.map(collapse);
-  // (not cleanName: its fallback would turn an empty entry — an unset env var — into a reserved "KONG")
+  // (not cleanName: its fallback would turn an empty entry — an unset env var — into a reserved "MEMER")
   const word = [...WORD, ...extra.map((t) => deleet(String(t).normalize("NFKC").toUpperCase()).replace(/[^A-Z]/g, "")).filter((t) => t.length >= 2)].map(collapse);
   const wordHit = (w: string) => word.some((r) => w === r || w === r + "S");
   return (name: string) => {

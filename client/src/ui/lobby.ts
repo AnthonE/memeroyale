@@ -1,5 +1,5 @@
 // Title / lobby screen in the Toon design: the live
-// title scene carries the right two-thirds behind a deep-navy fade on the left; the KONG ROYALE lockup top-left, the
+// title scene carries the right two-thirds behind a deep-navy fade on the left; the MEME ROYALE lockup top-left, the
 // Play / Training / Settings pills, the callsign as identity top-right (inline edit with validation, plus the private
 // lobby popover beside it), and one left column: eyebrow, display headline, a mode line from real data, Trios / Solo
 // (+ the bot difficulty), ONE yellow Play whose label is the real action, the live status line from the server's
@@ -50,7 +50,7 @@ export function createLobby(actions: LobbyActions): LobbyScreen {
 
   // ---------------- brand + nav
   const brand = h("img", "tn-logo tn-play-brand", root);
-  brand.src = TOON_LOGO.lockup; brand.alt = "Kong Royale"; brand.draggable = false;
+  brand.src = TOON_LOGO.lockup; brand.alt = "Meme Royale"; brand.draggable = false;
   const nav = h("nav", "tn-play-nav", root); nav.setAttribute("aria-label", "Lobby");
   const navBtn = (label: string) => { const b = h("button", "tn-pill", nav); b.type = "button"; b.textContent = label; return b; };
   const navPlay = navBtn("Play"), navTraining = navBtn("Training"), navSettings = navBtn("Settings");
@@ -71,7 +71,7 @@ export function createLobby(actions: LobbyActions): LobbyScreen {
   const csForm = h("form", "tn-play-panel", csPop); csForm.noValidate = true; csForm.setAttribute("aria-label", "Edit callsign");
   const csLabel = h("label", "tn-play-plabel", csForm); csLabel.textContent = "Callsign"; csLabel.htmlFor = "kr-callsign";
   const csInput = h("input", "tn-play-input", csForm);
-  csInput.id = "kr-callsign"; csInput.maxLength = NAME_MAX; csInput.spellcheck = false; csInput.autocomplete = "off"; csInput.placeholder = "KONG";
+  csInput.id = "kr-callsign"; csInput.maxLength = NAME_MAX; csInput.spellcheck = false; csInput.autocomplete = "off"; csInput.placeholder = "MEMER";
   csInput.setAttribute("aria-describedby", "kr-callsign-help");
   const csHelp = h("div", "tn-play-help", csForm); csHelp.id = "kr-callsign-help";
   const csRow = h("div", "tn-play-prow", csForm);
@@ -167,7 +167,7 @@ export function createLobby(actions: LobbyActions): LobbyScreen {
   let last: LobbyState | null = null, ui: Ui = "home", inviteDeclined: string | null = null, status: ServerStatus = { state: "checking" };
   actions.setMode(mode);
 
-  const callsign = () => (store.get(NAME_KEY) || "").toUpperCase().slice(0, NAME_MAX) || "KONG";
+  const callsign = () => (store.get(NAME_KEY) || "").toUpperCase().slice(0, NAME_MAX) || "MEMER";
   function commitName() { actions.setName(callsign()); }
   const paintName = () => { csName.textContent = callsign(); };
   paintName();
@@ -215,7 +215,7 @@ export function createLobby(actions: LobbyActions): LobbyScreen {
   for (const p of pops) p.addEventListener("toggle", () => {
     if (p.open) {
       for (const q of pops) if (q !== p && q.open) q.open = false;
-      if (p === csPop) { csInput.value = callsign() === "KONG" && !store.get(NAME_KEY) ? "" : callsign(); setCsError(null); requestAnimationFrame(() => { csInput.focus(); csInput.select(); }); }
+      if (p === csPop) { csInput.value = callsign() === "MEMER" && !store.get(NAME_KEY) ? "" : callsign(); setCsError(null); requestAnimationFrame(() => { csInput.focus(); csInput.select(); }); }
       else { frErr.textContent = ""; }
     } else if (p.contains(document.activeElement) && document.activeElement !== p.querySelector("summary")) p.querySelector<HTMLElement>("summary")?.focus();
   });
@@ -417,7 +417,7 @@ export function createLobby(actions: LobbyActions): LobbyScreen {
     roster.replaceChildren();
     roster.classList.toggle("solo", s.mode === "solo");
     const chip = (parent: HTMLElement, p: LobbyPlayer | null) => {
-      const name = p ? (p.name || "KONG") : "Bot", me = !!p && p.id === s.meId;
+      const name = p ? (p.name || "MEMER") : "Bot", me = !!p && p.id === s.meId;
       const d = h("div", "tn-play-chip" + (p ? (me ? " is-me" : "") : " is-bot") + (name.length > (p?.host ? 7 : 9) ? " is-long" : ""), parent);
       if (p?.host) d.insertAdjacentHTML("beforeend", ICON.crown);
       h("span", "nm", d).textContent = name;

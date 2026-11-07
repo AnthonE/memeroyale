@@ -77,7 +77,7 @@ const FLAGS = {
   join: { kind: text, owner: "game", routing: true, purpose: "join this private lobby code" },
   jungleCheck: { kind: present, owner: "pois", purpose: "check the baked jungle layout still matches the terrain" },
   jungleNoVeg: { kind: present, owner: "pois", purpose: "jungle POIs plant no vegetation" },
-  kong: { kind: text, owner: "actors", purpose: "kong asset: v1, v2 or alt; absent = v2" },
+  kong: { kind: text, owner: "actors", purpose: "player model: tt (Triple T), v1, v2 or alt; absent = tt" },
   konghalf: { kind: on, owner: "actors", purpose: "near-tier kong normal, clothing and sneaker maps load at 1024², 2048² for your victory shot and view pages; =0 keeps 2048²" },
   kongproxy: { kind: maybeNum, owner: "actors", purpose: "kong shadow proxy shrink (cm); 0 = no kong shadows" },
   kongtier: { kind: text, owner: "actors", purpose: "force every kong into LOD tier 0, 1 or 2" },

@@ -72,7 +72,7 @@ function hullOf(g: THREE.BufferGeometry): THREE.BufferGeometry {
   let h = hullCache.get(g);
   if (h) return h;
   const p = new THREE.BufferGeometry();
-  // (a GLB's meshes — the KONG AIR helicopter — keep their attributes interleaved:
+  // (a GLB's meshes — the MEME AIR helicopter — keep their attributes interleaved:
   // mergeVertices cannot copy those, it threw on the first look at one)
   const pos = g.getAttribute("position") as THREE.BufferAttribute | THREE.InterleavedBufferAttribute;
   p.setAttribute("position", (pos as THREE.InterleavedBufferAttribute).isInterleavedBufferAttribute ? flatPositions(pos) : pos as THREE.BufferAttribute);

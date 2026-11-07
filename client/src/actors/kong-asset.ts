@@ -13,6 +13,7 @@ import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 import { actorLook } from "./look";
 import { flag } from "../flags";
 import { releaseAfterUpload } from "../engine/texture-release";
+import { TT_FACE } from "./tt-rig.gen";
 
 export type AssetMat = "kbody" | "khead" | "kgear" | "kshoe" | "keye" | "kmin";
 export interface KongAsset {
@@ -25,16 +26,11 @@ export interface KongAsset {
 
 /** ?kongv=1 → the procedural kong (A/B) */
 export const USE_ASSET = !flag("kongv");
-/** which kong asset draws: ?kong=v1 (the Blender sculpt) / ?kong=v2 (the Tripo kong), else KONG_DEFAULT */
-export const KONG_DEFAULT: "v1" | "v2" = "v2";
-/** ?kong=alt — an IP-distance variant of v2, away from a famous ape mascot's look (heart-shaped
- *  tan face, forelock tuft, warm-brown fur): the same asset with darker, cooler fur, a dark face with only the muzzle
- *  tan, and the forelock tuft pressed flat (kong.ts ALT_GLSL / ALT_TUFT). Not the default. */
-export const KONG_ALT = flag("kong") === "alt";
-export const KONG_VER: "v1" | "v2" = flag("kong") === "v1" ? "v1" : flag("kong") === "v2" || KONG_ALT ? "v2" : KONG_DEFAULT;
+import { KONG_ALT, KONG_DEFAULT, KONG_VER } from "./which";
+export { KONG_ALT, KONG_DEFAULT, KONG_VER };
 /** the deploy base (vite `base`, e.g. "/kong/"): public/ files live under it */
 export const PUBLIC_BASE: string = (import.meta as unknown as { env?: { BASE_URL?: string } }).env?.BASE_URL ?? "/";
-const BASE = PUBLIC_BASE + (KONG_VER === "v2" ? "assets/actors/kong2/" : "assets/actors/kong/");
+const BASE = PUBLIC_BASE + (KONG_VER === "tt" ? "assets/actors/tt/" : KONG_VER === "v2" ? "assets/actors/kong2/" : "assets/actors/kong/");
 /** head scale of the Blender kong (anatomy HS: 0.86 → 1.0, the bigger mascot head);
  *  the face rig (kong.ts kongFaceOff / kongMouth), eye contact and the hats use it */
 export const KONG_HS = 1.0;
@@ -57,7 +53,16 @@ export interface KongFace {
   hat: [number, number, number, number];
 }
 const HK1 = KONG_HS / 0.86;
-export const FACE: KongFace = KONG_VER === "v2"
+export const FACE: KongFace = KONG_VER === "tt"
+  ? {
+    // Triple T (tt-rig.gen.ts, measured by tools/actors/triple-t-fit.py): his eyes are painted into his one texture,
+    // so there is no brow to lift, no jaw and no mouth to paint; the brow's region sits far off his head.
+    eyeMid: [...TT_FACE.eyeMid], fist: [...TT_FACE.fist],
+    brow: { c: [0, -9, 0], r: [0.001, 0.001, 0.001], inner: [0, 1] },
+    jaw: false, paintMouth: false, lid: [0.3, 0.22, 0.15],
+    hat: [...TT_FACE.hat],
+  }
+  : KONG_VER === "v2"
   ? {
     // measured on the Tripo kong in the rig's rest pose
     eyeMid: [0, 0.2, -0.1], fist: [-0.056, -0.146, -0.005],

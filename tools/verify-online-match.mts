@@ -90,7 +90,7 @@ let plannedDrops = 0, primaryDisconnects = 0;
 const onServerLine = (line: string, stream: string) => {
   if (!line.trim()) return;
   serverLog.push(`${stream}: ${line}`);
-  if (/KONG ROYALE server on/.test(line)) serverReady();
+  if (/MEME ROYALE server on/.test(line)) serverReady();
   if (/^\S+ disconnect: /.test(line) && !tearingDown) primaryDisconnects++;
   if (BAD_LOG.test(line) || (stream === "stderr" && /error/i.test(line))) fail(`server log: ${line.trim()}`);
 };

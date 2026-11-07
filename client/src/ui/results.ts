@@ -1,4 +1,4 @@
-// Placement / victory screen: a big placement number (or "#1 KONG ROYALE" with golden confetti), who got you and with
+// Placement / victory screen: a big placement number (or "#1 MEME ROYALE" with golden confetti), who got you and with
 // what, the match stats and the squad lines, then explicit actions: PLAY AGAIN (practice), SPECTATE (the match is still
 // running), BACK TO LOBBY.
 import type { ResultsActions, ResultsScreen, ResultsState } from "./api";
@@ -64,7 +64,7 @@ export function createResults(): ResultsScreen {
       root.classList.toggle("win", s.winner);
       kick.textContent = s.winner ? "VICTORY" : s.mode === "solo" ? "YOU PLACED" : "YOUR SQUAD PLACED";
       place.innerHTML = "";
-      if (s.winner) place.textContent = "KONG ROYALE";
+      if (s.winner) place.textContent = "MEME ROYALE";
       else { const sm = document.createElement("small"); sm.textContent = "#"; place.append(sm, String(s.placement)); }
       of.textContent = s.winner ? "#1 OF " + s.totalSquads + (s.mode === "solo" ? " PLAYERS" : " SQUADS") : `OF ${s.totalSquads} ${s.mode === "solo" ? "PLAYERS" : "SQUADS"}`;
       kb.textContent = "";

@@ -1,5 +1,5 @@
 // LADDERS + CLIMBABLE TREES, drawn (the sim is shared/sim/climb.ts + player.ts PS.Climb). Built once from
-// the static world's climb list (the same list the sim climbs): Kong Royale-style bamboo ladders lashed with rope
+// the static world's climb list (the same list the sim climbs): Meme Royale-style bamboo ladders lashed with rope
 // (stilt huts, the Murk, Coconut Cove), rope pilot ladders with wooden treads hooked over the wreck's deck edge, and on
 // the climbable giant trees a rope ladder pinned up the trunk with rope wraps + carved notches, under a plank perch
 // (shared/pois/climb-trees.ts). Everything merges into ONE vertex-coloured mesh (one draw call, no textures).

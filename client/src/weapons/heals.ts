@@ -11,7 +11,7 @@
 import * as THREE from "three";
 import type { ConsumableId } from "../../../shared/world/map";
 import { PartBuilder, type Built } from "./lib/builder";
-import { rng, paintKong, addGlint } from "./lib/mats";
+import { rng, paintEmblem, addGlint } from "./lib/mats";
 import { bunchPath } from "./chest-tex";
 import { bananaGeometry, bananaAt, catmull1, gridGeometry, lathe, polarAt, rope, roundedPolyPolar, tf, filletCyl } from "./lib/geo";
 import { bananaBomb, crateWallPack } from "./loot-lane";
@@ -208,10 +208,10 @@ function coconut(): Built {
     for (let i = 0; i < 240; i++) { x.strokeStyle = r() < 0.5 ? `rgba(170,150,100,${0.2 + r() * 0.3})` : `rgba(255,250,235,${0.3 + r() * 0.3})`; x.lineWidth = 1 + r() * 2; const px = r() * 1024, py = r() * yc; x.beginPath(); x.moveTo(px, py); x.lineTo(px + (r() - 0.5) * 6, py + 10 + r() * 30); x.stroke(); }
     // kong shield stencil (pale cream), front = u .5
     const cx = 512, cy = 512 * (1 - 0.5);
-    // the shared gorilla emblem (paintKong) as a bust inside the hex shield
+    // the shared emblem (paintEmblem) as a bust inside the hex shield
     x.strokeStyle = "rgba(240,232,205,.92)"; x.lineWidth = 11; shieldPath(x, cx, cy, 84, true); x.stroke();
     x.fillStyle = "rgba(240,232,205,.92)"; x.beginPath(); x.moveTo(cx - 62, cy + 70); x.quadraticCurveTo(cx - 58, cy + 26, cx - 22, cy + 22); x.lineTo(cx + 22, cy + 22); x.quadraticCurveTo(cx + 58, cy + 26, cx + 62, cy + 70); x.closePath(); x.fill();
-    paintKong(x, cx, cy - 8, 40, "rgba(240,232,205,.95)", "#6f932a", { line: 0.07 });
+    paintEmblem(x, cx, cy - 8, 40, "rgba(240,232,205,.95)", "#6f932a", { line: 0.07 });
     // distress
     x.globalCompositeOperation = "destination-over";
   });
@@ -488,7 +488,7 @@ function goldenBanana(): Built {
     shieldPath(x, 256, 250, 190); x.fillStyle = "#5c3510"; x.fill();
     shieldPath(x, 256, 250, 158); const gr = x.createLinearGradient(100, 60, 420, 460); gr.addColorStop(0, "#c98a2a"); gr.addColorStop(0.5, "#a06418"); gr.addColorStop(1, "#6e400c"); x.fillStyle = gr; x.fill();
     x.strokeStyle = "#f2c24a"; x.lineWidth = 6; shieldPath(x, 256, 250, 166); x.stroke();
-    paintKong(x, 256, 262, 96, "#f8d25a", "#3a1e04", { light: "#ffe79a", line: 0.075 });
+    paintEmblem(x, 256, 262, 96, "#f8d25a", "#3a1e04", { light: "#ffe79a", line: 0.075 });
   }, true, false);
   // a thin bronze plate lying FLAT on the banana's front facet (5 facets: faces at θ = 0, ±72°, ±144° from the concave
   // side; θ = −72° faces the camera) at t = .46, its long axis along the banana

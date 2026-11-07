@@ -8,7 +8,7 @@
 // Hand-painted look (the target art): broad warm streaks, bold dark grain, painted knots with a light rim, cracks with a
 // lit lip, pale edge chips, a lit top edge per board; the stencil is burnt INTO the boards (distressed, grain shows).
 import * as THREE from "three";
-import { rng, bananaPath, paintKong } from "./lib/mats";
+import { rng, bananaPath, paintEmblem } from "./lib/mats";
 /** full twists of each strand along the handle rope (chest-geo plyRope) — the target art shows ~12 strand bumps per loop */
 export const ROPE_TURNS = 4.6;
 
@@ -434,7 +434,7 @@ function paintMedal(P: Painter, rect: Rect, kong: boolean) {
   A.fillStyle = g;
   if (kong) {
     // kong face with a little crown (supply crate medallion) — the shared gorilla emblem
-    paintKong(A, cx, cy + R * 0.12, R * 0.5, "#f6c21a", "#2c170b", { light: "#ffe27a", crown: true, line: 0.06 });
+    paintEmblem(A, cx, cy + R * 0.12, R * 0.5, "#f6c21a", "#2c170b", { light: "#ffe27a", crown: true, line: 0.06 });
   }
   P.half((x) => {
     if (x === P.H) { x.fillStyle = "#707070"; x.fillRect(x0, y0, w, h); x.fillStyle = "#b0b0b0"; x.beginPath(); x.arc(cx, cy, R * 0.93, 0, Math.PI * 2); x.fill(); x.fillStyle = "#606060"; x.beginPath(); x.arc(cx, cy, R * 0.78, 0, Math.PI * 2); x.fill(); }

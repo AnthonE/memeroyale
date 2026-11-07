@@ -1,6 +1,6 @@
 // EVENT LOBBY, the player side: what a player link `<site>/?e=CODE` opens instead of the title
 // lobby. The same LobbyScreen as ui/lobby.ts (game/index.ts swaps one for the other), in the same Toon look: the live
-// title scene behind a deep-navy fade, the KONG ROYALE lockup, one left column.
+// title scene behind a deep-navy fade, the MEME ROYALE lockup, one left column.
 //   LOADING   GET api/event/CODE (public: name, mode, count / cap) while "Finding the lobby…"
 //   JOIN      the lobby's name, Your name (validated live), ONE yellow JOIN GAME. Nothing else.
 //   NOT FOUND "This lobby isn't open" + Retry (also: can't reach the server)
@@ -93,7 +93,7 @@ export function createEventLobby(actions: LobbyActions, code: string): LobbyScre
   const root = h("div", "kr-lobby tn-play tn-ev", null);
   h("div", "tn-play-shade tn-ev-shade", root);
   const brand = h("img", "tn-logo tn-play-brand", root);
-  brand.src = TOON_LOGO.lockup; brand.alt = "Kong Royale"; brand.draggable = false;
+  brand.src = TOON_LOGO.lockup; brand.alt = "Meme Royale"; brand.draggable = false;
 
   // ---------------- top right: who I am (in the room) + Settings
   const id = h("div", "tn-play-id tn-ev-id", root);
@@ -120,7 +120,7 @@ export function createEventLobby(actions: LobbyActions, code: string): LobbyScre
   const notes = h("div", "tn-ev-notes", join);
   const nameLabel = h("label", "tn-play-plabel tn-ev-label", join); nameLabel.textContent = "Your name"; nameLabel.htmlFor = "kr-ev-name";
   const input = h("input", "tn-play-input tn-ev-input", join);
-  input.id = "kr-ev-name"; input.maxLength = NAME_MAX; input.spellcheck = false; input.autocomplete = "off"; input.placeholder = "KONG";
+  input.id = "kr-ev-name"; input.maxLength = NAME_MAX; input.spellcheck = false; input.autocomplete = "off"; input.placeholder = "MEMER";
   input.setAttribute("aria-describedby", "kr-ev-name-help"); input.enterKeyHint = "go";
   const help = h("div", "tn-play-help tn-ev-help", join); help.id = "kr-ev-name-help";
   const HELP = "1–14 letters or numbers. Everyone in the lobby sees it.";
@@ -416,7 +416,7 @@ export function createEventLobby(actions: LobbyActions, code: string): LobbyScre
           const p = members[i];
           const me = !!p && p.id === s.meId;
           slot.el.classList.toggle("is-open", !p); slot.el.classList.toggle("is-me", me);
-          const label = p ? (p.name || "KONG") : "Open";
+          const label = p ? (p.name || "MEMER") : "Open";
           if (slot.nm.textContent !== label) slot.nm.textContent = label;
           slot.you.hidden = !me;
           slot.el.title = p ? label : "";
@@ -456,9 +456,9 @@ export function createEventLobby(actions: LobbyActions, code: string): LobbyScre
   function chip(p: EventPlayer, me: boolean) {
     const d = document.createElement("div");
     d.className = "tn-play-chip tn-ev-pchip" + (me ? " is-me" : "");
-    const nm = span(p.name || "KONG"); nm.className = "nm"; d.append(nm);
+    const nm = span(p.name || "MEMER"); nm.className = "nm"; d.append(nm);
     if (me) { const y = span("You"); y.className = "tn-badge tn-badge--accent tn-ev-you"; d.append(y); }
-    d.title = p.name || "KONG";
+    d.title = p.name || "MEMER";
     return d;
   }
 
@@ -496,7 +496,7 @@ export function createEventLobby(actions: LobbyActions, code: string): LobbyScre
       if (v && !was) { if (view === "join") void loadInfo(false); }
       else if (!v) clearTimeout(pollTimer);
     },
-    get name() { return storedName() || "KONG"; },
+    get name() { return storedName() || "MEMER"; },
     padFirst,
     padBack() { if (view === "ended") back(); },
   };

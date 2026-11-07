@@ -1394,4 +1394,4 @@ function giveWarmupKit(p: Player, rng: Rng) {
   const c = p.slots[1]; c.kind = SK.Consumable; c.id = CONSUMABLES.indexOf("leaf-bundle"); c.rarity = 0; c.count = 2; p.active = 0;
 }
 
-const BOT_NAMES = ["Bongo", "Kiki", "Mango", "Peel", "Rumble", "Tusk", "Koko", "Banjo", "Dizzy", "Chunk", "Ripe", "Zuzu", "Bruiser", "Nana", "Split", "Husk", "Fuzz", "Grit", "Loco", "Pip", "Rex", "Sable", "Tango", "Umbo", "Vex", "Waffle", "Yuca", "Zed", "Ape-X", "Bam", "Cocoa", "Dune", "Ember", "Fig", "Gogo", "Hopper", "Ivo", "Jumbo", "Kong-Jr", "Lush", "Moss", "Nib", "Ozzy", "Pulp", "Quill", "Rango", "Sprout", "Tiki", "Ubu", "Volt"];
+const BOT_NAMES = ["Bongo", "Kiki", "Mango", "Peel", "Rumble", "Tusk", "Koko", "Banjo", "Dizzy", "Chunk", "Ripe", "Zuzu", "Bruiser", "Nana", "Split", "Husk", "Fuzz", "Grit", "Loco", "Pip", "Rex", "Sable", "Tango", "Umbo", "Vex", "Waffle", "Yuca", "Zed", "Ape-X", "Bam", "Cocoa", "Dune", "Ember", "Fig", "Gogo", "Hopper", "Ivo", "Jumbo", "Meme-Jr", "Lush", "Moss", "Nib", "Ozzy", "Pulp", "Quill", "Rango", "Sprout", "Tiki", "Ubu", "Volt"];

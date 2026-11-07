@@ -1,4 +1,4 @@
-// KONG ROYALE island generator (terrain area). Deterministic — the terrain bake tool runs this and
+// MEME ROYALE island generator (terrain area). Deterministic — the terrain bake tool runs this and
 // writes public/assets/terrain/island.bin; client + server load the SAME bytes (decodeTerrainFile). generateTerrain()
 // returns exactly what decodeTerrainFile(encodeTerrainFile(...)) returns (heights quantised to cm, content hash set),
 // so a server that still generates in-process agrees bit-for-bit with a client that loads the file, as long as the

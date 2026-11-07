@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Verification harness: starts an isolated dev client + game server, checks that they are worth
-// driving, and plays Kong Royale through a real browser the way a player does (title, Play vs bots, Firing range, a
+// driving, and plays Meme Royale through a real browser the way a player does (title, Play vs bots, Firing range, a
 // two-player private lobby), writing screenshots and a result.json per run. Works on macOS, Windows and Linux.
 //
 //   node tools/kr-verify.mjs up            start client :5417 + server :3120

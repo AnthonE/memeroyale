@@ -1,6 +1,4 @@
-// THE TUK-TUK RADIO — KONG FM 99.8 with DJ Silverback Steve, built like a classic open-world game's radio:
-// ONE station cut from Witzner's own material (his songs, his DJ, his Banana Blaster
-// ad) into a 10-minute live broadcast — each song twice, DJ talk-ups over the intros, an ad break, the ident — at full
+// THE TUK-TUK RADIO, built like a classic open-world game's radio: a station is a 10-minute live broadcast — each song twice, DJ talk-ups over the intros, an ad break, the ident — at full
 // quality, loud and clean in the cab, under your gunfire, with a station banner when you tune in (render.ts / hud.ts:
 // the station + what is on air, from the cue sheet radio-program.ts).
 //
@@ -14,14 +12,13 @@
 // Turning the dial: a short soft sweep of static and the station fading up (not a hard cut).
 import type { Library } from "./loader";
 import { setT } from "./param";
-import { KONG_FM, type Cue } from "./radio-program";
+import type { Cue } from "./radio-program";
 
 export interface StationDef { name: string; host: string; file: string; dur: number; offset: number; cues: ReadonlyArray<Cue> }
 /** station index = the vehicle's `radio` (shared/sim/vehicle.ts TUK.RADIO_N); 0 = off */
-export const STATIONS: ReadonlyArray<StationDef | null> = [
-  null,
-  { name: "KONG FM 99.8", host: "DJ SILVERBACK STEVE", file: KONG_FM.file, dur: KONG_FM.dur, offset: 0, cues: KONG_FM.cues },
-];
+// Kong Royale's KONG FM is Witzner's work, licensed to Kong Royale alone (its CREDITS.md), so Meme Royale ships no
+// station yet: every dial position is OFF until one of our own is added here.
+export const STATIONS: ReadonlyArray<StationDef | null> = [null];
 export const stationName = (k: number) => STATIONS[k]?.name ?? null;
 /** the broadcast position (s) of station `k` at match time `clock` */
 export function broadcastAt(k: number, clock: number): number {
