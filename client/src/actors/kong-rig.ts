@@ -9,10 +9,14 @@ import type { KongPose } from "./api";
 import type { WeaponId } from "../../../shared/world/map";
 import { WEAPON_DEFS } from "../../../shared/sim/const";
 import { ZIP_HANG } from "../../../shared/pois/canopy-line";
+import { KONG_VER } from "./which";
+import { TT_BONES } from "./tt-rig.gen";
 
 export type BoneName = "hips" | "spine" | "chest" | "head" | "shoulderR" | "elbowR" | "wristR" | "shoulderL" | "elbowL" | "wristL" | "hipR" | "kneeR" | "ankleR" | "hipL" | "kneeL" | "ankleL";
 
-export const BONES: Record<BoneName, { parent: BoneName | null; offset: [number, number, number] }> = {
+type BoneTable = Record<BoneName, { parent: BoneName | null; offset: [number, number, number] }>;
+/** the kong's rest */
+const KONG_BONES: BoneTable = {
   // proportions from the target art: ~2.0 m, hips 0.86, short legs, massive shoulders (1.1 m), head low in the shoulders
   hips: { parent: null, offset: [0, 0.86, 0] },
   spine: { parent: "hips", offset: [0, 0.14, 0] },
@@ -31,6 +35,8 @@ export const BONES: Record<BoneName, { parent: BoneName | null; offset: [number,
   kneeL: { parent: "hipL", offset: [-0.02, -0.35, -0.02] },
   ankleL: { parent: "kneeL", offset: [0, -0.29, 0.02] },
 };
+/** the rest the rig poses from: Triple T's (tt-rig.gen.ts, tools/actors/triple-t-fit.py) or the kong's */
+export const BONES: BoneTable = KONG_VER === "tt" ? (TT_BONES as unknown as BoneTable) : KONG_BONES;
 export const BONE_LIST = Object.keys(BONES) as BoneName[];
 export const NB = BONE_LIST.length;
 const BI: Record<BoneName, number> = Object.fromEntries(BONE_LIST.map((b, i) => [b, i])) as Record<BoneName, number>;

@@ -10,6 +10,12 @@ Kong Royale's community work belongs to its creators and was licensed to Kong Ro
 KONG FM 99.8, the tuk-tuk radio (Witzner), and the Toon UI's KONG / ROYALE wordmarks and shield hit icons (RET). The
 Kong Royale name and logo are not reused either.
 
+## Triple T
+
+The player, Triple T, is the Gates and oneshot character, commissioned from Meshy and owned outright by the Elo Pros
+operator. He is **not covered by the MIT licence**: play and modify the game with him, but ask before reusing him
+anywhere else. Files: `public/assets/actors/tt/`, `tools/actors/src/triple-t.glb`.
+
 ## Ours
 
 | What | Licence | Files |

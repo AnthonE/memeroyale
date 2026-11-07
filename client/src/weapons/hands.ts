@@ -23,6 +23,7 @@ import * as THREE from "three";
 import { rbox } from "./lib/geo";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import { flag } from "../flags";
+import { KONG_VER } from "../actors/which";
 import { releaseGeometryAfterUpload } from "../engine/geometry-release";
 
 // ------------------------------------------------------------------------------------------------ dimensions (m)
@@ -81,6 +82,8 @@ export function handMaterials(): HandMats {
   // fur clumps: vertex colours (dark roots → lit tips, darker clump edges) × a fine strand texture along each clump;
   // double-sided: a lifted clump tip shows its underside
   const fur = new THREE.MeshStandardMaterial({ color: "#ffffff", vertexColors: true, map: ft.map, bumpMap: ft.bump, bumpScale: 1.1, roughness: 0.84, metalness: 0, envMapIntensity: 0.55, side: THREE.DoubleSide });
+  // Triple T (actors/which.ts): the same hand in his bark's tones, the forearm's clumps read as bark rather than fur
+  if (KONG_VER === "tt") { glove.color.set("#b49c7e"); fur.color.set("#9a8466"); fur.roughness = 0.92; }
   glove.name = "vm-skin"; peel.name = "vm-peel"; fur.name = "vm-fur";
   mats = { glove, peel, fur };
   return mats;
