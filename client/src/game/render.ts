@@ -56,7 +56,7 @@ import { createHelipad } from "../actors/helipad";
 import { TukFx } from "./tuk-fx";
 import { tukControls } from "./tuk-hud";
 import { TukThru } from "./tuk-thru";
-import { STATIONS, onAir, stationName } from "../audio/radio";
+import { RADIO_ON, STATIONS, onAir, stationName } from "../audio/radio";
 import { TUK, VE, VF, VKind, VS, freeSeat, specOf, vehicleInReach, vehPoint } from "../../../shared/sim/vehicle";
 import { HELI, TOP_BANANA, gunAngles, gunOf, padSlope } from "../../../shared/sim/heli";
 import { KILL_BOMB, KILL_GUN, KILL_HELI, KILL_TUK, VK } from "../../../shared/net/proto";
@@ -1853,7 +1853,7 @@ export class GameRender implements EventSink {
       if (fuse && A.fuseAt < 0) { A.fuseAt = now; this.kits.audio.play("tuk:horn", { pos, volume: 1 }); } else if (!fuse) A.fuseAt = -1;
       this.tukLoop(A, "H", vr.id, fuse, aboard, "tuk:fuse", pos, 1, fuse ? 1 - Math.min(0.2, (now - A.fuseAt) / 13000) : 1);
       // the radio (audio/radio.ts): plays while somebody rides it — in the cab a clean mix, outside from the tuk-tuk
-      const R = this.kits.audio.radio;
+      const R = RADIO_ON ? this.kits.audio.radio : undefined;
       if (R) {
         const rode = vr.seats[0] >= 0 || vr.seats[1] >= 0 || vr.seats[2] >= 0, st = alive2 && rode && !fuse ? vr.radio : 0;
         const clock = this.cm.serverTick() * DT;
@@ -2570,7 +2570,7 @@ export class GameRender implements EventSink {
         const ctl = tukControls(p.seat, cm.mode === "trios", now, padHold, heli, air, pilot && heliDownS < DOWN_TAUGHT_S, warn); V.hints = ctl.hints; V.keys = ctl.keys; V.hintsOn = now - this.rideAt < (heli ? 10000 : 6500);
         V.fill = pilot && air ? this.input.bailHold : 0;
         // (the radio is a tuk-tuk's: no radio row in a helicopter)
-        V.radio = heli ? undefined : stationName(mv.radio); V.tuning = !heli && now - this.tunedAt < 450;
+        V.radio = heli || !RADIO_ON ? undefined : stationName(mv.radio); V.tuning = !heli && RADIO_ON && now - this.tunedAt < 450;
         const use = bindingText("use", 0).toUpperCase(), swap = bindingText("crouch", 0).toUpperCase();
         // a helicopter in the air with nobody at the stick (the pilot swapped seats, bailed out or dropped):
         // it does not hover — it sinks at once and falls as the rotor winds down, and whoever takes the

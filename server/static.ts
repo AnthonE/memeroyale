@@ -3,7 +3,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import type http from 'node:http';
-const MIME: Record<string,string>={'.html':'text/html; charset=utf-8','.js':'text/javascript','.mjs':'text/javascript','.css':'text/css','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp','.avif':'image/avif','.glb':'model/gltf-binary','.gltf':'model/gltf+json','.json':'application/json','.woff2':'font/woff2','.mp3':'audio/mpeg','.ogg':'audio/ogg','.wav':'audio/wav','.ktx2':'image/ktx2','.bin':'application/octet-stream','.svg':'image/svg+xml','.wasm':'application/wasm','.hdr':'application/octet-stream','.exr':'application/octet-stream'};
+const MIME: Record<string,string>={'.html':'text/html; charset=utf-8','.js':'text/javascript','.mjs':'text/javascript','.css':'text/css','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp','.avif':'image/avif','.glb':'model/gltf-binary','.gltf':'model/gltf+json','.json':'application/json','.webmanifest':'application/manifest+json','.woff2':'font/woff2','.mp3':'audio/mpeg','.ogg':'audio/ogg','.wav':'audio/wav','.ktx2':'image/ktx2','.bin':'application/octet-stream','.svg':'image/svg+xml','.wasm':'application/wasm','.hdr':'application/octet-stream','.exr':'application/octet-stream'};
 const HASHED=/[-.][A-Za-z0-9_-]{8,}\.(js|mjs|css)$/;
 const stat=async(f:string)=>{try{return await fs.promises.stat(f);}catch{return null;}};
 function encodings(header:string){

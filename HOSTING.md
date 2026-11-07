@@ -9,7 +9,7 @@ npm run build    # build the client into dist/ and precompress it
 npm start        # serve dist/ and the game server on port 3020
 ```
 
-Open `http://<your machine>:3020/` once the server prints a line starting `KONG ROYALE server on`. Startup takes a
+Open `http://<your machine>:3020/` once the server prints a line starting `MEME ROYALE server on`. Startup takes a
 few seconds while it builds the island's collision world. `GET /health` returns a small JSON status for uptime checks.
 
 `npm start` sets `KR_SERVE=1` with POSIX shell syntax. On Windows, run it from Git Bash or WSL.

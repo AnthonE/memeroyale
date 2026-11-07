@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
   - name: Question or discussion
-    url: https://github.com/MaximilianHansen/kongroyale/discussions
+    url: https://github.com/AnthonE/memeroyale/discussions
     about: Ask how something works, or show what you made. Ideas for the game go in an Idea issue.
   - name: Security problem or cheat
-    url: https://github.com/MaximilianHansen/kongroyale/security/advisories/new
+    url: https://github.com/AnthonE/memeroyale/security/advisories/new
     about: Report it privately here, not in a public issue.

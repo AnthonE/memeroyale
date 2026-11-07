@@ -1,0 +1,11 @@
+{
+  "name": "Meme Royale",
+  "short_name": "Meme Royale",
+  "description": "A 50-player meme battle royale in the browser.",
+  "start_url": "./",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#0e6fa8",
+  "theme_color": "#0e2a3e",
+  "icons": [{ "src": "assets/ui/brand/meme-badge.svg", "sizes": "any", "type": "image/svg+xml" }]
+}

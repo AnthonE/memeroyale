@@ -187,10 +187,17 @@ export function loadKongAsset(renderer: THREE.WebGLRenderer): Promise<KongAsset 
         materials,
       };
       (globalThis as { __kongAsset?: KongAsset }).__kongAsset = asset;   // dev: live material tuning from tools
-      console.info(`[kong] ${KONG_VER === "v2" ? "Tripo" : "Blender"} kong (${KONG_VER}): hi ${asset.tris.hi} / lo ${asset.tris.lo} / min ${asset.tris.min} tris`);
+      console.info(`[kong] ${KONG_VER === "tt" ? "Triple T" : KONG_VER === "v2" ? "Tripo kong" : "Blender kong"} (${KONG_VER}): hi ${asset.tris.hi} / lo ${asset.tris.lo} / min ${asset.tris.min} tris`);
       return asset;
     } catch (e) {
-      console.warn("[kong] Blender kong unavailable, using the procedural kong:", e);
+      // Triple T is the player: a failed load is a broken build, not a style choice, so it is an error (window.__kr.errors, which the boot checks read)
+      // even though the procedural stand-in still lets the match play
+      if (KONG_VER === "tt") {
+        const msg = `[kong] Triple T failed to load (assets/actors/tt), drawing the procedural stand-in: ${e instanceof Error ? e.message : String(e)}`;
+        (globalThis as { __kr?: { errors?: string[] } }).__kr?.errors?.push(msg);
+        console.error(msg);
+      }
+      else console.warn(`[kong] ${KONG_VER === "v2" ? "Tripo" : "Blender"} kong unavailable, using the procedural kong:`, e);
       return null;
     }
   })());

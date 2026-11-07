@@ -1,6 +1,6 @@
 # Performance improvement plan
 
-This document is the proposed measurement, optimization and continuous-regression workflow for Kong Royale.
+This document is the proposed measurement, optimization and continuous-regression workflow for Meme Royale.
 It complements [ARCHITECTURE.md](ARCHITECTURE.md), not the implementation rules in [AGENTS.md](AGENTS.md) and
 [CONTRIBUTING.md](CONTRIBUTING.md). Memory work has its own plan in [docs/memory-architecture.md](docs/memory-architecture.md).
 

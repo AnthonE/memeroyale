@@ -19,6 +19,8 @@ export interface StationDef { name: string; host: string; file: string; dur: num
 // Kong Royale's KONG FM is Witzner's work, licensed to Kong Royale alone (its CREDITS.md), so Meme Royale ships no
 // station yet: every dial position is OFF until one of our own is added here.
 export const STATIONS: ReadonlyArray<StationDef | null> = [null];
+/** a station is on air: false hides the radio everywhere (the dial, its banner, its static, its settings rows) */
+export const RADIO_ON = STATIONS.some((s) => s !== null);
 export const stationName = (k: number) => STATIONS[k]?.name ?? null;
 /** the broadcast position (s) of station `k` at match time `clock` */
 export function broadcastAt(k: number, clock: number): number {

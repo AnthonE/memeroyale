@@ -1,11 +1,11 @@
-# How Kong Royale works
+# How Meme Royale works
 
 This is a tour for someone who has never seen the code. It covers the big pieces and names the files where each one
 lives. The comment at the top of each file goes into more detail.
 
 ## The big picture
 
-Kong Royale has three parts:
+Meme Royale (a fork of Kong Royale) has three parts:
 
 - **`client/`**: the browser game. It draws the island with three.js, reads input, plays sound and shows the UI.
 - **`server/`**: a Node.js process. It runs lobbies and matches, and decides everything that matters.

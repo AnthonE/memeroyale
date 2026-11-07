@@ -5,6 +5,7 @@
 // action but the slot / seat keys may be left unbound); a key another action uses moves here and the message names that
 // action (preferences.rebind; the slot / seat keys are refused). The CONTROLLER rows are settings/controller-panel.ts.
 import { preferences, type Preferences } from "./preferences";
+import { RADIO_ON } from "../audio/radio";
 import { BIND_LABELS, BIND_ORDER, CLEARABLE_BINDS, RIDE_BINDS, bindLabel, fixedBinds, type BindAction } from "./bindings";
 import { mult, pct, ON_OFF, type BindRow, type Category, type Help, type Row, type SliderRow, type SwitchRow, type ChoiceRow } from "../ui/settings-model";
 
@@ -29,11 +30,12 @@ const NOTE: Partial<Record<BindAction, string>> = {
 /** the tuk-tuk's driving keys, spelled out from the current bindings (help of the tuk-tuk rows) */
 function rideNote() {
   const b = preferences.value.binds, k = (a: BindAction) => b[a][0] ? bindLabel(b[a][0]) : "—";
-  return `Live only in a seat. Driving: ${k("fwd")} / ${k("back")} throttle and brake, ${k("left")} / ${k("right")} steer, ${k("jump")} handbrake, ${k("sprint")} hop, ${k("fire")} horn, ${k("crouch")} next free seat, ${k("use")} get out. At the bars ${k("reload")} also tunes the radio and ${bindLabel(b.slots[0])} / ${bindLabel(b.slots[1])} / ${bindLabel(b.slots[2])} also pick seats.`;
+  return `Live only in a seat. Driving: ${k("fwd")} / ${k("back")} throttle and brake, ${k("left")} / ${k("right")} steer, ${k("jump")} handbrake, ${k("sprint")} hop, ${k("fire")} horn, ${k("crouch")} next free seat, ${k("use")} get out. At the bars ${RADIO_ON ? `${k("reload")} also tunes the radio and ` : ""}${bindLabel(b.slots[0])} / ${bindLabel(b.slots[1])} / ${bindLabel(b.slots[2])} also pick seats.`;
 }
 function bindRows(): Row[] {
   const rows: Row[] = [];
   for (const action of BIND_ORDER) {
+    if (action === "radio" && !RADIO_ON) continue;
     const ride = RIDE_BINDS.includes(action);
     const help = (title: string, extra?: string) => (): Help => ({ eb: ride ? "Tuk-tuk" : "Bindings", title, viz: "bind",
       body: [REBIND_HELP, ...(extra ? [extra] : []), ride ? rideNote() : CONFLICT_HELP] });
@@ -107,7 +109,7 @@ export function audioCategory(): Category {
       slider("combat", "Combat & world", 0, 1, 0.01, pct, () => MIX("Combat & world", ["Weapons, footsteps, impacts and world effects."])),
       slider("ui", "Interface & confirmations", 0, 1, 0.01, pct, () => MIX("Interface & confirmations", ["Menus, hit confirmations and match cues."])),
       slider("ambience", "Island ambience", 0, 1, 0.01, pct, () => MIX("Island ambience", ["Environmental beds and ambient details."])),
-      slider("radio", "Tuk-tuk radio", 0, 1, 0.01, pct, () => MIX("Tuk-tuk radio", ["The tuk-tuk's radio, and other tuk-tuks' radios nearby."])),
+      ...(RADIO_ON ? [slider("radio", "Tuk-tuk radio", 0, 1, 0.01, pct, () => MIX("Tuk-tuk radio", ["The tuk-tuk's radio, and other tuk-tuks' radios nearby."]))] : []),
       { kind: "seg", id: "dynamicRange", label: "Dynamic range", options: () => [{ v: "full", label: "Full" }, { v: "reduced", label: "Reduced" }],
         get: () => preferences.value.dynamicRange, set: (v) => preferences.set({ dynamicRange: v === "reduced" ? "reduced" : "full" }),
         help: () => MIX("Dynamic range", ["Full preserves the authored impact. Reduced lowers louder events for quieter listening; adjust master volume to suit your room."]) },

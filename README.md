@@ -3,7 +3,7 @@
 A 50-player banana battle royale that runs in your browser: a reskin of Max Blade's
 [Kong Royale](https://github.com/MaximilianHansen/kongroyale) (MIT), which you can play at [kongroyale.com](https://kongroyale.com).
 
-You drop from the Banana Co. plane onto a jungle island, loot chests, and fight 49 other kongs while the storm closes
+You drop from the Banana Co. plane onto a jungle island, loot chests, and fight 49 other players while the storm closes
 in. Play solo or in trios; bots fill any empty seats.
 
 The client is built with [three.js](https://threejs.org). The multiplayer server is Node.js with WebSockets. Both run
@@ -115,11 +115,10 @@ for the full one. [HOSTING.md](HOSTING.md) lists every setting and explains how 
 
 ## Contribute
 
-Read [CONTRIBUTING.md](CONTRIBUTING.md). Every change goes through a pull request, and the Kong Royale Committee of
-Truth and Prosperity reviews it before it can reach the live game. Using an AI coding agent? Point it at
+Read [CONTRIBUTING.md](CONTRIBUTING.md). Every change goes through a pull request, reviewed before it reaches the live game. Using an AI coding agent? Point it at
 [AGENTS.md](AGENTS.md).
 
-Questions: [Discussions](https://github.com/MaximilianHansen/kongroyale/discussions). Ideas for the game: open an **Idea** issue.
+Questions and ideas for the game: open an issue.
 
 Found a security problem or a cheat? Don't open an issue. See [SECURITY.md](SECURITY.md).
 
@@ -127,4 +126,5 @@ Found a security problem or a cheat? Don't open an issue. See [SECURITY.md](SECU
 
 The code and the game's own art and audio are under the [MIT licence](LICENSE). A few files come from other people
 under their own licences; they're listed in [CREDITS.md](CREDITS.md). The MIT licence covers the code and files, not
-the **Kong Royale** name and logo: please don't use those for your own game or in a way that suggests it's official.
+the **Meme Royale** or **Kong Royale** names and logos: please don't use those for your own game or in a way that
+suggests it's official.

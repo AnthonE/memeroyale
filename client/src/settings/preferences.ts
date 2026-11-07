@@ -10,7 +10,7 @@ export interface Preferences {
   /** sprint whenever moving forward (keyboard); the controller has its own sprint mode (pad.sprintMode) */
   autoSprint: boolean;
   master: number; combat: number; ui: number; ambience: number;
-  /** the tuk-tuk radio, KONG FM (0 = muted; 1 = the authored level) */
+  /** the tuk-tuk radio (0 = muted; 1 = the authored level) */
   radio: number;
   /** "full" = the authored mix; "reduced" lowers louder events for quiet listening */
   dynamicRange: "full" | "reduced";

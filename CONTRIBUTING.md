@@ -1,4 +1,4 @@
-# Contributing to Kong Royale
+# Contributing to Meme Royale
 
 Thanks for wanting to help. This page covers how a change gets from your computer into the live game.
 
@@ -7,12 +7,10 @@ Thanks for wanting to help. This page covers how a change gets from your compute
 1. **Fork** this repo and make your change on a branch in your fork.
 2. **Open a pull request** against `main`. Tests run automatically; if you're not a collaborator, they start once a
    maintainer clicks **Approve and run**.
-3. **The Committee of Truth and Prosperity reviews it.** That's the small group that runs Kong Royale; today it's Max
-   Blade ([@MaximilianHansen](https://github.com/MaximilianHansen)). They may ask for changes. Nothing merges
+3. **The owner reviews it** ([@AnthonE](https://github.com/AnthonE)). They may ask for changes. Nothing merges
    without their approval.
-4. **It ships in the next drop.** A drop is a release of the live game at kongroyale.com. Each one is a GitHub
-   Release whose notes credit everyone whose work is in it. Merging into `main` doesn't put a change live; a merged
-   change usually ships in the next drop, but the Committee can hold one back.
+4. **It ships in the next release.** Merging into `main` doesn't put a change live; a merged change usually ships in
+   the next release.
 
 Nobody can push to this repository directly, including the maintainers. Every change, from anyone, goes through a
 reviewed pull request.
@@ -46,14 +44,14 @@ touched multiplayer.
 - **Art, models, sound and fonts must be yours or clearly free to use** (CC0, or CC-BY with credit). Say where each
   one came from in the pull request. Nothing taken from other games, and no lookalikes of other games' characters
   or logos.
-- **AI-assisted work is welcome.** Kong Royale was largely built with AI. You're responsible for every line: read
+- **AI-assisted work is welcome.** Meme Royale, and Kong Royale before it, was largely built with AI. You're responsible for every line: read
   it, run it, and be ready to explain it. Point your agent at [AGENTS.md](AGENTS.md).
 
 By opening a pull request you agree that your contribution is released under this project's [MIT licence](LICENSE).
 
 ## Questions
 
-Ask in [Discussions](https://github.com/MaximilianHansen/kongroyale/discussions).
+Open an issue.
 
 ## Reporting bugs
 

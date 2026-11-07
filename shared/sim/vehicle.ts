@@ -107,7 +107,7 @@ export const TUK = {
   /** a wreck stays this long (s) */
   WRECK_S: 40,
   /** the radio: stations incl. OFF (0) — client/src/audio/radio.ts names them; a fresh tuk-tuk plays station 1.
-   *  (one station, KONG FM 99.8 — the radio key toggles it on / off) */
+   *  (Meme Royale ships no station yet, so the client hides the dial: client/src/audio/radio.ts RADIO_ON) */
   RADIO_N: 2,
 } as const;
 

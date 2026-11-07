@@ -1,17 +1,17 @@
 {
-  "name": "kong-royale",
+  "name": "meme-royale",
   "private": true,
   "version": "0.2.0",
   "type": "module",
-  "description": "KONG ROYALE — 50-player battle royale in the browser",
+  "description": "Meme Royale — 50-player battle royale in the browser",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MaximilianHansen/kongroyale.git"
+    "url": "git+https://github.com/AnthonE/memeroyale.git"
   },
-  "homepage": "https://kongroyale.com",
+  "homepage": "https://github.com/AnthonE/memeroyale",
   "bugs": {
-    "url": "https://github.com/MaximilianHansen/kongroyale/issues"
+    "url": "https://github.com/AnthonE/memeroyale/issues"
   },
   "engines": {
     "node": ">=22.12"

@@ -11,6 +11,7 @@ import { glyphFamily } from "./labels";
 import { FACE_COLORS, LAYOUT_NAMES, PAD_ACTIONS, PAD_LABELS, PB, RIDE_SHARE, applyCurve, glyph, mayShare, type PadAction, type PadFamily, type PadPrefs } from "./pad";
 import { gamepads } from "../game/gamepad";
 import { TOON } from "../ui/toon";
+import { RADIO_ON } from "../audio/radio";
 import { mult, pct, type BindRow, type Category, type Help, type Row, type SliderRow, type SwitchRow, type ChoiceRow } from "../ui/settings-model";
 
 const deg = (v: number) => `${Math.round(v)}°/s`;
@@ -34,7 +35,7 @@ const REMAP = "Select a slot, then press a controller button. A button another a
 
 function layoutHelp(): string {
   const f = glyphFamily();
-  return `Standard: interact / reload on ${glyph(PB.X, f)}, crouch on ${glyph(PB.B, f)}. Tactical: crouch / slide on ${glyph(PB.RS, f)}, reload on ${glyph(PB.B, f)}. Bumper jumper: jump on ${glyph(PB.LB, f)}, previous slot on ${glyph(PB.LEFT, f)}, banana bomb on ${glyph(PB.RS, f)}. Every layout: ping ${glyph(PB.RIGHT, f)}, tuk-tuk radio ${glyph(PB.DOWN, f)}.`;
+  return `Standard: interact / reload on ${glyph(PB.X, f)}, crouch on ${glyph(PB.B, f)}. Tactical: crouch / slide on ${glyph(PB.RS, f)}, reload on ${glyph(PB.B, f)}. Bumper jumper: jump on ${glyph(PB.LB, f)}, previous slot on ${glyph(PB.LEFT, f)}, banana bomb on ${glyph(PB.RS, f)}. Every layout: ping ${glyph(PB.RIGHT, f)}${RADIO_ON ? `, tuk-tuk radio ${glyph(PB.DOWN, f)}` : ""}.`;
 }
 function padRideNote(): string {
   const p = pad(), f = glyphFamily(), k = (a: PadAction) => p.binds[a].map((b) => glyph(b, f)).join(" / ") || "—";
@@ -95,7 +96,7 @@ export function controllerCategory(): Category {
         choice("seg", "crouchToggle", "Crouch", [[false, "Hold"], [true, "Toggle"]], () => BEHAVE("Crouch", ["Hold to stay low, or press to toggle. Crouch while sprinting to slide."], "crouch")),
         choice("seg", "sprintMode", "Sprint", [["hold", "Hold"], ["toggle", "Toggle"], ["auto", "Auto"]], () => BEHAVE("Sprint", ["Hold the sprint button, press to toggle (stops when you stop moving), or Auto: sprint whenever the stick is pushed fully forward."], "sprint")),
       ] },
-      { id: "bindings", name: "Bindings", rows: () => PAD_ACTIONS.map((action): Row => {
+      { id: "bindings", name: "Bindings", rows: () => PAD_ACTIONS.filter((a) => a !== "radio" || RADIO_ON).map((action): Row => {
         const ride = !!RIDE_SHARE[action];
         return { kind: "bind", device: "pad", id: `padbind.${action}`, label: PAD_LABELS[action], action, first: 0, count: 2,
           help: () => ({ eb: ride ? "Tuk-tuk" : "Bindings", title: PAD_LABELS[action], viz: "pad", pad: [action],

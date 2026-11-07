@@ -1,6 +1,6 @@
 # Code of conduct
 
-Kong Royale is a game about bananas. Keep it fun.
+Meme Royale is a game about memes. Keep it fun.
 
 - Be kind and assume good intent. Critique the code, not the person.
 - No harassment, slurs, sexual content, or personal attacks, here or toward other players.
