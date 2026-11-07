@@ -82,8 +82,14 @@ export function handMaterials(): HandMats {
   // fur clumps: vertex colours (dark roots → lit tips, darker clump edges) × a fine strand texture along each clump;
   // double-sided: a lifted clump tip shows its underside
   const fur = new THREE.MeshStandardMaterial({ color: "#ffffff", vertexColors: true, map: ft.map, bumpMap: ft.bump, bumpScale: 1.1, roughness: 0.84, metalness: 0, envMapIntensity: 0.55, side: THREE.DoubleSide });
-  // Triple T (actors/which.ts): the same hand in his bark's tones, the forearm's clumps read as bark rather than fur
-  if (KONG_VER === "tt") { glove.color.set("#b49c7e"); fur.color.set("#9a8466"); fur.roughness = 0.92; }
+  // Triple T (actors/which.ts): the same hand in his bark's tones (hi-kong-albedo's mid browns). The forearm's clumps
+  // drop the fur's dark root-to-tip vertex tones and read as shingled bark; the cuff drops the peel's yellow and its
+  // satin sheen and reads as a thicker ring of bark at the wrist
+  if (KONG_VER === "tt") {
+    glove.color.set("#c4ab88");
+    fur.vertexColors = false; fur.color.set("#8f7656"); fur.roughness = 0.92; fur.bumpScale = 1.4;
+    peel.vertexColors = false; peel.map = null; peel.color.set("#735c42"); peel.roughness = 0.88; peel.clearcoat = 0; peel.bumpScale = 1.2;
+  }
   glove.name = "vm-skin"; peel.name = "vm-peel"; fur.name = "vm-fur";
   mats = { glove, peel, fur };
   return mats;

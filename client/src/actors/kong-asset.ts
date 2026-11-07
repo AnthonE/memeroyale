@@ -163,7 +163,11 @@ export function loadKongAsset(renderer: THREE.WebGLRenderer): Promise<KongAsset 
         if (m) return m;
         const t = tier === 0 ? T.hi : T.lo;
         // fur + skin: a satin sheen (the target art's glossy sculpted fur), baked AO in the atlas
-        const body = actorLook(tier === 0
+        // Triple T is bark: matte, no sheen, and his normal / AO slots are flat 4 × 4 stand-ins (triple-t-fit.py bakes only
+        // the albedo), so they are left off rather than sampled. (His head, gear and shoes are empty meshes.)
+        const body = KONG_VER === "tt"
+          ? actorLook(new THREE.MeshStandardMaterial({ map: t[0], roughness: 0.84, metalness: 0, name: tier === 0 ? "kbody" : "kbody-lo" }), { key: "kbody" + tier, spec: 0.35 })
+          : actorLook(tier === 0
           ? new THREE.MeshPhysicalMaterial({ map: t[0], normalMap: t[1], aoMap: t[2], aoMapIntensity: 1.0, roughness: 0.6, metalness: 0, sheen: 0.45, sheenColor: new THREE.Color("#b8834f"), sheenRoughness: 0.45, name: "kbody" })
           : new THREE.MeshStandardMaterial({ map: t[0], normalMap: t[1], aoMap: t[2], roughness: 0.62, metalness: 0, name: "kbody-lo" }), { key: "kbody" + tier, spec: 0.55 });
         const th = tier === 0 ? T.head : t;
