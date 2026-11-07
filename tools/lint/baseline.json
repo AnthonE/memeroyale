@@ -401,9 +401,6 @@
       "const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(1 / 0.6, 1 / 0.6); t.anisotropy = 4; return t;",
       "const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t;"
     ],
-    "client/src/world/pois/lobby-islet/atlas.ts": [
-      "ktx2 ??= new KTX2Loader().setTranscoderPath(assetUrl(\"assets/actors/basis/\")).setWorkerLimit(4).detectSupport(renderer);"
-    ],
     "client/src/world/pois/lobby-islet/paint.ts": [
       "const t = new THREE.CanvasTexture(c);"
     ],
