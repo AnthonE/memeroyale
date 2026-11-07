@@ -17,6 +17,7 @@ const tmp = (f) => path.join(os.tmpdir(), `kong-royale-${f}`);
 /** id: the name --only takes; slow: skipped by --fast (each takes 10 s or more) */
 const checks = [
   { id: "types", name: "types", cmd: "npx", args: ["tsc", "--noEmit"] },
+  { id: "formal", name: "TLA+ models re-verified since the code they describe changed", cmd: "node", args: ["tools/formal/drift.mjs"] },
   { id: "lint", name: "lint", cmd: "npx", args: ["tsx", "tools/lint/check.mts"] },
   { id: "gate", name: "verifier flag and empty-input gates", cmd: "npx", args: ["tsx", "tools/gate.test.mts"] },
   { id: "size", name: "download size (against tools/size-budgets.json)", cmd: "npx", args: ["tsx", "tools/check-size.mts", "--budgets", "tools/size-budgets.json"] },
