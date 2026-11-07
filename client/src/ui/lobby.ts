@@ -20,6 +20,7 @@ import { matchSeats } from "../../../shared/sim/const";
 import { bindingText, glyphFamily, lookText, onLabelsChange, pauseText } from "../settings/labels";
 import { glyph, PB } from "../settings/pad";
 import { device } from "../settings/device";
+import { eloSignIn } from "./elo-signin";
 
 const NAME_KEY = "kr-callsign", MODE_KEY = "kr-mode", DIFF_KEY = "kr-bot-difficulty";
 const NAME_MAX = 14;
@@ -93,6 +94,29 @@ export function createLobby(actions: LobbyActions): LobbyScreen {
   codeInput.setAttribute("aria-label", "Lobby code"); codeInput.maxLength = 6; codeInput.placeholder = "CODE"; codeInput.spellcheck = false; codeInput.autocomplete = "off";
   const btnJoin = h("button", "tn-btn", joinRow); btnJoin.type = "button"; btnJoin.textContent = "Join";
   const frErr = h("div", "tn-play-help tn-play-ferr", fr); frErr.setAttribute("role", "alert");
+
+  // Sign in with Elo Pros (ui/elo-signin.ts): only where the server offers it
+  const eloPop = h("details", "tn-play-pop", id);
+  const eloSum = h("summary", "tn-play-link tn-play-link--sm", eloPop);
+  const eloPanel = h("div", "tn-play-panel", eloPop); eloPanel.setAttribute("role", "group"); eloPanel.setAttribute("aria-label", "Elo Pros account");
+  h("div", "tn-play-plabel", eloPanel).textContent = "Elo Pros";
+  const eloText = h("p", "tn-play-help", eloPanel);
+  const eloBtn = h("button", "tn-btn tn-btn--primary tn-play-wide", eloPanel); eloBtn.type = "button";
+  // (the popup opens inside this click: a browser blocks one opened later)
+  eloBtn.addEventListener("click", () => { if (eloSignIn.state.account) eloSignIn.signOut(); else void eloSignIn.begin(); });
+  const short = (w: string) => w.length > 14 ? `${w.slice(0, 6)}…${w.slice(-4)}` : w;
+  let eloErr: string | null = null;
+  eloSignIn.onChange((st) => {
+    eloPop.hidden = !st.on && !st.account;
+    const who = st.wallet ? short(st.wallet) : st.account ? "your Elo Pros account" : "";
+    eloSum.innerHTML = `<span></span>`; eloSum.querySelector("span")!.textContent = st.account ? "Signed in" : "Sign in";
+    eloText.textContent = st.account ? `Signed in as ${who}. Your callsign is still yours to pick.` : "Sign in with your Elo Pros account: the game knows it's you, and your wallet if you linked one. Your callsign stays yours.";
+    eloBtn.textContent = st.busy ? "Signing in…" : st.account ? "Sign out" : "Sign in";
+    eloBtn.disabled = st.busy;
+    eloBtn.className = st.account ? "tn-btn tn-btn--tertiary tn-play-wide" : "tn-btn tn-btn--primary tn-play-wide";
+    if (st.error && st.error !== eloErr) { eloErr = st.error; showToast(st.error); } else if (!st.error) eloErr = null;
+  });
+  void eloSignIn.init();
 
   const toast = h("div", "tn-toast tn-play-toast", root); toast.setAttribute("role", "status");
 
@@ -210,8 +234,8 @@ export function createLobby(actions: LobbyActions): LobbyScreen {
   });
   paintMode(); paintDifficulty();
 
-  // ---------------- popovers (callsign edit, friends): one open at a time; outside click / Esc / B closes
-  const pops = [csPop, frPop];
+  // ---------------- popovers (callsign edit, friends, Elo Pros): one open at a time; outside click / Esc / B closes
+  const pops = [csPop, frPop, eloPop];
   for (const p of pops) p.addEventListener("toggle", () => {
     if (p.open) {
       for (const q of pops) if (q !== p && q.open) q.open = false;

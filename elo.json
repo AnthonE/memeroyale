@@ -1,0 +1,20 @@
+{
+  "elo": 1,
+  "game": "meme-royale",
+  "version": "0.2.0",
+  "terms": "2026-10-27",
+  "multiplayer": "match",
+  "listing": {
+    "name": "Meme Royale",
+    "wallet": true,
+    "kind": "battle royale — 50 players, solo and trios, in the browser",
+    "blurb": "A 50-player battle royale that runs in your browser. Drop onto the island, loot chests, and be the last one standing while the storm closes in. Play solo or in trios; bots fill any empty seats.",
+    "about": "Meme Royale is a fork of Max Blade's Kong Royale (MIT): a three.js client and a Node server that run the same simulation, with the server deciding every hit, pickup and storm tick. You play as Triple T. There's a firing range with every gun, bot matches that run entirely in your browser, and private lobbies with friends. Sign in with Elo Pros to play as your account; your callsign stays yours.",
+    "tags": ["battle royale", "shooter", "multiplayer", "browser", "open source"],
+    "engine": { "name": "three.js", "license": "MIT" },
+    "made_with": { "parts": ["code", "art"], "note": "Built with AI coding agents (Kong Royale before it, and Claude on this fork); Triple T was modelled with Meshy" },
+    "lang": "en"
+  },
+  "_listing": "Add play_url (and state: live) once a public server is up; art paths go in an art block once the capsule and hero exist.",
+  "_signin": "Sign in with Elo Pros: server/elo.ts (KR_ELO_DOMAINS turns it on) and client/src/ui/elo-signin.ts"
+}

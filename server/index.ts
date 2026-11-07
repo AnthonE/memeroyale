@@ -37,6 +37,7 @@ import { performanceMetrics } from "./perf";
 import { onVoiceJSON, voiceReset, voiceRosters, voiceSeatLeft } from "./voice";
 // (admin lobby) event lobbies the admin runs from /admin + the admin's auth
 import { playerName } from "./names";
+import { eloFromEnv, type Passed } from "./elo";
 import { EVENT_MODE, assignEventSquads, eventJoin, eventPickTeam, eventRoom, eventSeatOf, eventSeated, eventsDirty, initEvents, type EventMember, type EventState } from "./admin/events";
 import { createAdminHttp } from "./admin/http";
 
@@ -118,6 +119,8 @@ const sendJSON = (ws: WebSocket, o: unknown) => { if (ws.readyState === WebSocke
 
 // ---- clients + lobbies
 export interface Client { uid: number; token: string; name: string; lobby: Lobby | null; pid: number; squad: number; sock: Sock; aux: Sock[];
+  /** who signed in with Elo Pros on this connection (server/elo.ts; null = a guest) */
+  elo: Passed | null;
   /** the binary transports: the WebSocket pair (always), the WebTransport session (KR_WT=1, when the client opened one)
    *  and the one that carries the hot path now (the session while it lives, else the pair) */
   ws: WsTransport; wt: WtTransport | null; bin: Transport; lastInputAt: number;
@@ -339,10 +342,37 @@ const kongbot = kongbotDb(root);
 // dev view notes (?dev=annotate) → .kongbot/annotations/*.jsonl (+ Mongo kongbot_annotations)
 const annotations = annotationsApi(root);
 const adminHttp = createAdminHttp({ root, ipOf: (req) => ipOf(req), log });
+// Sign in with Elo Pros (server/elo.ts): off unless KR_ELO_DOMAINS names the page's host
+const elo = eloFromEnv(process.env, log);
+const eloJSON = (res: http.ServerResponse, code: number, o: unknown) => { res.writeHead(code, { "content-type": "application/json", "cache-control": "no-store" }); res.end(JSON.stringify(o)); };
+function eloHttp(req: http.IncomingMessage, res: http.ServerResponse, url: string): boolean {
+  if (url === "/api/elo" && req.method === "GET") { eloJSON(res, 200, { on: !!elo?.key(), game: elo?.game ?? null }); return true; }
+  if (!url.startsWith("/api/elo/")) return false;
+  if (!elo?.key()) { eloJSON(res, 404, { ok: false, error: "sign-in is off" }); return true; }
+  if (url === "/api/elo/nonce" && req.method === "GET") { eloJSON(res, 200, { nonce: elo.nonces.issue() }); return true; }
+  if (url === "/api/elo/signin" && req.method === "POST") {
+    // a pass is under 1 KB: a bigger body is refused before it is read
+    let body = "", over = false;
+    req.setEncoding("utf8");
+    req.on("data", (d: string) => { if (over) return; body += d; if (body.length > 4096) { over = true; eloJSON(res, 413, { ok: false, error: "too big" }); req.destroy(); } });
+    req.on("end", () => {
+      if (over) return;
+      let pass: unknown = null; try { pass = (JSON.parse(body) as { pass?: unknown }).pass; } catch { /* refused below */ }
+      const r = elo.check(pass);
+      if (typeof r === "string") { eloJSON(res, r === "off" ? 503 : 401, { ok: false, error: r }); return; }
+      const { ticket, exp } = elo.tickets.issue(r);
+      log(`elo sign-in: ${r.account}${r.wallet ? ` (${r.wallet})` : ""}`);
+      eloJSON(res, 200, { ok: true, ticket, exp, account: r.account, wallet: r.wallet });
+    });
+    return true;
+  }
+  eloJSON(res, 404, { ok: false, error: "no such route" }); return true;
+}
 const server = http.createServer((req, res) => {
   const url = (req.url || "/").split("?")[0];
   // (admin lobby) /admin, /admin/api/*, /api/event/CODE — before anything else (server/admin/http.ts)
   if (adminHttp.handle(req, res, url)) return;
+  if (eloHttp(req, res, url)) return;
   if (url === "/api/kongbot") {
     // a failed store always answers (the client shows "couldn't send"), never a hung request
     void kongbot.handle(req, res, ipOf(req)).catch((error) => {
@@ -438,7 +468,7 @@ wss.on("connection", (ws, req) => {
 
   const aux: Sock[] = [];
   const wsT = new WsTransport(s, aux, strike);
-  const c: Client = { uid: uidSeq++, token: crypto.randomBytes(16).toString("hex"), name: "MEMER", lobby: null, pid: -1, squad: 0, sock: s, aux, ws: wsT, wt: null, bin: wsT, lastInputAt: Date.now(), away: false, peer: null!, markAt: 0, seat: -1, camAt: 0, program: false, ev: null };
+  const c: Client = { uid: uidSeq++, token: crypto.randomBytes(16).toString("hex"), name: "MEMER", elo: null, lobby: null, pid: -1, squad: 0, sock: s, aux, ws: wsT, wt: null, bin: wsT, lastInputAt: Date.now(), away: false, peer: null!, markAt: 0, seat: -1, camAt: 0, program: false, ev: null };
   wsT.onMessage = (u8, _at, from) => onBinary(c, u8, from);
   c.peer = { pid: -1, invSeq: 0, send: (u8) => sendFrame(c.bin, u8), sendResult: (state) => sendJSON(c.sock.ws, { t: "result", state }) };
   byToken.set(c.token, c);
@@ -493,6 +523,13 @@ function onJSON(c: Client, msg: { t?: unknown; [k: string]: unknown }) {
         break;
       }
       helloAt.set(c, Date.now()); c.lobby?.broadcastJSON(c.lobby.state()); break;
+    }
+    // Sign in with Elo Pros: the ticket the page kept from POST /api/elo/signin names who this connection is
+    case "elo": {
+      const p = elo?.tickets.take(msg.ticket) ?? null;
+      c.elo = p;
+      sendJSON(c.sock.ws, { t: "elo", ok: !!p, wallet: p?.wallet ?? null });
+      break;
     }
     case "create": {
       if (EVENT_MODE) { sendJSON(c.sock.ws, { t: "error", msg: "PRIVATE LOBBIES ARE OFF DURING THIS EVENT — USE YOUR HOST'S LINK" }); break; }

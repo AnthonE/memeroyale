@@ -57,6 +57,7 @@ import { createBlimp } from "./blimp";
 import { createCasterApp, type CasterApp } from "../caster/app";
 import { createSquadVoice, type SquadVoice } from "../voice/squad";
 import { flag } from "../flags";
+import { eloSignIn } from "../ui/elo-signin";
 
 export interface GameBoot { views: Record<string, CamSpec>; modules: WorldModule[] }
 
@@ -231,6 +232,8 @@ export async function startGame(engine: Engine, boot: GameBoot) {
   let roomReason: string | null = null;
   function setBusy(b: boolean, err: string | null = null) { roomReason = null; lobbyState.busy = b; lobbyState.error = err; lobby.update(lobbyState); }
   /** connect for this session; false when it failed or a newer session superseded it while connecting */
+  /** a fresh connection names who signed in with Elo Pros (ui/elo-signin.ts), before it joins anything */
+  function sendElo(l: Link) { const ticket = eloSignIn.ticket(); if (ticket) l.sendJSON({ t: "elo", ticket }); }
   async function online(generation: number) {
     if (link && !link.offline) return true;
     setBusy(true);
@@ -239,7 +242,7 @@ export async function startGame(engine: Engine, boot: GameBoot) {
       if (old) { old.onClose = () => {}; old.close(); }
       const connected = await connectWs(wsUrl);
       if (generation !== sessionGeneration) { connected.close(); return false; }
-      link = connected; wire(link);
+      link = connected; wire(link); sendElo(link);
       lobbyState.offline = false; setBusy(false); return true;
     } catch {
       if (generation !== sessionGeneration) return false;
@@ -294,6 +297,7 @@ export async function startGame(engine: Engine, boot: GameBoot) {
     if (reconnect && (m.t === "lobby" || m.t === "match")) stopReconnect();   // back in: the room or our seat answered
     if (staleMatch && (m.t === "phase" || m.t === "result")) return;
     if ((m.t === "rtc" || m.t === "voiceroster") && voice?.onJSON(m)) return;
+    if (m.t === "elo") { if (m.ok === false) eloSignIn.refused(); return; }
     if (m.t === "result") {
       const state = m.state as OutcomeState | undefined;
       if (!cm || !render || !state || state.pid !== cm.me || !completedResult(state)) return;
@@ -469,7 +473,7 @@ export async function startGame(engine: Engine, boot: GameBoot) {
     // a fresh ClientMatch + renderer on the new link (the frozen match goes; the card stays up until the server answers)
     link = l; staleMatch = false;
     exitToRoom();
-    l.sendJSON({ t: "hello", name: lobby.name }); l.sendJSON({ t: "join", code: r.code, tok: playerTok });
+    sendElo(l); l.sendJSON({ t: "hello", name: lobby.name }); l.sendJSON({ t: "join", code: r.code, tok: playerTok });
     // no answer at all (a half-open path): drop this try and go again
     r.timer = window.setTimeout(() => { if (reconnect === r && link === l) { link = null; l.onClose = () => {}; l.onJSON = () => {}; l.close(); reconnectLater(generation); } }, 8000);
   }
