@@ -57,6 +57,8 @@ import { TukFx } from "./tuk-fx";
 import { tukControls } from "./tuk-hud";
 import { TukThru } from "./tuk-thru";
 import { RADIO_ON, STATIONS, onAir, stationName } from "../audio/radio";
+import { Announcer } from "../audio/announcer";
+import { PHASE_REF } from "../../../shared/sim/storm";
 import { TUK, VE, VF, VKind, VS, freeSeat, specOf, vehicleInReach, vehPoint } from "../../../shared/sim/vehicle";
 import { HELI, TOP_BANANA, gunAngles, gunOf, padSlope } from "../../../shared/sim/heli";
 import { KILL_BOMB, KILL_GUN, KILL_HELI, KILL_TUK, VK } from "../../../shared/net/proto";
@@ -550,7 +552,10 @@ export class GameRender implements EventSink {
     if (this.hud.killfeed.length > 6) this.hud.killfeed.shift();
     this.range?.onKill(killer, victim);
     this.spec.onKill(this.cm, killer, victim, final);   // the spectator bar / list tallies
-    if (killer === me && victim !== me && this.cm.remotes[victim]?.team !== this.cm.pred.team && this.cm.phase !== 0) this.kills++;
+    if (killer === me && victim !== me && this.cm.remotes[victim]?.team !== this.cm.pred.team && this.cm.phase !== 0) {
+      this.kills++;
+      if (this.voLive && ++this.streak === 3) this.vo.say("killing_spree"); else if (this.voLive && this.streak === 5) this.vo.say("unstoppable");
+    }
     if (killer === me && victim !== me) gamepads.rumble(0.35, 0.6, 140);
     // a special kill of mine pops its medals (game/accolades.ts → ui/medals.ts); who got me is remembered.
     // None in the warm-up (nothing counts yet — like the kill counter) or on the range
@@ -566,6 +571,9 @@ export class GameRender implements EventSink {
       this.resCountdown = final ? null : resurgenceDelay(this.cm.mode, this.cm.storm.phase);
       if (!final && this.cm.phase !== 0) this.redeploysUsed++;
       this.sfx("elim:self");
+      this.streak = 0;
+      // out for good, taken by the storm, or knocked: the announcer has a word for each
+      if (this.voLive) this.vo.say(final ? "logged_off" : wid === "storm" ? "touch_grass" : "skill_issue", undefined, true);
       this.stopAllLoops();
       this.addTrauma(0.5);
       if (this.range) { this.resCountdown = 3; this.announce("KNOCKED OUT", "back on the firing line in a moment", "info"); }
@@ -576,6 +584,11 @@ export class GameRender implements EventSink {
   }
   // ---- accolades
   private readonly acc = new AccoladeTracker();
+  /** the announcer's voice (audio/announcer.ts): only what happens to me, never in the warm-up or on the range */
+  private readonly vo = new Announcer((s) => this.sfx(s));
+  /** my kills since I last went down (3 = a killing spree, 5 = unstoppable); the top-ten / top-three calls, once a match */
+  private streak = 0; private calledTop10 = false; private calledTop3 = false;
+  private get voLive() { return !this.range && this.cm.phase !== 0; }
   private readonly accOut: Array<{ id: AccoladeId; sub: string }> = [];
   private accolades(victim: number, cause: number) {
     const now = performance.now(), out = this.acc.kill(this.cm, victim, cause, now, this.name(victim).toUpperCase(), this.accOut);
@@ -586,6 +599,11 @@ export class GameRender implements EventSink {
     // (and the kill feed's headshot glyph, which no kill set before)
     if (out.some((a) => a.id === "headshot")) { const k = this.hud.killfeed[this.hud.killfeed.length - 1]; if (k?.meKiller) k.head = true; }
     this.sfx(out.some((a) => BIG.has(a.id)) ? "ui:medal-big" : "ui:medal");
+    // the announcer calls the biggest medal of the kill (a multi-kill over the style medals)
+    const has = (id: AccoladeId) => out.some((a) => a.id === id);
+    const line = has("rampage") ? "rampage" : has("quad") ? "overkill" : has("triple") ? "triple_kill" : has("double") ? "double_kill"
+      : has("bananasplit") ? "ratioed" : has("topbanana") ? "brrrt" : has("headshot") ? "headshot" : has("longshot") ? "long_shot" : has("payback") ? "payback" : null;
+    if (line) this.vo.say(line, now);
   }
   chest(id: number, by: number) {
     const c = this.cm.chests[id];
@@ -613,6 +631,7 @@ export class GameRender implements EventSink {
       const k = this.itemKind.get(id), item = this.pickupItems.get(id);
       if (item) this.hud.pickup = { at: performance.now(), label: item.kind === IK.Cash ? `$${(item.count * 10).toLocaleString("en-US")} CLOUT` : item.kind === IK.Weapon ? (mythicOf(item.rarity)?.name ?? WEAPON_DEFS[WEAPONS[item.sub]].name) : item.kind === IK.Consumable ? CONSUMABLE_DEFS[CONSUMABLES[item.sub]].name : `${AMMO_TYPES[item.sub].toUpperCase()} AMMO` };
       this.sfx(k === IK.Ammo || k === IK.Cash ? "pickup:ammo" : k === IK.Consumable ? "pickup:heal" : "pickup:weapon", { volume: 0.8 });
+      if (item && item.kind === IK.Cash && item.count * 10 >= 1000 && this.voLive) this.vo.say("clout_acquired");
       const my = item && item.kind === IK.Weapon ? mythicOf(item.rarity) : null;
       if (my) this.announce(`MYTHIC · ${my.name}`, `${POIS.find((q) => q.id === my.poi)?.name ?? ""} SIGNATURE ${WEAPON_DEFS[my.weapon].name} — hits harder than any legendary`, "victory");
     }
@@ -677,13 +696,13 @@ export class GameRender implements EventSink {
   }
   storm(phase: number, shrinking: boolean) {
     if (phase === 0) return;
-    if (shrinking) { this.announce("THE STORM IS CLOSING IN", `phase ${phase} — get inside the white circle`, "storm"); this.sfx("storm:shrink"); }
-    else this.announce(`STORM PHASE ${phase}`, "next safe zone marked on the map (M)", "storm");
+    if (shrinking) { this.announce("THE STORM IS CLOSING IN", `phase ${phase} — get inside the white circle`, "storm"); this.sfx("storm:shrink"); if (phase === 1 && !this.range) this.vo.say("feed_closing"); }
+    else { this.announce(`STORM PHASE ${phase}`, "next safe zone marked on the map (M)", "storm"); if (phase === PHASE_REF.length - 1 && !this.range && this.deadAt < 0) this.vo.say("final_circle"); }
     this.kits.storm.flash(0.6);
   }
   announceCode(code: number, a: number, b: number) {
     switch (code) {
-      case ANN.MatchStart: this.announce("THE FEED · FLIGHT DEPARTING", `the ramp opens in a moment · ${bindingText("ping", 0)} pings where you'll drop`, "info"); break;
+      case ANN.MatchStart: this.announce("THE FEED · FLIGHT DEPARTING", `the ramp opens in a moment · ${bindingText("ping", 0)} pings where you'll drop`, "info"); if (!this.range) this.vo.say("drop_in_chat"); break;
       case ANN.PlaneOpen: {
         this.announce("RAMP OPEN — JUMP!", "SPACE to jump · steer with the mouse · SHIFT to dive · X glider", "info"); this.sfx("ui:countdown-go");
         this.cm.planePos(PP); this.play("plane:ramp", PP.x, PLANE_ALT, PP.z, 1);
@@ -697,13 +716,13 @@ export class GameRender implements EventSink {
         if (this.deadAt >= 0 && this.resCountdown != null && !this.range && this.cm.phase !== 0) this.resCountdown = null;
         break;
       }
-      case ANN.Victory: { const win = a === this.cm.pred.team; if (win) { this.announce("MEME ROYALE VICTORY", "#1", "victory"); this.sfx("ui:victory"); this.placement = 1; this.victoryAt = performance.now(); void fullKongMaps(); this.onVictory?.(); } else if (this.deadAt < 0) { this.placement = 2; this.onEliminated?.(); } else if (this.spec.active(this.cm)) this.spectatorVictory(a); break; }
+      case ANN.Victory: { const win = a === this.cm.pred.team; if (win) { this.announce("MEME ROYALE VICTORY", "#1", "victory"); this.sfx("ui:victory"); this.vo.say("game_over_you_win", undefined, true); this.vo.say("main_character"); this.placement = 1; this.victoryAt = performance.now(); void fullKongMaps(); this.onVictory?.(); } else if (this.deadAt < 0) { this.placement = 2; this.onEliminated?.(); } else if (this.spec.active(this.cm)) this.spectatorVictory(a); break; }
       // (economy) bounties and buy-backs: a / b carry teams (or kong ids) — this squad's news only
       case ANN_ECON.Bounty: { const t = this.cm.pred.team; if (a === (t & 0xff)) { this.announce("BOUNTY CONTRACT ACTIVE", "the marked squad is on your map — 90 s", "kill"); this.sfx("ui:countdown"); } else if (b === (t & 0xff)) { this.announce("YOU HAVE A BOUNTY", "a squad is hunting you — survive 90 s for $500", "warn"); this.sfx("storm:shrink"); } break; }
       case ANN_ECON.BountyDone: { const t = this.cm.pred.team; if (a === (t & 0xff)) { this.announce("BOUNTY COMPLETE", "+$1,500 each · the reward dropped where they fell", "victory"); this.sfx("ui:victory"); } else if (b === (t & 0xff)) this.announce("YOUR BOUNTY WAS CLAIMED", "the hunters got one of you", "warn"); break; }
       case ANN_ECON.BountyOver: { const t = this.cm.pred.team; if (a === (t & 0xff)) this.announce("BOUNTY EXPIRED", "the mark got away", "info"); else if (b === (t & 0xff)) this.announce("BOUNTY SURVIVED", "+$500 for every one of you still standing", "victory"); break; }
       case ANN_ECON.BuyBack: { const q = this.cm.remotes[a]; if (a === this.cm.me || (q && q.team === this.cm.pred.team)) { this.announce(`${this.name(a)} IS BACK`, `bought back by ${this.name(b)} — redeploying`, "info"); this.sfx("ui:resurgence"); } break; }
-      case ANN.SquadEliminated: if (a === this.cm.pred.team) { this.placement = b + 1; this.totalSquads = Math.max(this.totalSquads, b + 1); this.resCountdown = null; if (this.cm.mode === "trios") this.announce("SQUAD ELIMINATED", `#${b + 1} · better luck next drop`, "warn"); this.onEliminated?.(); } break;
+      case ANN.SquadEliminated: if (a === this.cm.pred.team) { this.vo.say("game_over_you_lose", undefined, true); this.placement = b + 1; this.totalSquads = Math.max(this.totalSquads, b + 1); this.resCountdown = null; if (this.cm.mode === "trios") this.announce("SQUAD ELIMINATED", `#${b + 1} · better luck next drop`, "warn"); this.onEliminated?.(); } break;
     }
   }
   /** out and watching when a squad wins: name the winners on the banner (the server points every spectator's camera
@@ -1897,6 +1916,7 @@ export class GameRender implements EventSink {
     }
     this.tukFx.update(dt);
     this.kits.audio.radio?.frame();
+    this.vo.frame();
     this.bananas.update(dt);
   }
   /** the radio's station banner (ui/hud.ts .kr-radio): `st` tuned in at match time `clock` — the station
@@ -2400,6 +2420,11 @@ export class GameRender implements EventSink {
     h.phase = cm.phase === 0 ? "warmup" : cm.phase === 1 ? (p.st === PS.Plane ? "plane" : "drop") : cm.phase === 2 ? (p.st === PS.Freefall || p.st === PS.Glide ? "drop" : "play") : "results";
     h.mode = cm.mode; h.hp = Math.max(0, Math.round(p.hp)); h.shield = Math.max(0, Math.round(p.shield));
     h.alive = cm.alive; h.squadsAlive = cm.squads;
+    // the announcer: my squad still in at the top ten, then the top three (once each; none in the warm-up or on the range)
+    if (cm.phase === 2 && !this.range && this.placement === 0 && cm.squads > 1) {
+      if (!this.calledTop3 && cm.squads <= 3) { this.calledTop3 = this.calledTop10 = true; this.vo.say("top_three"); }
+      else if (!this.calledTop10 && cm.squads <= 10) { this.calledTop10 = true; this.vo.say("top_ten"); }
+    }
     // the pill clock counts down whatever is next: warm-up → plane, then the storm
     h.stormTimer = cm.phase === 0 ? cm.warmupLeft() : s.timer; h.stormShrinking = cm.phase >= 1 && s.shrinking; h.inStorm = inside > 0.5 && cm.phase >= 1 && s.phase >= 1; h.stormPhase = s.phase;
     h.stormTotal = cm.phase === 0 ? WARMUP_S : cm.plan ? stageLength(cm.plan, s) : 60;

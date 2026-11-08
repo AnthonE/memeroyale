@@ -5,6 +5,7 @@
 //   • no `pos`  → it's YOU (first-person: 2D, stereo, your own gun gets sub + mechanics + ducking)
 //   • `pos`     → it's in the world (HRTF-panned, distance curves, occlusion, speed-of-sound delay, terrain echoes)
 //   • loops need `loopId`; calling play() again with the same loopId UPDATES pos/volume/rate (no restart)
+import { VO_LINES } from "./vo-lines";
 import type { Bus } from "./mixer";
 import { WEAPONS, type WeaponId } from "../../../shared/world/map";
 import type { Surface } from "../../../shared/world/colliders";
@@ -478,6 +479,9 @@ export const BANK: Record<string, EventDef> = {
   // (it rides on the confirm, it never masks it); the vehicle medals and the multi-kills get the big one
   "ui:medal": S({ bus: "ui", db: 2, layers: [{ g: "ui/medal", delay: 0.15 }], gap: 0.3 }),
   "ui:medal-big": S({ bus: "ui", db: 3.5, layers: [{ g: "ui/medal-big", delay: 0.15 }], gap: 0.3 }),
+  // the announcer (vo/<line>, levelled to -15 LUFS-I, category vo): a little under the medal sting it follows, and the
+  // rest of the mix dips 4 dB under it so a line reads over a fight
+  ...Object.fromEntries(VO_LINES.map((l) => [`vo:${l}`, S({ bus: "ui", db: -4, layers: [{ g: `vo/${l}`, delay: 0.25 }], gap: 1, cueDuck: [4, 1.2] })])),
   whizz: S({ bus: "p3", db: -6, layers: [{ g: "fx/whizz", pitch: 1.0 }], gap: 0.04, cap: 6, prio: 2, burst: { win: 0.03, max: 2, radius: 1e9 }, spatial: { ref: 3, max: 30, rolloff: 1.0, hrtf: 30 } }),
   "fx:tinnitus": S({ bus: "ui", db: -16, layers: [{ g: "fx/tinnitus" }] }),
   // the ZIPLINE (shared/sim/zipline.ts): the trolley's steel wheels on the cable, a LOOP whose rate

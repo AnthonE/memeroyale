@@ -1,6 +1,7 @@
 // AUDIO CONTRACT. Gameplay calls these; the engine in ./index.ts voices them.
 import type { Surface } from "../../../shared/world/colliders";
 import type { WeaponId } from "../../../shared/world/map";
+import type { VoLine } from "./vo-lines";
 
 export type Sfx =
   | `fire:${WeaponId}` | `reload:${WeaponId}` | `equip` | `dryfire`
@@ -17,6 +18,8 @@ export type Sfx =
   // a special kill's medal pops (ROADKILL, HEADSHOT, DOUBLE KILL … client/src/ui/medals.ts); -big: the
   // vehicle medals and the multi-kills
   | `ui:medal` | `ui:medal-big`
+  // the announcer's lines (audio/announcer.ts queues them; never two at once)
+  | `vo:${VoLine}`
   // the server says a hit we predicted (its tick already played) landed on a SHIELD — the shield's glassy
   // crackle alone, no second tick
   | `hit:shield:confirm`

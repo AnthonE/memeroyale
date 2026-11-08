@@ -16,6 +16,12 @@ The player, Triple T, is the Gates and oneshot character, commissioned from Mesh
 operator. He is **not covered by the MIT licence**: play and modify the game with him, but ask before reusing him
 anywhere else. Files: `public/assets/actors/tt/`, `tools/actors/src/triple-t.glb`.
 
+## The announcer
+
+The announcer's voice, Kallixis, was recorded with ElevenLabs on the Elo Pros operator's paid plan: fifteen lines by
+`tools/audio/vo.mjs`, the rest taken from oneshot's announcer. Like Triple T, it is **not covered by the MIT licence**.
+Files: `public/assets/audio/kr/vo/`.
+
 ## Ours
 
 | What | Licence | Files |

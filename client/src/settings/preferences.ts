@@ -14,6 +14,8 @@ export interface Preferences {
   radio: number;
   /** "full" = the authored mix; "reduced" lowers louder events for quiet listening */
   dynamicRange: "full" | "reduced";
+  /** the announcer's voice lines (audio/announcer.ts) */
+  announcer: boolean;
   /** accessibility: no decorative camera / HUD motion; HUD and settings-text size multipliers (1..1.5) */
   reducedMotion: boolean; hudScale: number; uiScale: number;
   /** the minimap turns with you so
@@ -25,10 +27,10 @@ export interface Preferences {
 }
 export const PREFERENCE_KEY = "kr-preferences-v1";
 export function defaults(): Preferences {
-  return { sensitivity: 1, adsSensitivity: 1, scopeSensitivity: 1, invertY: false, aimToggle: false, crouchToggle: false, sprintToggle: false, autoSprint: false, master: 0.9, combat: 1, ui: 1, ambience: 1, radio: 1, dynamicRange: "full", reducedMotion: false, hudScale: 1, uiScale: 1, minimapRotate: false, binds: structuredClone(DEFAULT_BINDS), pad: padDefaults() };
+  return { sensitivity: 1, adsSensitivity: 1, scopeSensitivity: 1, invertY: false, aimToggle: false, crouchToggle: false, sprintToggle: false, autoSprint: false, master: 0.9, combat: 1, ui: 1, ambience: 1, radio: 1, dynamicRange: "full", announcer: true, reducedMotion: false, hudScale: 1, uiScale: 1, minimapRotate: false, binds: structuredClone(DEFAULT_BINDS), pad: padDefaults() };
 }
 const RANGES = { sensitivity: [0.2, 3], adsSensitivity: [0.2, 2], scopeSensitivity: [0.2, 2], master: [0, 1], combat: [0, 1], ui: [0, 1], ambience: [0, 1], radio: [0, 1], hudScale: [1, 1.5], uiScale: [1, 1.5] } as const;
-const FLAGS = ["invertY", "aimToggle", "crouchToggle", "sprintToggle", "autoSprint", "reducedMotion", "minimapRotate"] as const;
+const FLAGS = ["invertY", "aimToggle", "crouchToggle", "sprintToggle", "autoSprint", "reducedMotion", "minimapRotate", "announcer"] as const;
 
 /** Reject malformed storage and duplicate bindings instead of creating ambiguous actions. */
 export function normalizePreferences(raw: unknown): Preferences {
@@ -59,7 +61,7 @@ export type PreferenceSection = "controls" | "controller" | "audio" | "accessibi
 const SECTION_KEYS: Record<PreferenceSection, Array<keyof Preferences>> = {
   controls: ["sensitivity", "adsSensitivity", "scopeSensitivity", "invertY", "aimToggle", "crouchToggle", "sprintToggle", "autoSprint", "binds"],
   controller: ["pad"],
-  audio: ["master", "combat", "ui", "ambience", "radio", "dynamicRange"],
+  audio: ["master", "combat", "ui", "ambience", "radio", "dynamicRange", "announcer"],
   accessibility: ["reducedMotion", "hudScale", "uiScale", "minimapRotate"],
 };
 
