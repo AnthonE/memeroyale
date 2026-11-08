@@ -19,30 +19,28 @@ export const PLAYER_R = 0.42;                // capsule radius (m)
 export const PLAYER_H = 1.9;                 // standing height
 export const CROUCH_H = 1.3;
 export const EYE_STAND = 1.65;
-/** BULLET HITBOX: fitted to the real skinned kong (≥ 95 % of the silhouette inside from 8 azimuths, ≤ 0.15 m
- * outside it). Local frame of the target: origin at the feet, −z = facing (the recorded yaw), +x = its right, standing heights in metres. The kong is
- * hunched with the head FORWARD of the trunk, ~1.5 m wide across the hanging arms and ~0.9 m deep, so the hitbox is a
- * head sphere offset forward + a stack of elliptic cylinders (the arms are inside the wide band). Crouched (h < PLAYER_H):
- * heights above `crouch[0]` drop by `crouch[1]`, below it they scale by crouch[2]. Hit-testing only — movement keeps
- * PLAYER_R / PLAYER_H. Mutable on purpose: the fit tool tunes it in-process; the game never writes it. */
+/** BULLET HITBOX: fitted to Triple T, the player model (tools/actors/hitbox-fit.mts: the real animator poses his skinned
+ * mesh idle, walking, running, sprinting, strafing, backpedalling and crouched at three aim pitches; this shape is the
+ * coordinate-descent minimum of shots landing > 0.15 m off his drawn body, holding ~95 % of his silhouette hittable and
+ * most of his head a head hit). Kong Royale's gorilla fit, kept on him, put 30 % of hits off his body and 55 % of
+ * headshots off his head. Local frame of the target: origin at the feet, −z = facing (the recorded yaw), +x = its
+ * right, standing heights in metres. A head sphere + a stack of elliptic cylinders. Crouched (h < PLAYER_H): heights
+ * above `crouch[0]` drop by `crouch[1]`, below it they scale by crouch[2]. Hit-testing only — movement keeps
+ * PLAYER_R / PLAYER_H. Mutable on purpose: the fit tool scores candidates in-process; the game never writes it. */
 export const HITBOX = {
-  /** head sphere: centre height, forward offset (−z), radius. Fitted to the kong model (v2 — its head
-   *  sits between the shoulders at idle but drops ~0.3 m and leans forward when it runs: the drawn face of a moving kong
-   *  sits at 1.42 m, 0.46 m forward — so the sphere is fitted on the run / strafe poses too, not only idle / crouch) */
-  head: { y: 1.6, z: -0.17, r: 0.32 },
+  /** head sphere: centre height, forward offset (−z), radius (his head and neck; the run leans it forward) */
+  head: { y: 1.46, z: -0.08, r: 0.32 },
   /** body parts: vertical elliptic cylinders [y0, y1, centre x, centre z, half-width x, half-depth z] */
   parts: [
-    [-0.03, 0.55, 0, -0.07, 0.49, 0.33],   // legs + the big high-tops
-    [0.47, 0.91, 0, -0.14, 0.63, 0.38],    // hips + shorts + the fists hanging beside them
-    [0.79, 1.41, 0, -0.04, 0.7, 0.38],     // chest + upper arms (1.4 m across the arms)
-    [1.21, 1.62, 0, 0.02, 0.6, 0.33],      // shoulders / deltoids
-    [0.57, 1.08, 0.58, -0.23, 0.18, 0.22], // right forearm + fist
-    [0.57, 1.12, -0.58, -0.23, 0.2, 0.2],  // left forearm + fist
+    [-0.03, 0.46, 0, -0.05, 0.44, 0.6],   // legs (deep: the run's stride swings them fore and aft)
+    [0.45, 1.12, 0, -0.1, 0.39, 0.47],    // hips, trunk and the arms on the gun
+    [1.12, 1.16, 0, 0.07, 0.28, 0.37],    // (a sliver behind the chest: what the fit kept of its own start)
+    [1.2, 1.36, 0, -0.1, 0.14, 0.36],     // shoulders, under the head
   ] as number[][],
   /** crouch remap: above y0 drop by dy, below it scale by k */
-  crouch: [0.5, 0.3, 0.4] as number[],
+  crouch: [0.5, 0.24, 0.48] as number[],
   /** a head hit wins over a body entry up to this far in front of it (m): the face in front of the shoulders (and the
-   *  running kong's face, low in front of its chest) */
+   *  running player's face, low in front of the chest) */
   headBias: 0.16,
 };
 export const STEP_H = 0.55;                  // auto-step height

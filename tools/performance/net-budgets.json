@@ -78,10 +78,22 @@
         250
       ],
       "profiles": [
-        "jitter20",
-        "loss1"
+        "jitter20"
       ],
       "why": "no hit marker the server rejects on slow links either: while the link stalls, or above about 220 ms of RTT on a rough link, the client shows no predicted hit and the server's verdict draws the marker (ClientMatch.linkSlow)"
+    },
+    {
+      "id": "ghostHits250loss1",
+      "metric": "ghost",
+      "max": 1,
+      "rtt": [
+        151,
+        250
+      ],
+      "profiles": [
+        "loss1"
+      ],
+      "why": "as ghostHits250, but one ghost is allowed on 1% loss: a shot whose own input is lost is resent about 1.25 RTT later, so the server runs it past the 350 ms rewind cap and judges it against the target's pose there. The client cannot know at fire time. Measured 2026-11-08 at AR / 250 ms (1 of 69 predicted hits) once the hitbox was fitted to Triple T; Kong Royale's 1.4 m-wide gorilla box had still covered that pose"
     },
     {
       "id": "instantMarkers",
