@@ -808,7 +808,7 @@ export async function startGame(engine: Engine, boot: GameBoot) {
         shopStorm = storming ? Math.min(shopStorm + cm.storm.dps * dt, cm.storm.dps * 1.5 + 1) : 0;
         const drop = shopHs - hs, stormTick = storming && p.shield >= shopShield - 0.01 && drop <= shopStorm + 1;
         if (drop > 0.5 && stormTick) shopStorm = Math.max(0, shopStorm - drop);
-        if (drop > 0.5 && !stormTick) { setShopOpen(false); audio.play("hurt", { volume: 0.5 }); render.announce("UNDER FIRE", "the banana stand closed", "warn"); }
+        if (drop > 0.5 && !stormTick) { setShopOpen(false); audio.play("hurt", { volume: 0.5 }); render.announce("UNDER FIRE", "the merch table closed", "warn"); }
         else if (!st || p.hp <= 0 || p.st !== PS.Ground || Math.hypot(st.x - p.x, st.z - p.z) > 6.5) setShopOpen(false); else shop.update(render.shopView());
         shopHs = hs; shopShield = p.shield;
       }

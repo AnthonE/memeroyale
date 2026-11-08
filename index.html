@@ -426,7 +426,7 @@
     // ---- Learn controls: a quick card with the real bindings (the full guide lives in the game once it is ready). Loading
     // carries on underneath; if the island is ready while the card is open, the screen waits until it is closed.
     var GUIDE = [["Move", ["fwd", "left", "back", "right"]], ["Sprint · dive", "sprint"], ["Crouch · slide", "crouch"], ["Jump · mantle", "jump"],
-      ["Open · take", "use"], ["Reload", "reload"], ["Aim", "aim"], ["Fire · use item", "fire"], ["Item slots", "slots"], ["Throw banana bomb", "throw"],
+      ["Open · take", "use"], ["Reload", "reload"], ["Aim", "aim"], ["Fire · use item", "fire"], ["Item slots", "slots"], ["Throw ratio bomb", "throw"],
       ["Map · place a pin", "map"], ["Inventory", "inventory"], ["Mark the spot", "ping"], ["Deploy glider", "glider"]];
     function renderGuide() {
       rows.replaceChildren();
@@ -540,7 +540,7 @@
     addEventListener("error", function (e) { if (!done && ((e.target && e.target.tagName === "SCRIPT") || (!window.__kr && e.error))) fail(); }, true);
     addEventListener("unhandledrejection", function () { if (!done && !window.__kr) fail(); });
     var names = { boot: "Loading the island", terrain: "Raising the island", atmos: "Painting the sky", water: "Filling the lagoon", veg: "Growing the jungle",
-      "lobby-islet": "Building the lobby island", afterBuild: "Settling the sand", showcase: "Waking the Memes", "weapons-showcase": "Peeling the bananas",
+      "lobby-islet": "Building the lobby island", afterBuild: "Settling the sand", showcase: "Waking the Memes", "weapons-showcase": "Buffering the memes",
       "gameplay-stage": "Loading the island", game: "Waking the Memes", settle: "Almost there", ready: "Ready" };
     // the game's own boot steps (client/src/game/index.ts gameStage)
     var gameNames = { world: "Building the collision world", kits: "Unpacking the crates", "prewarm:assets": "Stocking the chests",

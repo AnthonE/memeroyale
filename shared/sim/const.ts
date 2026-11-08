@@ -237,15 +237,15 @@ export interface ConsumableDef { id: ConsumableId; name: string; hp: number; shi
   buffS?: number; speedMul?: number; jumpMul?: number }
 export const CONSUMABLE_DEFS: Record<ConsumableId, ConsumableDef> = {
   // 25 × a full stack of 4 = one slot fills one bar; hold fire to chain the next use
-  "leaf-bundle":   { id: "leaf-bundle",   name: "LEAF BUNDLE",     hp: 25,  shield: 0,   useS: 2.0, stack: 4 },
-  "smoothie":      { id: "smoothie",      name: "BANANA SMOOTHIE", hp: 0,   shield: 25,  useS: 2.0, stack: 4 },
-  "golden-banana": { id: "golden-banana", name: "GOLDEN BANANA",   hp: 100, shield: 100, useS: 4.5, stack: 1 },
+  "leaf-bundle":   { id: "leaf-bundle",   name: "BAND-AID.EXE",     hp: 25,  shield: 0,   useS: 2.0, stack: 4 },
+  "smoothie":      { id: "smoothie",      name: "UPVOTE", hp: 0,   shield: 25,  useS: 2.0, stack: 4 },
+  "golden-banana": { id: "golden-banana", name: "GOLDEN POST",   hp: 100, shield: 100, useS: 4.5, stack: 1 },
   // eat it (1 s) → 8 s of ~1.85× run speed and a
   // jump that goes twice as high (1.2 → 2.3 m) and much further; eating another one refreshes the timer
-  "red-banana":    { id: "red-banana",    name: "RED BANANA",      hp: 0,   shield: 0,   useS: 1.0, stack: 2, buffS: 8, speedMul: 1.85, jumpMul: 1.38 },
+  "red-banana":    { id: "red-banana",    name: "HYPE",      hp: 0,   shield: 0,   useS: 1.0, stack: 2, buffS: 8, speedMul: 1.85, jumpMul: 1.38 },
   // --- throwables and placeables --- (no heal: G / fire throws the bomb, fire places the wall — player.ts stepHands)
-  "banana-bomb":   { id: "banana-bomb",   name: "BANANA BOMB",     hp: 0,   shield: 0,   useS: 0,   stack: 4 },
-  "crate-wall":    { id: "crate-wall",    name: "COCONUT CRATE WALL", hp: 0, shield: 0,  useS: 0,   stack: 1 },
+  "banana-bomb":   { id: "banana-bomb",   name: "RATIO BOMB",     hp: 0,   shield: 0,   useS: 0,   stack: 4 },
+  "crate-wall":    { id: "crate-wall",    name: "FIREWALL", hp: 0, shield: 0,  useS: 0,   stack: 1 },
 };
 /** the BANANA BOMB: a frag grenade with a 3 s peel fuse that starts burning when you
  * pull it (G / fire with it in hand) — hold to cook, let go to throw; it bounces and rolls; area damage with falloff and

@@ -103,7 +103,7 @@ export const HELI = {
   GUN_SPREAD: 1.6, GUN_SPREAD_HOT: 1.5,
 } as const;
 /** TOP BANANA's rounds (the damage shape shared/sim/player.ts pelletDamage reads; hitscan like the other guns) */
-export const TOP_BANANA = { name: "TOP BANANA", dmg: 14, headMul: 1.5, falloff: [60, 160, 0.6] as [number, number, number] };
+export const TOP_BANANA = { name: "BRRRT", dmg: 14, headMul: 1.5, falloff: [60, 160, 0.6] as [number, number, number] };
 
 /** the helicopter's shape for vehicle.ts: seats in the body frame [right, up, back] (the rider's feet), exits, panels.
  * 0 = the pilot, 1 = the door gunner behind TOP BANANA (left door), 2 = the passenger in the right door (own guns). */

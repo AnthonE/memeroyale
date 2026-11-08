@@ -40,7 +40,7 @@ export class BuffOverlay {
     const img = document.createElement("img"); img.src = itemIconUrl("red-banana"); img.alt = "";
     const col = document.createElement("div"); col.className = "col";
     const row = document.createElement("div"); row.className = "row";
-    const name = document.createElement("span"); name.textContent = "RED BANANA";
+    const name = document.createElement("span"); name.textContent = "HYPE";
     const secs = this.secs = document.createElement("b");
     row.append(name, secs);
     const track = document.createElement("div"); track.className = "track";

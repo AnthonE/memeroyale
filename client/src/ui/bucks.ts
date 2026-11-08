@@ -13,7 +13,7 @@ let styled = false;
 export function injectBucksCss() { if (!styled) { styled = true; addCss("kr-ui-bucks", CSS); } }
 
 /** the coin as inline HTML (sized by the surrounding font) */
-export const coinHtml = () => `<i class="kr-bb" role="img" aria-label="Banana Bucks"></i>`;
+export const coinHtml = () => `<i class="kr-bb" role="img" aria-label="Clout"></i>`;
 /** an amount: the coin + 1,500 */
 export const bucksHtml = (n: number) => `${coinHtml()}${Math.round(n).toLocaleString("en-US")}`;
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]!));

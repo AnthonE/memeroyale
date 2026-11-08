@@ -54,8 +54,8 @@ export function installKongbot(engine: Engine) {
   setInterval(sampleTrail, 1000 / TRAIL_HZ);
   const style = document.createElement("style"); style.textContent = CSS; document.head.appendChild(style);
   const bar = document.createElement("div"); bar.className = "kb-bar"; bar.hidden = true;
-  bar.innerHTML = `<div class="kb-title"><span>🦍 KONGBOT · BUG REPORT</span><span>ENTER SEND · ESC CANCEL</span></div>
-    <input class="kb-in" maxlength="2000" spellcheck="true" autocomplete="off" placeholder="/kongbot what went wrong?">
+  bar.innerHTML = `<div class="kb-title"><span>BUG REPORT</span><span>ENTER SEND · ESC CANCEL</span></div>
+    <input class="kb-in" maxlength="2000" spellcheck="true" autocomplete="off" placeholder="/report what went wrong?">
     <div class="kb-status">A screenshot, your position and the game logs are attached.</div>`;
   document.body.appendChild(bar);
   const input = bar.querySelector("input")!, status = bar.querySelector(".kb-status") as HTMLDivElement;
@@ -78,7 +78,7 @@ export function installKongbot(engine: Engine) {
       if (ctx && shot?.frame) (ctx.perf as Record<string, unknown>).frame = shot.frame;
       return { ctx, shot };
     })();
-    bar.hidden = false; input.disabled = false; input.value = "/kongbot "; setStatus("A screenshot, your position and the game logs are attached.");
+    bar.hidden = false; input.disabled = false; input.value = "/report "; setStatus("A screenshot, your position and the game logs are attached.");
     input.focus(); input.setSelectionRange(input.value.length, input.value.length);
   }
   function close() { bar.hidden = true; input.blur(); snap = null; }
@@ -87,9 +87,9 @@ export function installKongbot(engine: Engine) {
     if (sending) return;
     const raw = input.value.trim();
     const cmd = raw.split(/\s+/)[0]?.toLowerCase() ?? "";
-    if (!COMMANDS.includes(cmd)) { setStatus("Chat is reports-only for now: type /kongbot <what went wrong>", true); return; }
+    if (!COMMANDS.includes(cmd)) { setStatus("Chat is reports-only for now: type /report <what went wrong>", true); return; }
     const message = raw.slice(cmd.length).trim();
-    if (message.length < 3) { setStatus("Tell KONGBOT what went wrong: /kongbot <description>", true); return; }
+    if (message.length < 3) { setStatus("Tell us what went wrong: /report <description>", true); return; }
     sending = true; input.disabled = true; setStatus("Sending…");
     try {
       const { ctx, shot } = snap ? await snap : { ctx: null, shot: null };
@@ -137,5 +137,5 @@ export function installKongbot(engine: Engine) {
     if (e.code === "Slash" || e.key === "/" || (e.key === "Enter" && inMatch && t?.tagName !== "BUTTON")) { e.preventDefault(); e.stopImmediatePropagation(); open(); }
   }, true);
 
-  (kr() as Record<string, unknown>).kongbot = { open, close, mark: (m: string) => { if (!bar.hidden || sending) return false; open(); input.value = "/kongbot " + m; void submit(); return true; }, context: () => gatherContext(engine), screenshot: () => grabScreenshot(engine) };
+  (kr() as Record<string, unknown>).kongbot = { open, close, mark: (m: string) => { if (!bar.hidden || sending) return false; open(); input.value = "/report " + m; void submit(); return true; }, context: () => gatherContext(engine), screenshot: () => grabScreenshot(engine) };
 }

@@ -839,7 +839,7 @@ export function createHud(terrain: Terrain, pois: typeof POIS): Hud {
       else if (hintKey === "free") { add(keyName("jump"), "PULL CHUTE"); add(lookText(), "STEER"); add(keyName("fwd"), "FLY FORWARD"); add(`HOLD ${keyName("sprint")}`, "DIVE"); if (pk) add(pk, "PING"); }
       else if (hintKey === "glide") { add(`HOLD ${keyName("jump")}`, "CUT CHUTE"); add(lookText(), "STEER"); add(keyName("fwd"), "GLIDE FORWARD"); if (pk) add(pk, "PING"); }
       else if (bombH === 1) { add(`HOLD ${s.lethal!.key}`, "OR FIRE · COOK"); add("RELEASE", "THROW"); add("3 S", "FUSE — DON'T HOLD IT TOO LONG"); }
-      else if (bombH === 2) { add(`HOLD ${s.lethal!.key}`, "COOK A BANANA BOMB"); add("RELEASE", "THROW"); }
+      else if (bombH === 2) { add(`HOLD ${s.lethal!.key}`, "COOK A RATIO BOMB"); add("RELEASE", "THROW"); }
       else if (hintKey === "swim-surface") { add(keyName("crouch"), "DIVE"); add(keyName("sprint"), "SWIM FASTER"); add(keyName("jump"), "AT AN EDGE · CLIMB OUT"); }
       else if (hintKey === "swim-under") { add(keyName("fwd"), "SWIM WHERE YOU LOOK"); add(keyName("jump"), "UP"); add(keyName("crouch"), "DOWN"); }
     }

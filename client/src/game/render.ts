@@ -306,7 +306,7 @@ export class GameRender implements EventSink {
       else if (o.id === Offer.Ammo && p.slots[p.active].kind !== SK.Weapon) why = "HOLD A GUN FIRST";
       return { id: o.id, name, desc, price, icon: o.icon, ok: !why && e.cash >= price, why };
     });
-    return { cash: e.cash, title: "BANANA STAND", sub: (POIS[cm.stands[this.standNear]?.poi ?? -1]?.name ?? "") + " · SPEND YOUR BANANA BUCKS", offers };
+    return { cash: e.cash, title: "MERCH TABLE", sub: (POIS[cm.stands[this.standNear]?.poi ?? -1]?.name ?? "") + " · SPEND YOUR CLOUT", offers };
   }
   bomb(id: number, owner: number, x: number, y: number, z: number, vx: number, vy: number, vz: number, fuse: number) {
     this.bombFx.spawn(id, owner === this.cm.me, x, y, z, vx, vy, vz, fuse);
@@ -558,11 +558,11 @@ export class GameRender implements EventSink {
     if (victim === me && killer >= 0 && killer !== me) this.acc.died(killer);
     if (victim === me) {
       const deathNow = performance.now();
-      this.deathSummary = { weapon: myth ? myth.name : weapon < 6 ? WEAPON_DEFS[WEAPONS[weapon]].name : wid === "storm" ? "Storm" : wid === "fall" ? "Fall damage" : weapon === KILL_TUK ? "Tuk-tuk" : weapon === KILL_BOMB ? "Banana bomb" : weapon === KILL_HELI ? "Helicopter" : weapon === KILL_GUN ? `${TOP_BANANA.name} (door gun)` : "Unknown cause", incomingDamage: Math.round(this.incomingHits.filter((q) => deathNow - q.at <= 10000).reduce((a, q) => a + q.damage, 0)), windowS: 10 };
+      this.deathSummary = { weapon: myth ? myth.name : weapon < 6 ? WEAPON_DEFS[WEAPONS[weapon]].name : wid === "storm" ? "Storm" : wid === "fall" ? "Fall damage" : weapon === KILL_TUK ? "Tuk-tuk" : weapon === KILL_BOMB ? "Ratio bomb" : weapon === KILL_HELI ? "Helicopter" : weapon === KILL_GUN ? `${TOP_BANANA.name} (door gun)` : "Unknown cause", incomingDamage: Math.round(this.incomingHits.filter((q) => deathNow - q.at <= 10000).reduce((a, q) => a + q.damage, 0)), windowS: 10 };
       this.incomingHits.length = 0;
       this.cm.resetJitter();                  // the view changes (death cam → spectate): re-learn the buffer from fresh arrivals
       const p = this.cm.pred; this.cm.localPose(V3); this.deathX = V3.x; this.deathY = V3.y; this.deathZ = V3.z; void p;
-      this.deadAt = performance.now(); this.killedBy = killer >= 0 && killer !== me ? this.name(killer) : wid === "storm" ? "THE STORM" : weapon === KILL_TUK ? "A TUK-TUK" : weapon === KILL_HELI ? "A HELICOPTER" : weapon === KILL_BOMB ? "A BANANA BOMB" : "THE FALL";
+      this.deadAt = performance.now(); this.killedBy = killer >= 0 && killer !== me ? this.name(killer) : wid === "storm" ? "THE STORM" : weapon === KILL_TUK ? "A TUK-TUK" : weapon === KILL_HELI ? "A HELICOPTER" : weapon === KILL_BOMB ? "A RATIO BOMB" : "THE FALL";
       this.resCountdown = final ? null : resurgenceDelay(this.cm.mode, this.cm.storm.phase);
       if (!final && this.cm.phase !== 0) this.redeploysUsed++;
       this.sfx("elim:self");
@@ -611,7 +611,7 @@ export class GameRender implements EventSink {
     const v = this.lootViews.get(id); if (v) { this.drops.delete(v); this.grow.delete(v.object); v.dispose(); this.lootViews.delete(id); }
     if (by === this.cm.me) {
       const k = this.itemKind.get(id), item = this.pickupItems.get(id);
-      if (item) this.hud.pickup = { at: performance.now(), label: item.kind === IK.Cash ? `$${(item.count * 10).toLocaleString("en-US")} BANANA BUCKS` : item.kind === IK.Weapon ? (mythicOf(item.rarity)?.name ?? WEAPON_DEFS[WEAPONS[item.sub]].name) : item.kind === IK.Consumable ? CONSUMABLE_DEFS[CONSUMABLES[item.sub]].name : `${AMMO_TYPES[item.sub].toUpperCase()} AMMO` };
+      if (item) this.hud.pickup = { at: performance.now(), label: item.kind === IK.Cash ? `$${(item.count * 10).toLocaleString("en-US")} CLOUT` : item.kind === IK.Weapon ? (mythicOf(item.rarity)?.name ?? WEAPON_DEFS[WEAPONS[item.sub]].name) : item.kind === IK.Consumable ? CONSUMABLE_DEFS[CONSUMABLES[item.sub]].name : `${AMMO_TYPES[item.sub].toUpperCase()} AMMO` };
       this.sfx(k === IK.Ammo || k === IK.Cash ? "pickup:ammo" : k === IK.Consumable ? "pickup:heal" : "pickup:weapon", { volume: 0.8 });
       const my = item && item.kind === IK.Weapon ? mythicOf(item.rarity) : null;
       if (my) this.announce(`MYTHIC · ${my.name}`, `${POIS.find((q) => q.id === my.poi)?.name ?? ""} SIGNATURE ${WEAPON_DEFS[my.weapon].name} — hits harder than any legendary`, "victory");
@@ -683,7 +683,7 @@ export class GameRender implements EventSink {
   }
   announceCode(code: number, a: number, b: number) {
     switch (code) {
-      case ANN.MatchStart: this.announce("BANANA CO. FLIGHT DEPARTING", `the ramp opens in a moment · ${bindingText("ping", 0)} pings where you'll drop`, "info"); break;
+      case ANN.MatchStart: this.announce("THE FEED · FLIGHT DEPARTING", `the ramp opens in a moment · ${bindingText("ping", 0)} pings where you'll drop`, "info"); break;
       case ANN.PlaneOpen: {
         this.announce("RAMP OPEN — JUMP!", "SPACE to jump · steer with the mouse · SHIFT to dive · X glider", "info"); this.sfx("ui:countdown-go");
         this.cm.planePos(PP); this.play("plane:ramp", PP.x, PLANE_ALT, PP.z, 1);
@@ -1995,7 +1995,7 @@ export class GameRender implements EventSink {
     const seat = freeSeat(sim, cm.pred.team, (i) => (i === cm.me ? cm.pred.team : cm.remotes[i]?.team ?? -1));
     if (seat < 0) { P.label = name; P.blocked = sim.seats.some((i) => i >= 0 && i !== cm.me && cm.remotes[i]?.team !== cm.pred.team) ? "ANOTHER SQUAD IS ABOARD" : "FULL"; return P; }
     if (heli) { P.label = seat === 0 ? "FLY HELICOPTER" : seat === HELI.GUN_SEAT ? "MAN THE MINIGUN" : "RIDE SHOTGUN"; P.detail = seat === 0 ? "MEME AIR · 3 SEATS" : seat === HELI.GUN_SEAT ? `${TOP_BANANA.name} · ${sim.gunBelt} ROUNDS ON THE BELT` : "IN THE RIGHT DOOR · YOUR OWN GUNS"; }
-    else { P.label = seat === 0 ? "DRIVE TUK-TUK" : "RIDE TUK-TUK"; P.detail = seat === 0 ? "BANANA CO. TAXI · 3 SEATS" : "ON THE BENCH · SHOOT FROM THE BACK"; }
+    else { P.label = seat === 0 ? "DRIVE TUK-TUK" : "RIDE TUK-TUK"; P.detail = seat === 0 ? "FEED TAXI · 3 SEATS" : "ON THE BENCH · SHOOT FROM THE BACK"; }
     P.change = `HULL ${Math.max(0, Math.round((sim.hp / specOf(sim.kind).HP) * 100))}%`;
     return P;
   }
@@ -2702,8 +2702,8 @@ const saveSwimHints = () => { try { localStorage.setItem("kr.swimHints", JSON.st
 const wrapPi = (a: number) => { a %= Math.PI * 2; return a > Math.PI ? a - Math.PI * 2 : a <= -Math.PI ? a + Math.PI * 2 : a; };
 const INTERACT_CHEST = { label: "OPEN CHEST", key: "E" };
 const BOMB_COOK_LABEL = "COOKING · LET GO TO THROW";
-const COVER_PROMPT: NonNullable<HudState["interact"]> = { label: "SET DOWN COCONUT CRATE WALL", key: "FIRE", act: "fire", rarity: "rare", detail: "PORTABLE COVER · STOPS BULLETS AND BLASTS · BREAKS" };
-const STAND_PROMPT: NonNullable<HudState["interact"]> = { label: "SHOP AT THE BANANA STAND", key: "E", rarity: "legendary", detail: "", low: true };
+const COVER_PROMPT: NonNullable<HudState["interact"]> = { label: "SET DOWN FIREWALL", key: "FIRE", act: "fire", rarity: "rare", detail: "PORTABLE COVER · STOPS BULLETS AND BLASTS · BREAKS" };
+const STAND_PROMPT: NonNullable<HudState["interact"]> = { label: "SHOP AT THE MERCH TABLE", key: "E", rarity: "legendary", detail: "", low: true };
 const COVER_NO: NonNullable<HudState["interact"]> = { label: "NO ROOM FOR THE WALL HERE", key: "FIRE", act: "fire", blocked: "FIND FLAT, OPEN GROUND" };
 const INTERACT_BOX = { label: "OPEN AMMO BOX", key: "E" };
 const INTERACT_GLASS = { label: "SMASH WINDOW", key: "E" };
@@ -2860,8 +2860,8 @@ const POI_THEME: Record<string, PoiTheme> = {
 };
 /** the location banner's sub-line per POI */
 const POI_TAGLINE: Record<string, string> = {
-  "peel-harbor": "Banana Co. docks", "mango-market": "Market square", "coconut-cove": "Beach resort", "stilt-town": "Village on stilts",
+  "peel-harbor": "The Feed's docks", "mango-market": "Market square", "coconut-cove": "Beach resort", "stilt-town": "Village on stilts",
   "the-murk": "Mangrove swamp", "banana-temple": "Ancient ruins", "ripe-peak": "The volcano", "mist-falls": "Waterfall gorge",
-  "cnvs-lab": "Research lab", "canopy-line": "Treetop ziplines", "peel-strip": "Airstrip", "the-plantation": "Banana farm",
-  "lookout-point": "Lighthouse cliffs", "the-wreck": "Banana Co. freighter", "coco-caves": "Sea caves", "wreck-bay": "Shipwreck cove",
+  "cnvs-lab": "Research lab", "canopy-line": "Treetop ziplines", "peel-strip": "Airstrip", "the-plantation": "Old plantation",
+  "lookout-point": "Lighthouse cliffs", "the-wreck": "The Feed's freighter", "coco-caves": "Sea caves", "wreck-bay": "Shipwreck cove",
 };

@@ -36,23 +36,23 @@ export interface Poi {
 }
 
 export const POIS: Poi[] = [
-  { id: "peel-harbor",    name: "PEEL HARBOR",    x:  600, z:  360, r: 190, padY: 3.2, pad: 190, blend: 70, refs: ["poi-01-peel-harbor.png"] },
-  { id: "mango-market",   name: "MANGO MARKET",   x:  430, z:   20, r: 150, padY: 9,   pad: 140, blend: 80, refs: ["poi-12-mango-market.png"] },
-  { id: "coconut-cove",   name: "COCONUT COVE",   x:   90, z:  400, r: 150, padY: 4,   pad: 110, blend: 70, refs: ["poi-05-coconut-cove.png"] },
+  { id: "peel-harbor",    name: "PORT 80",    x:  600, z:  360, r: 190, padY: 3.2, pad: 190, blend: 70, refs: ["poi-01-peel-harbor.png"] },
+  { id: "mango-market",   name: "MARKETPLACE",   x:  430, z:   20, r: 150, padY: 9,   pad: 140, blend: 80, refs: ["poi-12-mango-market.png"] },
+  { id: "coconut-cove",   name: "COPYPASTA COVE",   x:   90, z:  400, r: 150, padY: 4,   pad: 110, blend: 70, refs: ["poi-05-coconut-cove.png"] },
   { id: "stilt-town",     name: "STILT TOWN",     x:  330, z: -330, r: 130, padY: null, pad: 0, blend: 0,   refs: ["poi-06-stilt-town.png"] },
-  { id: "the-murk",       name: "THE MURK",       x:  560, z: -220, r: 110, padY: null, pad: 0, blend: 0,   refs: ["poi-13-the-murk.png"] },
-  { id: "banana-temple",  name: "BANANA TEMPLE",  x:  -40, z: -130, r: 140, padY: 28,  pad: 95,  blend: 80, refs: ["poi-04-banana-temple.png", "loot-06-golden-vault.png"] },
-  { id: "ripe-peak",      name: "RIPE PEAK",      x: -380, z: -430, r: 200, padY: null, pad: 0, blend: 0,   refs: ["poi-03-ripe-peak.png", "biome-04-volcanic.png", "char-04-victory.png"] },
-  { id: "mist-falls",     name: "MIST FALLS",     x: -140, z: -400, r: 100, padY: null, pad: 0, blend: 0,   refs: ["poi-09-mist-falls.png", "biome-06-river.png"] },
-  { id: "cnvs-lab",       name: "CNVS LAB",       x:  150, z: -480, r: 100, padY: 34,  pad: 70,  blend: 60, refs: ["poi-08-cnvs-lab.png"] },
+  { id: "the-murk",       name: "THE COMMENTS",       x:  560, z: -220, r: 110, padY: null, pad: 0, blend: 0,   refs: ["poi-13-the-murk.png"] },
+  { id: "banana-temple",  name: "ALGO TEMPLE",  x:  -40, z: -130, r: 140, padY: 28,  pad: 95,  blend: 80, refs: ["poi-04-banana-temple.png", "loot-06-golden-vault.png"] },
+  { id: "ripe-peak",      name: "PEAK CONTENT",      x: -380, z: -430, r: 200, padY: null, pad: 0, blend: 0,   refs: ["poi-03-ripe-peak.png", "biome-04-volcanic.png", "char-04-victory.png"] },
+  { id: "mist-falls",     name: "BUFFER FALLS",     x: -140, z: -400, r: 100, padY: null, pad: 0, blend: 0,   refs: ["poi-09-mist-falls.png", "biome-06-river.png"] },
+  { id: "cnvs-lab",       name: "BETA LAB",       x:  150, z: -480, r: 100, padY: 34,  pad: 70,  blend: 60, refs: ["poi-08-cnvs-lab.png"] },
   { id: "canopy-line",    name: "CANOPY LINE",    x:  160, z: -230, r: 110, padY: null, pad: 0, blend: 0,   refs: ["poi-15-canopy-line.png"] },
-  { id: "peel-strip",     name: "PEEL STRIP",     x: -470, z:  -40, r: 190, padY: 14,  pad: 170, blend: 90, refs: ["poi-10-peel-strip.png"] },
-  { id: "the-plantation", name: "THE PLANTATION", x: -230, z:  240, r: 170, padY: 10,  pad: 150, blend: 90, refs: ["poi-07-the-plantation.png"] },
-  { id: "lookout-point",  name: "LOOKOUT POINT",  x: -590, z:  470, r: 100, padY: 46,  pad: 45,  blend: 70, refs: ["poi-11-lookout-point.png", "biome-05-sea-cliffs.png"] },
-  { id: "the-wreck",      name: "THE WRECK",      x: -800, z:   90, r: 150, padY: null, pad: 0, blend: 0,   refs: ["poi-02-the-wreck.png"] },
-  { id: "coco-caves",     name: "COCO CAVES",     x: -720, z: -290, r: 100, padY: null, pad: 0, blend: 0,   refs: ["poi-14-coco-caves.png"] },
-  { id: "wreck-bay",      name: "WRECK BAY",      x:   40, z: -700, r: 110, padY: null, pad: 0, blend: 0,   refs: ["poi-16-wreck-bay.png"] },
-  { id: "lobby-islet",    name: "LOBBY ISLET",    x:    0, z: 1020, r:  90, padY: 2.5, pad: 60,  blend: 40, refs: ["char-02-lobby-island.png"] },
+  { id: "peel-strip",     name: "RUNWAY 404",     x: -470, z:  -40, r: 190, padY: 14,  pad: 170, blend: 90, refs: ["poi-10-peel-strip.png"] },
+  { id: "the-plantation", name: "SERVER FARM", x: -230, z:  240, r: 170, padY: 10,  pad: 150, blend: 90, refs: ["poi-07-the-plantation.png"] },
+  { id: "lookout-point",  name: "TRENDING POINT",  x: -590, z:  470, r: 100, padY: 46,  pad: 45,  blend: 70, refs: ["poi-11-lookout-point.png", "biome-05-sea-cliffs.png"] },
+  { id: "the-wreck",      name: "SHIPWRECK.ZIP",      x: -800, z:   90, r: 150, padY: null, pad: 0, blend: 0,   refs: ["poi-02-the-wreck.png"] },
+  { id: "coco-caves",     name: "THE CACHE",     x: -720, z: -290, r: 100, padY: null, pad: 0, blend: 0,   refs: ["poi-14-coco-caves.png"] },
+  { id: "wreck-bay",      name: "ERROR BAY",      x:   40, z: -700, r: 110, padY: null, pad: 0, blend: 0,   refs: ["poi-16-wreck-bay.png"] },
+  { id: "lobby-islet",    name: "LOADING ISLE",    x:    0, z: 1020, r:  90, padY: 2.5, pad: 60,  blend: 40, refs: ["char-02-lobby-island.png"] },
 ];
 
 export const poiById = (id: PoiId): Poi => {

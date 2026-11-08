@@ -43,7 +43,7 @@ export const mayShare = (a: PadAction, b: PadAction) => a !== b && (!!RIDE_SHARE
 export const PAD_LABELS: Record<PadAction, string> = {
   fire: "Fire / use item", aim: "Aim down sights", jump: "Jump / exit plane / glider", crouch: "Crouch / slide", sprint: "Sprint / dive / hold breath",
   interact: "Interact · reload when nothing to take", reload: "Reload", nextSlot: "Next slot", prevSlot: "Previous slot", lastSlot: "Swap to last slot",
-  map: "Map", inventory: "Inventory", glider: "Deploy glider", ping: "Ping / mark the spot you look at", throw: "Throw banana bomb (hold to cook)",
+  map: "Map", inventory: "Inventory", glider: "Deploy glider", ping: "Ping / mark the spot you look at", throw: "Throw ratio bomb (hold to cook)",
   radio: "Tuk-tuk radio · next station", rideView: "Tuk-tuk driver view",
 };
 

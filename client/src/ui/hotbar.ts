@@ -171,7 +171,7 @@ export function createHotbar(root: HTMLElement) {
   const gunMax = el("span", "max", gunRow);
   const gunTop = el("div", "nm", gunBox);
   const gunTag = el("span", "tag", gunTop);
-  const gunName = el("span", "", gunTop); gunName.textContent = "TOP BANANA";
+  const gunName = el("span", "", gunTop); gunName.textContent = "BRRRT";
   const gunHeat = el("div", "heat", gunBox);
   const gunHeatClip = el("i", "", gunHeat), gunHeatRamp = el("s", "", gunHeatClip);
   el("b", "", gunHeat).textContent = "HEAT";

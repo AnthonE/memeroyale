@@ -35,7 +35,7 @@ const REMAP = "Select a slot, then press a controller button. A button another a
 
 function layoutHelp(): string {
   const f = glyphFamily();
-  return `Standard: interact / reload on ${glyph(PB.X, f)}, crouch on ${glyph(PB.B, f)}. Tactical: crouch / slide on ${glyph(PB.RS, f)}, reload on ${glyph(PB.B, f)}. Bumper jumper: jump on ${glyph(PB.LB, f)}, previous slot on ${glyph(PB.LEFT, f)}, banana bomb on ${glyph(PB.RS, f)}. Every layout: ping ${glyph(PB.RIGHT, f)}${RADIO_ON ? `, tuk-tuk radio ${glyph(PB.DOWN, f)}` : ""}.`;
+  return `Standard: interact / reload on ${glyph(PB.X, f)}, crouch on ${glyph(PB.B, f)}. Tactical: crouch / slide on ${glyph(PB.RS, f)}, reload on ${glyph(PB.B, f)}. Bumper jumper: jump on ${glyph(PB.LB, f)}, previous slot on ${glyph(PB.LEFT, f)}, ratio bomb on ${glyph(PB.RS, f)}. Every layout: ping ${glyph(PB.RIGHT, f)}${RADIO_ON ? `, tuk-tuk radio ${glyph(PB.DOWN, f)}` : ""}.`;
 }
 function padRideNote(): string {
   const p = pad(), f = glyphFamily(), k = (a: PadAction) => p.binds[a].map((b) => glyph(b, f)).join(" / ") || "—";

@@ -122,16 +122,16 @@ const CSS = `
 let styled = false;
 const GLYPH: Record<string, "person" | "skull" | "bullet"> = { buyback: "person", bounty: "skull", ammo: "bullet" };
 /** what the shopkeeper says: welcome / short of Bucks / thanks (after a purchase) */
-const LINES = { hi: "WHAT'LL IT BE, MEMER?", broke: "NO BUCKS, NO BANANAS! LOOT SOME CASH.", thanks: "PLEASURE DOING BUSINESS!" };
+const LINES = { hi: "WHAT'LL IT BE, MEMER?", broke: "NO CLOUT, NO MERCH! LOOT SOME CASH.", thanks: "PLEASURE DOING BUSINESS!" };
 
 export function createShop(): ShopScreen {
   if (!styled) { injectStyles(); injectBucksCss(); const st = document.createElement("style"); st.textContent = CSS; document.head.appendChild(st); styled = true; }
-  const el = document.createElement("div"); el.className = "kr-shop"; el.setAttribute("role", "dialog"); el.setAttribute("aria-label", "Banana Stand");
+  const el = document.createElement("div"); el.className = "kr-shop"; el.setAttribute("role", "dialog"); el.setAttribute("aria-label", "Merch Table");
   el.innerHTML = `<div class="panel"><div class="awning"></div><div class="board">
-    <div class="head"><div class="badge">${MONKEY_SVG}</div><div><div class="ttl">BANANA STAND</div><div class="sub"></div></div>
-      <div class="wallet"><small>BANANA BUCKS</small><span class="cash">${bucksHtml(0)}</span></div></div>
+    <div class="head"><div class="badge">${MONKEY_SVG}</div><div><div class="ttl">MERCH TABLE</div><div class="sub"></div></div>
+      <div class="wallet"><small>CLOUT</small><span class="cash">${bucksHtml(0)}</span></div></div>
     <div class="grid"></div>
-    <div class="foot"><span><kbd>1</kbd>–<kbd>7</kbd> OR CLICK TO BUY</span><span class="sp"></span><span class="warn">TAKING DAMAGE CLOSES THE STAND</span><span class="leave"></span></div></div></div>`;
+    <div class="foot"><span><kbd>1</kbd>–<kbd>7</kbd> OR CLICK TO BUY</span><span class="sp"></span><span class="warn">TAKING DAMAGE CLOSES THE TABLE</span><span class="leave"></span></div></div></div>`;
   const grid = el.querySelector<HTMLElement>(".grid")!, cashEl = el.querySelector<HTMLElement>(".cash")!, subEl = el.querySelector<HTMLElement>(".sub")!, leaveEl = el.querySelector<HTMLElement>(".leave")!;
   let cards: Array<{ el: HTMLElement; nm: HTMLElement; ds: HTMLElement; tag: HTMLElement; id: number; ok: boolean; icon: string }> = [];
   let talk: { bubble: HTMLElement; face: HTMLElement } | null = null;

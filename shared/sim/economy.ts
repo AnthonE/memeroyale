@@ -16,10 +16,10 @@ export interface OfferDef { id: Offer; name: string; price: number; desc: string
 export const OFFERS: readonly OfferDef[] = [
   { id: Offer.BuyBack, name: "BUY BACK", price: 2500, desc: "An eliminated squadmate redeploys from the sky above you", icon: "buyback" },
   { id: Offer.Bounty, name: "BOUNTY CONTRACT", price: 800, desc: "Mark an enemy squad for 90 s — kill one for $1,500 + loot", icon: "bounty" },
-  { id: Offer.Smoothies, name: "SHIELD SMOOTHIES ×2", price: 300, desc: "+25 shield each", icon: "smoothie" },
-  { id: Offer.Leaves, name: "LEAF BUNDLES ×2", price: 200, desc: "+25 health each", icon: "leaf-bundle" },
-  { id: Offer.Bombs, name: "BANANA BOMBS ×2", price: 400, desc: "Frag grenades — hold G to cook", icon: "banana-bomb" },
-  { id: Offer.Wall, name: "COCONUT CRATE WALL", price: 600, desc: "Portable cover you set down anywhere flat", icon: "crate-wall" },
+  { id: Offer.Smoothies, name: "UPVOTES ×2", price: 300, desc: "+25 shield each", icon: "smoothie" },
+  { id: Offer.Leaves, name: "BAND-AID.EXE ×2", price: 200, desc: "+25 health each", icon: "leaf-bundle" },
+  { id: Offer.Bombs, name: "RATIO BOMBS ×2", price: 400, desc: "Frag grenades — hold G to cook", icon: "banana-bomb" },
+  { id: Offer.Wall, name: "FIREWALL", price: 600, desc: "Portable cover you set down anywhere flat", icon: "crate-wall" },
   { id: Offer.Ammo, name: "AMMO ×2", price: 150, desc: "Two stacks for the gun in your hands", icon: "ammo" },
 ];
 /** solo has no squadmates to buy back: the same slot sells one more redeploy */

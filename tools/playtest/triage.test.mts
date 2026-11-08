@@ -190,12 +190,12 @@ const clean = (s: string) => { for (const w of [...callsigns, ...words]) assert.
   assert.equal(ht.attribution, "invoker bBUY NOW/b fn@main.js:12 640 ms", "markup characters are dropped");
   assert.equal(ht.location.poi, null, "a POI id that isn't on the map is ignored");
   const built = (text: string) => { hostileText.ctx.diag.events = [[6.1, "module-built", 420, text]]; return entryOf(hostileText).attribution; };
-  assert.equal(built("poi:banana-temple"), "Module build BANANA TEMPLE", "a map POI is named");
+  assert.equal(built("poi:banana-temple"), "Module build ALGO TEMPLE", "a map POI is named");
   assert.equal(built("exits"), "Module build exits", "other stream modules are kept");
   assert.equal(built("poi:buy-now"), "Module build unknown");
   assert.equal(built("<b>x</b>\nBUY"), "Module build unknown");
   hostileText.ctx.diag.events = [[6.1, "module-built", 420, "exits"], [6.3, "module-failed", 15, "poi:banana-temple"]];
-  assert.equal(entryOf(hostileText).attribution, "Module failed BANANA TEMPLE", "a failed build outranks a slow one");
+  assert.equal(entryOf(hostileText).attribution, "Module failed ALGO TEMPLE", "a failed build outranks a slow one");
   hostileText.ctx.diag.events = [[40, "module-failed", 15, "exits"]];
   const failedBuild = entryOf(hostileText);
   assert.ok(failedBuild.symptoms.includes("error"), "a failed module build is an error");

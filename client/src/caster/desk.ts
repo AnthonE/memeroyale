@@ -156,15 +156,15 @@ export class CasterDesk {
     this.resultsEl.addEventListener("click", () => { if (!this.program) this.resultsEl.classList.remove("on"); });
     this.help = el("div", "kc-help hide", root, `<div class="p bc"><h3>CASTER DESK — KEYS</h3>
       <div><kbd>SPACE / P</kbd>autopilot on / off</div><div><kbd>1 – 6</kbd>follow · pov · drone · orbit · overhead · free</div>
-      <div><kbd>TAB / SHIFT+TAB</kbd>next / previous kong alive</div><div><kbd>F</kbd>drone on the hottest fight</div>
+      <div><kbd>TAB / SHIFT+TAB</kbd>next / previous player alive</div><div><kbd>F</kbd>drone on the hottest fight</div>
       <div><kbd>G</kbd>cycle the live fights</div><div><kbd>T</kbd>follow the top fragger</div>
       <div><kbd>C</kbd>re-chase (camera back behind)</div><div><kbd>M</kbd>tactical map</div>
       <div><kbd>B</kbd>leaderboard / live fights</div><div><kbd>H</kbd>clean feed (broadcast only)</div>
       <div><kbd>L</kbd>listen in on the watched squad</div><div><kbd>R</kbd>instant replay of the shot (R / ESC = live)</div><div><kbd>[ ]</kbd>replay speed ¼× · ½× · 1×</div><div><kbd>CLICK</kbd>a HIGHLIGHT to replay it</div>
-      <div><kbd>X</kbd>x-ray (kongs through walls): auto in wide shots · on · off</div><div><kbd>I</kbd>nameplates + team markers on / off</div><div><kbd>N</kbd>ping your shot to the other seats</div>
+      <div><kbd>X</kbd>x-ray (players through walls): auto in wide shots · on · off</div><div><kbd>I</kbd>nameplates + team markers on / off</div><div><kbd>N</kbd>ping your shot to the other seats</div>
       <div><kbd>Y</kbd>go to the last ping</div><div><kbd>ENTER</kbd>producer: put your camera on air</div>
       <div><kbd>WASD QE</kbd>fly (free cam), Shift = fast</div><div><kbd>DRAG / WHEEL</kbd>orbit / zoom</div>
-      <div><kbd>CLICK</kbd>a kong (roster / feed / board) to follow, double-click = POV</div><div><kbd>CLICK A SEAT</kbd>mirror that seat's camera</div>
+      <div><kbd>CLICK</kbd>a player (roster / feed / board) to follow, double-click = POV</div><div><kbd>CLICK A SEAT</kbd>mirror that seat's camera</div>
       <div><kbd>?</kbd>this sheet</div><div><kbd>ESC</kbd>close the map / this sheet</div>
       <div><kbd>PROGRAM OUT</kbd>open ?cast=CODE&amp;program in OBS: the clean feed of the camera on air</div></div>`);
     this.help.addEventListener("click", () => this.help.classList.add("hide"));

@@ -90,7 +90,7 @@ export class CasterLook {
   /** X: AUTO → ON → OFF → AUTO; returns the toast */
   cycleXray(): string {
     this.xrayMode = this.xrayMode === "auto" ? "on" : this.xrayMode === "on" ? "off" : "auto"; this.xrayFor();
-    return this.xrayMode === "auto" ? "X-RAY AUTO — through walls in the wide shots" : this.xrayMode === "on" ? "X-RAY ON — every kong through walls" : "X-RAY OFF";
+    return this.xrayMode === "auto" ? "X-RAY AUTO — through walls in the wide shots" : this.xrayMode === "on" ? "X-RAY ON — every player through walls" : "X-RAY OFF";
   }
   /** the x-ray pass follows the mode (and, in AUTO, the camera) */
   private xrayFor() {

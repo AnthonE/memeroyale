@@ -1048,7 +1048,7 @@ export class ClientMatch {
       || this.nearestChest(CHEST_OPEN_DIST + 0.6, true) !== null || manualLootCandidate(this.items.values(), p, this.world, this.range, this.stands) !== null;
   }
   nearestItem(maxD: number, kind: IK, reach = false): Item | null { let best: Item | null = null, bd = maxD; const p = this.pred; for (const it of this.items.values()) { if (it.kind !== kind) continue; const d = Math.hypot(it.x - p.x, it.z - p.z, (it.y - p.y) * 0.6); if (d < bd && (!reach || this.range || lootReachable(this.world, p.x, p.y, p.z, it.x, it.y, it.z))) { bd = d; best = it; } } return best; }
-  weaponName(i: number) { const my = killMythic(i); if (my) return my.name; return i < 6 ? WEAPON_DEFS[WEAPONS[i]].name : i === 255 ? "STORM" : i === 254 ? "FALL" : i === KILL_TUK ? "TUK-TUK" : i === KILL_HELI ? "HELICOPTER" : i === KILL_GUN ? TOP_BANANA.name : i === KILL_BOMB ? "BANANA BOMB" : "?"; }
+  weaponName(i: number) { const my = killMythic(i); if (my) return my.name; return i < 6 ? WEAPON_DEFS[WEAPONS[i]].name : i === 255 ? "STORM" : i === 254 ? "FALL" : i === KILL_TUK ? "TUK-TUK" : i === KILL_HELI ? "HELICOPTER" : i === KILL_GUN ? TOP_BANANA.name : i === KILL_BOMB ? "RATIO BOMB" : "?"; }
   /** this match's seed, and where its taxis wait once the plane leaves (the server parks them from the same seed) */
   seed = 0; private ranks: TukSpot[] | null = null;
   taxiRanks(): TukSpot[] { return (this.ranks ??= fleetSpots(this.world, this.seed)); }

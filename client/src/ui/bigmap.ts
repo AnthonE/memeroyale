@@ -130,7 +130,7 @@ export class BigMap {
     gunSw.appendChild(gc); row(gunSw, "GUNFIRE"); shotDot(gc.getContext("2d")!, 40, 22, 0.7, 14);
     // (economy) the Banana Stands and a bounty's circle
     const stSw = sw(""); const sc = document.createElement("canvas"); sc.width = 80; sc.height = 44; sc.style.cssText = "width:100%;height:100%";
-    stSw.appendChild(sc); row(stSw, "BANANA STAND (BUY)"); standDot(sc.getContext("2d")!, 40, 22, 14);
+    stSw.appendChild(sc); row(stSw, "MERCH TABLE (BUY)"); standDot(sc.getContext("2d")!, 40, 22, 14);
     const bSw = sw(""); const bc = document.createElement("canvas"); bc.width = 80; bc.height = 44; bc.style.cssText = "width:100%;height:100%";
     bSw.appendChild(bc); row(bSw, "BOUNTY TARGET AREA"); bountyRing(bc.getContext("2d")!, 40, 22, 17, 0.4);
     lg.append(this.phEl, tm, rows);

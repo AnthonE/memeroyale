@@ -87,7 +87,7 @@ export function heldName(held: number): string {
   const w = WEAPONS[held & 7]; return w ? WEAPON_DEFS[w].name : "GUN";
 }
 export function weaponName(weapon: number): string {
-  if (weapon === 255) return "STORM"; if (weapon === 253) return "TUK-TUK"; if (weapon === 252) return "BANANA BOMB"; if (weapon === 251) return "TOP BANANA"; if (weapon === 250) return "HELICOPTER";
+  if (weapon === 255) return "STORM"; if (weapon === 253) return "TUK-TUK"; if (weapon === 252) return "RATIO BOMB"; if (weapon === 251) return "BRRRT"; if (weapon === 250) return "HELICOPTER";
   const w = WEAPONS[weapon]; return w ? WEAPON_DEFS[w].name : "FALL";
 }
 
