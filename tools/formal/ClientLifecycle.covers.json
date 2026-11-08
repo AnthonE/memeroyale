@@ -51,11 +51,11 @@
   "verified": {
     "model": "3dca02e9e8268996",
     "regions": {
-      "client/src/game/index.ts#startGame.online": "1527455257c5daee",
+      "client/src/game/index.ts#startGame.online": "801e6fe108c559cc",
       "client/src/game/index.ts#startGame.prepareIsland": "a60414b7ba8c24b5",
       "client/src/game/index.ts#startGame.offline": "b98b9176c358e63d",
       "client/src/game/index.ts#startGame.wire": "7b7861aa561871a9",
-      "client/src/game/index.ts#startGame.onJSON": "be9570951fcfac98",
+      "client/src/game/index.ts#startGame.onJSON": "ee96463857e81d3b",
       "client/src/game/index.ts#startGame.enterMatch": "83540ec309c5c948",
       "client/src/game/index.ts#startGame.exitToRoom": "acf1a2d410b3d561",
       "client/src/game/index.ts#startGame.leaveAll": "c480d73a5128830f",
