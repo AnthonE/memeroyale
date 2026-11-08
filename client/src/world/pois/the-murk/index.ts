@@ -226,7 +226,7 @@ const mod: WorldModule = {
       if (!OFF.has("roots")) addRootMasses((x, z) => Mn(x, z), [...rootMasses(), ...LAYOUT.plants.filter((p) => p.kind === "mangrove").map(massOfPlant)]);
     }
     // ---- props
-    const signMat = mats.sign("BANANA CO.", "#2f4a3a", "#f2e6c2");
+    const signMat = mats.sign("THE FEED", "#2f4a3a", "#f2e6c2");
     await Y(":masses");
     // the props are the swamp's HARD COVER (crates, barrels, traps — with colliders): drawn with the main tier
     // (to the far switch), not the near tier — a crate you can be shot from behind never vanishes at 90–170 m

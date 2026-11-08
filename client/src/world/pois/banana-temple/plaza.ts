@@ -124,7 +124,7 @@ export function buildPlaza(ctx: WorldCtx, mats: TempleMats, root: THREE.Group) {
     staticMesh(merge(woodG), mats.wood, "plaza-wood")!, staticMesh(merge(ropes), mats.rope, "plaza-ropes", false)!, staticMesh(merge(bananas), bananaMaterial(), "plaza-bananas")!);
 }
 
-/** the plaza crates' stencil: "BANANA CO." sized to sit INSIDE the front board with a margin (never clipped by the crate's
+/** the plaza crates' stencil: "THE FEED" sized to sit INSIDE the front board with a margin (never clipped by the crate's
  *  edge battens), worn paint, plank grain, corner nails */
 function plazaCrateTex(): THREE.CanvasTexture {
   return canvasTex(512, 512, (g, w, h) => {
@@ -134,7 +134,7 @@ function plazaCrateTex(): THREE.CanvasTexture {
       g.strokeStyle = "rgba(60,30,10,0.35)"; g.lineWidth = 2; for (let k = 0; k < 6; k++) { g.beginPath(); g.moveTo(0, y + 10 + rnd() * (h / 5 - 20)); g.bezierCurveTo(w * 0.3, y + rnd() * (h / 5), w * 0.6, y + rnd() * (h / 5), w, y + rnd() * (h / 5)); g.stroke(); } }
     g.fillStyle = "#7a4a1e"; g.fillRect(0, 0, 30, h); g.fillRect(w - 30, 0, 30, h); g.fillRect(0, 0, w, 30); g.fillRect(0, h - 30, w, 30);
     g.save(); g.globalAlpha = 0.82; g.fillStyle = "#3c1e0a"; g.font = "bold 50px Helvetica, Arial"; g.textAlign = "center"; g.textBaseline = "middle";
-    g.fillText("BANANA CO.", w / 2, h / 2 + 3); g.strokeStyle = "#3c1e0a"; g.lineWidth = 5; g.strokeRect(w * 0.2, h * 0.37, w * 0.6, h * 0.26); g.restore();
+    g.fillText("THE FEED", w / 2, h / 2 + 3); g.strokeStyle = "#3c1e0a"; g.lineWidth = 5; g.strokeRect(w * 0.2, h * 0.37, w * 0.6, h * 0.26); g.restore();
     // worn stencil: scratches through the paint
     g.globalCompositeOperation = "destination-out"; for (let i = 0; i < 70; i++) { g.fillStyle = `rgba(0,0,0,${0.25 + rnd() * 0.4})`; g.fillRect(w * 0.18 + rnd() * w * 0.64, h * 0.35 + rnd() * h * 0.3, 2 + rnd() * 9, 1 + rnd() * 2); }
     g.globalCompositeOperation = "destination-over"; g.fillStyle = "#b8823f"; g.fillRect(0, 0, w, h); g.globalCompositeOperation = "source-over";

@@ -161,7 +161,7 @@ export function buildHangar(b: Batch, bNear: Batch, glows: THREE.Vector3[]) {
   // one BIG outlined banana on the long side facing the view camera
   // nearer the door end (the spotter deck sees the side's door half past the tower)
   decal(b, "logo1", 6.6, 6.6, M(6.2, 2.45, hw + 0.03, 0, 0, 0));
-  textDecal(b, "BANANA CO.", 7.2, 0.9, M(hl + 0.1, floor + H.doorH + 1.25, 0, 0, Math.PI / 2, 0), { fg: "#2a2418", bg: null, font: 900 });
+  textDecal(b, "THE FEED", 7.2, 0.9, M(hl + 0.1, floor + H.doorH + 1.25, 0, 0, Math.PI / 2, 0), { fg: "#2a2418", bg: null, font: 900 });
   // ---- interior: mezzanine joists + posts + railing, stair rail, shelves, bench, tyres, drums, propeller, lamps
   const my = H.mezz.y, mx = H.mezz.x1;
   for (let z = -hw + 1; z < hw; z += 2.2) b.add(box(Math.abs(-hl - mx) - 0.3, 0.26, 0.14), "wood", { m: M((-hl + mx) / 2, my - 0.43, z), color: 0x6a4a30 });
@@ -204,7 +204,7 @@ export function buildHangar(b: Batch, bNear: Batch, glows: THREE.Vector3[]) {
   }
   // ---- the plane, half out of the door (nose +X)
   bananaPlane(b, M(S.PLANE_AT.x, floor, S.PLANE_AT.z, 0, 0, 0), { propA: 0.35 });
-  for (const sd of [-1, 1]) textDecal(b, "BANANA CO.", 2.3, 0.36, M(S.PLANE_AT.x - 1.4, floor + 1.58, S.PLANE_AT.z + sd * 0.7, 0, sd > 0 ? 0 : Math.PI, sd * 0.17), { fg: "#2a2418", bg: null, font: 900 });
+  for (const sd of [-1, 1]) textDecal(b, "THE FEED", 2.3, 0.36, M(S.PLANE_AT.x - 1.4, floor + 1.58, S.PLANE_AT.z + sd * 0.7, 0, sd > 0 ? 0 : Math.PI, sd * 0.17), { fg: "#2a2418", bg: null, font: 900 });
   // wheel chocks + tow bar
   for (const s of [-1, 1]) b.add(rbox(0.25, 0.18, 0.4, 0.03), "plaster", { m: M(S.PLANE_AT.x + 1.95, floor + 0.09, S.PLANE_AT.z + s * 1.42), color: YEL });
   // ---- fuel drums (red / green / red-with-band) + tool cart + jerry cans by the mural corner and inside the door

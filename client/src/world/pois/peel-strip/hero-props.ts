@@ -308,7 +308,7 @@ export function boxVan(b0: Batch, n0: Batch, m: THREE.Matrix4, seed: number) {
   for (let x = -2.4; x < 0.8; x += 0.7) for (const s of [-1, 1]) n.add(box(0.05, 1.5, 0.02), "gloss", { m: at(x, 1.45, s * 1.045), color: new THREE.Color(PAINT).multiplyScalar(0.86) });
   for (const s of [-1, 1]) {
     b.add(box(3.3, 0.22, 0.012), "gloss", { m: at(-0.85, 1.0, s * 1.046), color: 0xd23a2a });
-    textDecal(n, "BANANA CO.", 2.4, 0.42, at(-0.9, 1.6, s * 1.05, 0, s > 0 ? 0 : Math.PI, 0), { fg: "#2a4f6f", bg: null, font: 900 });
+    textDecal(n, "THE FEED", 2.4, 0.42, at(-0.9, 1.6, s * 1.05, 0, s > 0 ? 0 : Math.PI, 0), { fg: "#2a4f6f", bg: null, font: 900 });
     n.add(cyl(0.025, 0.025, 3.3, 6).rotateZ(Math.PI / 2), "steel", { m: at(-0.85, 2.33, s * 0.9), uv: "local", color: 0x8a8a86 });
   }
   n.add(box(0.012, 1.5, 0.02), "pmetal", { m: at(-2.61, 1.45, 0), color: 0x333333 });

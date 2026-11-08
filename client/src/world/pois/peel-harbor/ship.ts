@@ -434,10 +434,10 @@ function hullPlates(): THREE.MeshStandardMaterial {
   return plates;
 }
 
-/** "BANANA CO." painted on both flanks (white, worn) + rust runs from the hawse pipes and the scuppers */
+/** "THE FEED" painted on both flanks (white, worn) + rust runs from the hawse pipes and the scuppers */
 function nameDecals(group: THREE.Group) {
   const [el, c] = canvas(2048, 256);
-  stencilText(c, "BANANA CO.", 1024, 205, { size: 200, color: "#f4f1e8", align: "center", wear: 0.2, seed: 17, letterSpacing: 18 });
+  stencilText(c, "THE FEED", 1024, 205, { size: 200, color: "#f4f1e8", align: "center", wear: 0.2, seed: 17, letterSpacing: 18 });
   const t = tex(el, { repeat: false, aniso: 16 });
   const mat = new THREE.MeshStandardMaterial({ map: t, transparent: true, alphaTest: 0.35, roughness: 0.5, metalness: 0, polygonOffset: true, polygonOffsetFactor: -4, polygonOffsetUnits: -4 });
   mat.name = "ship-name";

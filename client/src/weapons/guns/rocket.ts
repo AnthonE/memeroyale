@@ -43,7 +43,7 @@ function tubeSkin(): THREE.CanvasTexture {
       // line-art bunch (three outlined bananas) like the target art — the filled overlapping crescents read as a heart
       paintBunch(x, -14, -92, 86, col, "#ffffff", 0.07);
       x.font = `900 46px "Arial Black", Impact, sans-serif`; x.textAlign = "center"; x.textBaseline = "middle";
-      x.fillText("BANANA CO.", 0, 20, 330);
+      x.fillText("THE FEED", 0, 20, 330);
       x.restore();
     }
   }

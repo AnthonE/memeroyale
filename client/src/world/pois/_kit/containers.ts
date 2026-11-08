@@ -1,4 +1,4 @@
-// poi-harbor kit — instanced ISO shipping containers ("BANANA CO."), the shared prop other POIs / the actors area can
+// poi-harbor kit — instanced ISO shipping containers ("THE FEED"), the shared prop other POIs / the actors area can
 // use. Plain placements in → InstancedMeshes out. Colliders for the same placements: `containerBox()` /
 // `containerBoxes()` in shared/pois/harbor-kit.ts.
 //
@@ -11,7 +11,7 @@
 //
 // How it renders: every colour shares ONE painted atlas (containers-tex.ts): the paint layer is near-white and is
 // multiplied by the per-instance colour where the atlas' tint mask says "painted steel"; rust, dust, rubber, castings
-// keep their painted colour. "BANANA CO." text + banana logos are stamped in the fragment shader from a per-instance
+// keep their painted colour. "THE FEED" text + banana logos are stamped in the fragment shader from a per-instance
 // decal id (stamp atlas + a tiny rect table), so decals cost no extra draws, never z-fight and survive the LOD box.
 // LOD: `build({ lod: metres })` → containers within `lod` of the camera use the full ~2 k-tri model, the rest a
 // ~30-tri box painted from the same atlas (instances swap between the two meshes when the camera moves).

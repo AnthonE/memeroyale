@@ -165,7 +165,7 @@ export function buildBarnCover(b: Batch, n: Batch) {
       washTrough(n, n, M(cx, y0, cz, 0, Math.PI / 2, 0), d, w, h, 400 + i);
     } else if (k === "bn:bins") {
       b.add(rbox(w, h, d, 0.03), "gPlanksH", { m: M(cx, y0 + h / 2, cz), tile: 1.6, uvRot: true, color: 0xc49a6a, lod: 2 });
-      textDecal(n, "BANANA CO.", Math.min(1.6, w - 0.2), 0.3, M(cx, y0 + h * 0.55, z1 + 0.012), { fg: "#8a2418", bg: null, font: 900, stencil: true });
+      textDecal(n, "THE FEED", Math.min(1.6, w - 0.2), 0.3, M(cx, y0 + h * 0.55, z1 + 0.012), { fg: "#8a2418", bg: null, font: 900, stencil: true });
       P.bananaHeap(n, M(cx, top - 0.05, cz), w - 0.2, d - 0.2, 4, 500 + i, 0.14);
     } else if (k === "bn:desk") {
       // a timber desk carrying a cast-iron platform scale

@@ -1,7 +1,7 @@
 // COCO CAVES timber + buildings + props, every piece derived from the shared layout (shared/pois/coco-caves.ts) that the
 // server collides with: decks (planks, beams, piles, rope-and-post rails), solid step blocks, the smugglers' DEN and the
 // MINE OFFICE (plank walls with real thickness + openings, frames, floors, ceilings, stairs, furniture), the hoist
-// tower + headframe, crates ("BANANA CO."), barrels, the boat, the mine cart + rails, lanterns.
+// tower + headframe, crates ("THE FEED"), barrels, the boat, the mine cart + rails, lanterns.
 // Geometry is merged per material through GeoBins (poi-town kit) into a handful of draws; all materials take the cave
 // light patch.
 import * as THREE from "three";
@@ -35,7 +35,7 @@ export function timberMats(ctx: WorldCtx): TimberMats {
   const bulb = new THREE.MeshStandardMaterial({ name: "caves:bulb", vertexColors: true, color: "#fff4d0", emissive: "#ffd27a", emissiveIntensity: 5 });
   const rope = new THREE.MeshStandardMaterial({ name: "caves:rope", map: ropeTex(), vertexColors: true, roughness: 0.95, color: "#f6ead4" });
   const cloth = new THREE.MeshStandardMaterial({ name: "caves:cloth", vertexColors: true, roughness: 0.95, color: "#ffffff" });
-  const crate = new THREE.MeshStandardMaterial({ name: "caves:crate", map: crateTex("BANANA CO."), roughness: 0.85, color: "#ffffff" });
+  const crate = new THREE.MeshStandardMaterial({ name: "caves:crate", map: crateTex("THE FEED"), roughness: 0.85, color: "#ffffff" });
   const tin = new THREE.MeshStandardMaterial({ name: "caves:tin", vertexColors: true, roughness: 0.6, metalness: 0.35, color: "#ffffff", side: THREE.DoubleSide });
   const sign = new THREE.MeshStandardMaterial({ name: "caves:sign", map: signTex(), roughness: 0.75 });
   // raw gold: metallic, a warm self-glow so the piles sparkle in the cave light
@@ -74,7 +74,7 @@ function signTex(): THREE.CanvasTexture {
   for (let i = 0; i < 5; i++) { g.fillStyle = `rgba(0,0,0,${0.08 + (i % 2) * 0.06})`; g.fillRect(0, i * 64, 1024, 3); }
   g.strokeStyle = "#f2c132"; g.lineWidth = 14; g.strokeRect(22, 22, 980, 276);
   g.fillStyle = "#f2c132"; g.font = "900 150px 'Arial Black', Impact, sans-serif"; g.textAlign = "center"; g.textBaseline = "middle";
-  g.fillText("BANANA CO.", 512, 168);
+  g.fillText("THE FEED", 512, 168);
   // wear
   const r = mulberry(5); for (let i = 0; i < 900; i++) { g.fillStyle = `rgba(${r() < 0.5 ? "20,30,24" : "240,220,170"},${0.05 + r() * 0.12})`; g.fillRect(r() * 1024, r() * 320, 2 + r() * 10, 1 + r() * 4); }
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t;

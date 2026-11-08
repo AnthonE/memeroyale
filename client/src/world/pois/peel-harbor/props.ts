@@ -20,7 +20,7 @@ import { flag } from "../../../flags";
 
 // ------------------------------------------------------------------------------------------------ materials
 let boxMat: THREE.MeshStandardMaterial | null = null;
-/** printed cardboard banana box (kraft brown, yellow banana, "BANANA CO.") — UV 0..1 per face */
+/** printed cardboard banana box (kraft brown, yellow banana, "THE FEED") — UV 0..1 per face */
 function bananaBoxMat(): THREE.MeshStandardMaterial {
   if (boxMat) return boxMat;
   const [el, c] = canvas(256, 256);
@@ -28,7 +28,7 @@ function bananaBoxMat(): THREE.MeshStandardMaterial {
   paintNoise(c, 0, 0, 256, 256, { seed: 301, scale: 200, alpha: 0.25, blend: "overlay" });
   c.fillStyle = "#e9b722"; c.fillRect(0, 60, 256, 100);
   drawFruitBanana(c, 128, 112, 190, -0.3, { color: "#fff0b8", outline: "#6b4a1a", stem: "#6d6a22" });
-  stencilText(c, "BANANA CO.", 128, 222, { size: 34, color: "#3f2a14", align: "center" });
+  stencilText(c, "THE FEED", 128, 222, { size: 34, color: "#3f2a14", align: "center" });
   c.strokeStyle = "rgba(60,40,20,0.5)"; c.lineWidth = 4; c.strokeRect(2, 2, 252, 252);
   boxMat = new THREE.MeshStandardMaterial({ map: tex(el, { repeat: false }), roughness: 0.9, metalness: 0 });
   boxMat.name = "banana-box";

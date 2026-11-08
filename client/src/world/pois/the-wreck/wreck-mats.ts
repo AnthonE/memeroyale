@@ -322,7 +322,7 @@ function lettersTex(): THREE.Texture {
   c.clearRect(0, 0, W, H);
   c.font = `800 276px "Avenir Next Condensed", "Arial Narrow", Impact, sans-serif`;
   (c as unknown as { letterSpacing: string }).letterSpacing = "34px";
-  c.textAlign = "center"; c.fillStyle = "#efe8d8"; c.fillText("BANANA CO.", W / 2, 282);
+  c.textAlign = "center"; c.fillStyle = "#efe8d8"; c.fillText("THE FEED", W / 2, 282);
   // paint ageing ON the letters only (source-atop): grime toward the bottom, rust bleeding down through the paint
   c.save(); c.globalCompositeOperation = "source-atop";
   const g = c.createLinearGradient(0, 0, 0, H); g.addColorStop(0, "rgba(255,250,235,0)"); g.addColorStop(1, "rgba(120,92,64,0.35)");

@@ -575,10 +575,10 @@ export function paintSheets(): Record<SheetId, Sheet> {
   A.paint(A_REG.barrel, barrel);
   A.paint(A_REG.target, target);
   A.paint(A_REG.banana, banana);
-  stencilText(A, A_REG.crate, "BANANA", { cx: 0.5, cy: 0.56, size: 0.15, color: hex("#2a1a0f"), wear: 0.28 });
-  stencilText(A, A_REG.crate, "CO.", { cx: 0.5, cy: 0.4, size: 0.15, color: hex("#2a1a0f"), wear: 0.28 });
-  stencilText(A, A_REG.barrel, "BANANA CO.", { cx: 0.25, cy: 0.52, size: 0.13, color: hex("#2a1a0f"), wear: 0.3 });
-  stencilText(A, A_REG.barrel, "BANANA CO.", { cx: 0.75, cy: 0.52, size: 0.13, color: hex("#f2d25a"), wear: 0.35 });
+  stencilText(A, A_REG.crate, "THE", { cx: 0.5, cy: 0.56, size: 0.15, color: hex("#2a1a0f"), wear: 0.28 });
+  stencilText(A, A_REG.crate, "FEED", { cx: 0.5, cy: 0.4, size: 0.15, color: hex("#2a1a0f"), wear: 0.28 });
+  stencilText(A, A_REG.barrel, "THE FEED", { cx: 0.25, cy: 0.52, size: 0.13, color: hex("#2a1a0f"), wear: 0.3 });
+  stencilText(A, A_REG.barrel, "THE FEED", { cx: 0.75, cy: 0.52, size: 0.13, color: hex("#f2d25a"), wear: 0.35 });
 
   // ---- B
   const B = new Sheet(2048);
@@ -603,7 +603,7 @@ export function paintSheets(): Record<SheetId, Sheet> {
   B.paint(B_REG.shell, shell);
   B.paint(B_REG.sock, (a, b, p) => windsock(b, a * 0.6, p));          // bands along u (the sock tube runs along u)
   B.paint(B_REG.fabric, fabric);
-  stencilText(B, B_REG.sign, "BANANA CO.", { cx: 0.5, cy: 0.5, size: 0.62, color: hex("#f6d45a"), wear: 0.22 });
+  stencilText(B, B_REG.sign, "THE FEED", { cx: 0.5, cy: 0.5, size: 0.62, color: hex("#f6d45a"), wear: 0.22 });
 
   // ---- tiling sheets
   const T = new Sheet(1024);

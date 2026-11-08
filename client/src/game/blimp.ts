@@ -45,8 +45,8 @@ function paintSkin(): THREE.CanvasTexture {
     g.save(); g.translate(W * 0.5, H * vy);
     if (vy > 0.5) g.scale(-1, 1);
     g.font = "900 150px 'KR Block', 'Arial Black', Impact, sans-serif"; g.textAlign = "center"; g.textBaseline = "middle";
-    g.lineWidth = 16; g.strokeStyle = "#3a2204"; g.lineJoin = "round"; g.strokeText("BANANA CO.", 0, 0);
-    g.fillStyle = "#c7261c"; g.fillText("BANANA CO.", 0, 0);
+    g.lineWidth = 16; g.strokeStyle = "#3a2204"; g.lineJoin = "round"; g.strokeText("THE FEED", 0, 0);
+    g.fillStyle = "#c7261c"; g.fillText("THE FEED", 0, 0);
     g.restore();
   }
   const t = new THREE.CanvasTexture(c);

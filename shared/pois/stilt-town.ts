@@ -123,7 +123,7 @@ function genLayout(): StiltLayout {
 
   // ---- the fish-market shack: open shop front toward the camera under a deep tin porch roof
   // turned 3/4 to the camera — ridge along the open front, the left gable end toward the camera
-  const market = hut(27, 2.4, 0.42, 8.6, 7.4, { shop: true, sign: "BANANA CO.", awning: "tin", awningColor: "#8e8f8a", awningDepth: 2.6, awningPosts: true, wall: "#c9553d", trim: "#f6efe0", roofColor: "#a0522d", roofAxis: "x", roofPitch: 0.8, door: "#f2c132", shutter: "#f6efe0", overhang: 1.1 }, DECK_Y, 5.0);
+  const market = hut(27, 2.4, 0.42, 8.6, 7.4, { shop: true, sign: "THE FEED", awning: "tin", awningColor: "#8e8f8a", awningDepth: 2.6, awningPosts: true, wall: "#c9553d", trim: "#f6efe0", roofColor: "#a0522d", roofAxis: "x", roofPitch: 0.8, door: "#f2c132", shutter: "#f6efe0", overhang: 1.1 }, DECK_Y, 5.0);
   decks[decks.length - 1] = { ...decks[decks.length - 1], w: 13.0, rail: [] };
   const marketDeck = decks[decks.length - 1];
   // ---- LEFT CLUSTER at three depths (not one deck line high on tall bare stilts): decks

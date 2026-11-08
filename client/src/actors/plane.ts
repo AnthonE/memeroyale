@@ -7,7 +7,7 @@
 //
 // Everything is procedural: lofted parametric surfaces (fuselage, sponsons, wings, fin, nacelles, cowls, blades, tyres)
 // with analytic-ish normals, canvas-painted colour maps + height-derived normal maps + roughness maps (paint, panel
-// lines, rivets, cheat line, cockpit glazing, "BANANA CO." livery, banana-leaf fin art, grime/soot/wear).
+// lines, rivets, cheat line, cockpit glazing, "THE FEED" livery, banana-leaf fin art, grime/soot/wear).
 import * as THREE from "three";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";

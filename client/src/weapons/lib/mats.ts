@@ -175,7 +175,7 @@ export function paintEmblem(x: CanvasRenderingContext2D, cx: number, cy: number,
 
 
 /** transparent stencil decal (text + logo), dark brown, distressed */
-export function stencilTex(text = "BANANA CO.", size = 512, color = "rgba(70,40,15,.85)", logo = true): THREE.CanvasTexture {
+export function stencilTex(text = "THE FEED", size = 512, color = "rgba(70,40,15,.85)", logo = true): THREE.CanvasTexture {
   const { c, x } = canvas(size, size / 2);
   const r = rng(5);
   x.fillStyle = color;

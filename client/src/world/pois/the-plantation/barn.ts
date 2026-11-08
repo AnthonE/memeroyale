@@ -272,7 +272,7 @@ export function buildBarn(b: Batch, bMid: Batch, bNear: Batch, glows: THREE.Vect
   for (const [i, [x0, z0, x1, z1, h, y]] of S.CRATE_STACKS.entries()) crateStack(bMid, x0, z0, x1, z1, h, y, 70 + i);
   // BANANA CO. sign board on the gable under the loft window
   b.add(rbox(5.4, 1.1, 0.1, 0.03), "wood", { m: M(0, Mn.eave - 0.2, 0.08), color: 0xf1e6cc });
-  textDecal(b, "BANANA CO.", 5.0, 0.9, M(0, Mn.eave - 0.2, 0.14), { fg: "#8a2418", bg: null, font: 900 });
+  textDecal(b, "THE FEED", 5.0, 0.9, M(0, Mn.eave - 0.2, 0.14), { fg: "#8a2418", bg: null, font: 900 });
   // ---- interior (≤ 75 m): a working packing line — sorting tables heaped with hands, two long washing tanks,
   // hanging bunches on the overhead rail, stacked empty crates, a scale desk, sacks; warm lamps with light pools
   const n = bIn;

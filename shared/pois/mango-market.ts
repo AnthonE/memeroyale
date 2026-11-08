@@ -69,7 +69,7 @@ const ROOFS = ["#b8432f", "#2f8f86", "#8e5a3a", "#b7bcc0", "#3a6fa8", "#c9553d",
 const TRIMS = ["#f6efe0", "#fbf3e2", "#f2e8d0", "#f6efe0"];
 const SHUT = ["#2f4a3a", "#284b6b", "#5a3a2a", "#3b6a5a", "#7a3a30", "#3a3f44"];
 const DOORS = ["#6b4a2b", "#8a3a2a", "#2f5f7a", "#3f6a4a", "#5a3a2a"];
-const SIGNS = ["BANANA CO.", "BANANA CO.", "CNVS.DEV"];
+const SIGNS = ["THE FEED", "THE FEED", "CNVS.DEV"];
 const TANKS: Record<string, string> = { blue: "#2f4f8f", teal: "#2c8a80", olive: "#5e7a3a" };
 
 /** the flat town ground (terrain at padY), measured in the plaza frame: flat from v −160 up to
@@ -198,7 +198,7 @@ function genLayout(): MarketLayout {
     roofProps: [{ kind: "plastic", x: -3.9, z: 5.0, color: "#2c8a80", s: 1.1 }, { kind: "crates", x: 1.2, z: 4.6 }, { kind: "ac", x: 2.6, z: -3.4 }, { kind: "planter", x: 3.6, z: 4.8, s: 1.0 }] }, "C");
   // B: the right-hand neighbour — yellow, blank pipe wall toward the forecourt, red tin pent, olive tank on a
   // timber stand at its forecourt edge (the frame's right third)
-  place(3.2, 12.6, -34, -20, 0, 1, { floors: 2, floorH: 3.1, roof: "flat", wall: "#f2c132", trim: "#f6efe0", balcony: true, awning: "stripe", stripe: 0, parapetH: 0.5, roofAccess: true, sign: "BANANA CO.", shop: true, blind: [1], pent: "#c2452f",
+  place(3.2, 12.6, -34, -20, 0, 1, { floors: 2, floorH: 3.1, roof: "flat", wall: "#f2c132", trim: "#f6efe0", balcony: true, awning: "stripe", stripe: 0, parapetH: 0.5, roofAccess: true, sign: "THE FEED", shop: true, blind: [1], pent: "#c2452f",
     roofProps: [{ kind: "stand", x: 2.9, z: 5.2, color: "#5e7a3a", s: 1.3 }, { kind: "ac", x: -3.2, z: -3.4 }, { kind: "plastic", x: -2.6, z: 1.6, color: "#2f4f8f" }] }, "B");
   // (every ring gap is 0 (party wall) or a real street — 0.4–1.0 m slots between the ring houses are stuck spots)
   place(12.6, 22, -31, -21.6, 0, 1, { floors: 2, roof: "gable", wall: "#7fc8c0", roofColor: "#b8432f", balcony: false, awning: "tin", awningColor: "#b8432f" });
@@ -210,7 +210,7 @@ function genLayout(): MarketLayout {
   // left side (fronts face +u)
   place(-21, -12, -15.5, -3.6, 1, 0, { floors: 2, roof: "gable", roofColor: "#2f8f86", roofPitch: 0.5, wall: "#eab33c", trim: "#f6efe0", shutter: "#3a3f44", balcony: true, awning: "tin", awningColor: "#2f8f86", awningPosts: true, shop: true, flowers: 0.9, shutters: "closed" }, "D1");
   place(-21, -12, -3.6, 6, 1, 0, { floors: 2, roof: "flat", wall: "#e2563f", trim: "#fbf3e2", balcony: true, awning: "stripe", stripe: 0, shop: true, flowers: 0.6 }, "D2");
-  place(-21, -12, 10.6, 17, 1, 0, { floors: 3, roof: "flat", wall: "#3fb8b0", trim: "#f6efe0", balcony: true, awning: "stripe", stripe: 2, shop: true, sign: "BANANA CO." });
+  place(-21, -12, 10.6, 17, 1, 0, { floors: 3, roof: "flat", wall: "#3fb8b0", trim: "#f6efe0", balcony: true, awning: "stripe", stripe: 2, shop: true, sign: "THE FEED" });
   place(-21, -12, 17, 24, 1, 0, { floors: 2, roof: "gable", wall: "#f0a24a", roofColor: "#c9553d", awning: "tin", awningColor: "#b8432f", shop: true });
   // far side (fronts face -v); the far-left street runs at u ∈ [-12, -6.2]
   place(-6.2, 1.9, 24, 33, 0, -1, { floors: 2, roof: "gable", roofColor: "#c9553d", wall: "#4f9fd6", awning: "stripe", stripe: 3, shop: true, balcony: true });
@@ -273,9 +273,9 @@ function genLayout(): MarketLayout {
   {
     const [tx, tz] = toW(SQ[0] + 15, SQ[1] + 16), [hx, hz] = toW(SQ[0] - 17, SQ[1] - 22);
     const ty = yawUV(-0.6, -0.8), hy = yawUV(0, 1);
-    const tw = mk(tx, tz, ty, 9.2, 9.2, { use: "tower", floors: 6, floorH: 3.2, roof: "flat", roofAccess: true, shop: false, balcony: true, awning: null, wall: "#f6efe0", trim: "#c9553d", shutter: "#2f8f86", parapetH: 1.1, sign: "BANANA CO.", roofProps: [{ kind: "tower", x: 2.3, z: 2.3, s: 1.15 }] }, "TOWER");
+    const tw = mk(tx, tz, ty, 9.2, 9.2, { use: "tower", floors: 6, floorH: 3.2, roof: "flat", roofAccess: true, shop: false, balcony: true, awning: null, wall: "#f6efe0", trim: "#c9553d", shutter: "#2f8f86", parapetH: 1.1, sign: "THE FEED", roofProps: [{ kind: "tower", x: 2.3, z: 2.3, s: 1.15 }] }, "TOWER");
     if (tw) site.addPoly(footprint(tw));
-    const mh = mk(hx, hz, hy, 22, 12.5, { use: "market-hall", floors: 1, floorH: 5.2, roof: "gable", roofAxis: "x", roofPitch: 0.5, shop: true, balcony: false, awning: "stripe", stripe: 2, wall: "#e2563f", trim: "#f6efe0", material: "stone", sign: "BANANA CO." }, "HALL");
+    const mh = mk(hx, hz, hy, 22, 12.5, { use: "market-hall", floors: 1, floorH: 5.2, roof: "gable", roofAxis: "x", roofPitch: 0.5, shop: true, balcony: false, awning: "stripe", stripe: 2, wall: "#e2563f", trim: "#f6efe0", material: "stone", sign: "THE FEED" }, "HALL");
     if (mh) site.addPoly(footprint(mh));
   }
   // ---- lots along every street side

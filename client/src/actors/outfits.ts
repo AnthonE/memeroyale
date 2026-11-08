@@ -54,7 +54,7 @@ function textures() {
   fabric(vg, 1024, 512, "#f2c21a", r, 0.05);
   vg.fillStyle = "#d9d9d0"; vg.fillRect(0, 300, 1024, 46); vg.fillStyle = "rgba(255,255,255,0.35)"; vg.fillRect(0, 306, 1024, 6);
   vg.fillStyle = "#3a2a14"; vg.font = "900 62px Impact, Arial Black, sans-serif"; vg.textAlign = "center";
-  vg.fillText("BANANA", 512 - 170, 180); vg.fillText("CO.", 512 - 170, 245);
+  vg.fillText("THE", 512 - 170, 180); vg.fillText("FEED", 512 - 170, 245);
   // pirate coat: deep red wool, darker seams + gold braid rows are geometry
   const [pc, pg] = canvas(512, 512);
   fabric(pg, 512, 512, "#8e2a1c", r, 0.06);
@@ -74,8 +74,8 @@ function textures() {
   v2g.fillStyle = "#d9d9d0"; v2g.fillRect(0, 300, 2048, 44); v2g.fillStyle = "rgba(255,255,255,0.35)"; v2g.fillRect(0, 305, 2048, 6);
   v2g.fillStyle = "#3a2a14"; v2g.textAlign = "center";
   // (the left chest panel runs ~u 0.095 → 0.175 between the open front and the armhole: the print is centred in it)
-  v2g.font = "900 44px Impact, Arial Black, sans-serif"; v2g.fillText("BANANA", 281, 156); v2g.fillText("CO.", 281, 204);
-  v2g.font = "900 104px Impact, Arial Black, sans-serif"; v2g.fillText("BANANA", 1024, 160); v2g.fillText("CO.", 1024, 262);
+  v2g.font = "900 44px Impact, Arial Black, sans-serif"; v2g.fillText("THE", 281, 156); v2g.fillText("FEED", 281, 204);
+  v2g.font = "900 104px Impact, Arial Black, sans-serif"; v2g.fillText("THE", 1024, 160); v2g.fillText("FEED", 1024, 262);
   T = { hawaii: tex(hc), vest: tex(vc), vest2: tex(v2c), coat: tex(pc, 2), straw: tex(sc, 3) };
   return T;
 }

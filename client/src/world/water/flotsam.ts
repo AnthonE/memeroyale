@@ -63,7 +63,7 @@ function crateTexture(): THREE.CanvasTexture {
       }
       g.fillStyle = "#5e4a1a"; g.beginPath(); g.roundRect(cx - 18, cy - 82, 26, 24, 5); g.fill();
       g.font = "bold 58px Impact, 'Arial Black', sans-serif"; g.textAlign = "center"; g.textBaseline = "middle";
-      g.lineWidth = 8; g.strokeText("BANANA CO.", cx, cy + 112); g.fillText("BANANA CO.", cx, cy + 112);
+      g.lineWidth = 8; g.strokeText("THE FEED", cx, cy + 112); g.fillText("THE FEED", cx, cy + 112);
       g.restore();
       // wear: scratch the paint off in places
       for (let k = 0; k < 220; k++) { g.fillStyle = `rgba(${125 + rnd() * 30},${85 + rnd() * 20},${45 + rnd() * 15},${0.3 + rnd() * 0.45})`; g.fillRect(cx - 170 + rnd() * 340, cy - 80 + rnd() * 230, 2 + rnd() * 9, 1 + rnd() * 3); }

@@ -63,9 +63,9 @@ export function buildTerminal(b: Batch, bMid: Batch, bNear: Batch, glows: THREE.
     b.add(rbox(w, h, SG.t, 0.03), "gloss", { m: M(0, yc, zc), color: 0xf6d23a });
     b.add(rbox(w + 0.12, 0.12, SG.t + 0.04, 0.02), "gloss", { m: M(0, rt + SG.y1 - 0.02, zc), color: YEL });
     b.add(rbox(w + 0.12, 0.1, SG.t + 0.04, 0.02), "gloss", { m: M(0, rt + SG.y0 + 0.03, zc), color: YEL });
-    textDecal(b, "PEEL STRIP", (w - 0.6) * 0.62, h * 0.66, M(0, yc + 0.12, zc + SG.t / 2 + 0.006), { fg: "#1f5f8c", bg: null, font: 900, outline: "#fdf6e3" });
+    textDecal(b, "RUNWAY 404", (w - 0.6) * 0.62, h * 0.66, M(0, yc + 0.12, zc + SG.t / 2 + 0.006), { fg: "#1f5f8c", bg: null, font: 900, outline: "#fdf6e3" });
     textDecal(b, "AIR TERMINAL · EST. 1962", w * 0.5, h * 0.16, M(0, rt + SG.y0 + 0.26, zc + SG.t / 2 + 0.006), { fg: "#1d1a14", bg: null, font: 800 });
-    textDecal(b, "BANANA CO. AIRWAYS", w - 1.2, h * 0.5, M(0, yc, zc - SG.t / 2 - 0.006, 0, Math.PI, 0), { fg: "#fdf6e3", bg: null, font: 900 });
+    textDecal(b, "FEED AIRWAYS", w - 1.2, h * 0.5, M(0, yc, zc - SG.t / 2 - 0.006, 0, Math.PI, 0), { fg: "#fdf6e3", bg: null, font: 900 });
     for (const x of [-4.6, -1.5, 1.5, 4.6]) bNear.add(box(0.06, 1.6, 0.06), "pmetal", { m: M(x, rt + 0.95, zc - 0.85, 0.55, 0, 0), color: DARK });
     // floodlights on the sign top, aimed at its face
     for (const x of [-3.6, 0, 3.6]) { bNear.add(rbox(0.3, 0.18, 0.22, 0.03), "pmetal", { m: M(x, rt + SG.y1 + 0.12, zc + 0.3, -0.5, 0, 0), color: 0x333333 }); bNear.add(box(0.24, 0.12, 0.02), "lamp", { m: M(x, rt + SG.y1 + 0.08, zc + 0.42, -0.5, 0, 0) }); }
@@ -239,7 +239,7 @@ function coverProp(b: Batch, n: Batch, k: S.CoverKind, m: THREE.Matrix4, seed: n
     }
     case "container": {
       b.add(containerGeometry(20), "gCorrPaint", { m, uv: "keep", tile: 2, color: [0x2f6fa6, 0xb8452e, 0x3d7a3a][seed % 3], lod: 1 });
-      textDecal(b, "BANANA CO.", 3.2, 0.62, mul(m, M(0, 1.6, 1.23)), { fg: "#f7e7b0", bg: null, font: 900 });
+      textDecal(b, "THE FEED", 3.2, 0.62, mul(m, M(0, 1.6, 1.23)), { fg: "#f7e7b0", bg: null, font: 900 });
       break;
     }
     case "wreck": {

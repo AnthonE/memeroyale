@@ -1,6 +1,6 @@
 // Painted textures for the char-05 thatched hamlet (tp-hamlet.ts): weathered TIMBER (logs / beams / planks, grain along
 // V), golden STRAW for the layered thatch (fibres along V = down the slope), rope COIL wraps for the lashings, the red
-// FLAG cloth and the "BANANA CO." stencil. Tileable sets are generated on typed arrays (albedo + normal + roughness),
+// FLAG cloth and the "THE FEED" stencil. Tileable sets are generated on typed arrays (albedo + normal + roughness),
 // the flag / stencil are canvas-painted. Geometry UVs are in metres; each set's repeat carries its tile size.
 import * as THREE from "three";
 
@@ -235,8 +235,8 @@ export function flagTex(): THREE.CanvasTexture {
   });
 }
 
-/** "BANANA CO." stencil + banana mark on transparent (dark brown paint, worn) — decal for the yellow crate */
-export function stencilTex(label = "BANANA CO."): THREE.CanvasTexture {
+/** "THE FEED" stencil + banana mark on transparent (dark brown paint, worn) — decal for the yellow crate */
+export function stencilTex(label = "THE FEED"): THREE.CanvasTexture {
   return canvasTex(512, 256, (g) => {
     const W = 512, H = 256, r = prng(51);
     g.clearRect(0, 0, W, H);

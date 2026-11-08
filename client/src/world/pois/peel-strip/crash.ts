@@ -144,7 +144,7 @@ function cabin(b: Batch, n: Batch, q: S.CrashPart, front: boolean, seed: number)
     }
     b.add(box(2 * hx - 0.4, 0.22, 0.012), "pmetal", { m: mul(m, M(0, -0.15, s * (hz + 0.008))), color: LIVERY });
     b.add(box(2 * hx - 0.4, 0.06, 0.012), "pmetal", { m: mul(m, M(0, 0.02, s * (hz + 0.008))), color: 0xd9a62a });
-    if (front) textDecal(n, "BANANA CO. AIR", 2.4, 0.34, mul(m, M(0.6, 1.25, s * (hz + 0.012), 0, s > 0 ? 0 : Math.PI, 0)), { fg: "#2a4f6f", bg: null, font: 900 });
+    if (front) textDecal(n, "FEED AIR", 2.4, 0.34, mul(m, M(0.6, 1.25, s * (hz + 0.012), 0, s > 0 ? 0 : Math.PI, 0)), { fg: "#2a4f6f", bg: null, font: 900 });
   }
   // rivet lines: the hull texture carries the rivets; add a few big dents as dark scuffs + rust streaks under the windows
   const r = rng(seed * 13 + 5);

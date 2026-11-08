@@ -239,7 +239,7 @@ function paintFuselage(): Layers<Canvas> {
   for (const s of [1, -1]) {
     const zc = -6.95, yc = 4.72, a = side(aOfY(yc), s);
     const pxPerM = W / (ZCAP - ZN);
-    stencil(c, "BANANA CO.", X(zc), Y(a), 0.5 * pxPerM, s > 0 ? -1 : 1, s > 0 ? 1 : -1, BROWN, 3.7 * pxPerM);
+    stencil(c, "THE FEED", X(zc), Y(a), 0.5 * pxPerM, s > 0 ? -1 : 1, s > 0 ? 1 : -1, BROWN, 3.7 * pxPerM);
     P.r.globalAlpha = 1;
   }
   // wear: chips around doors, ramp hinge + edges, nose; scuffs near the belly
@@ -341,7 +341,7 @@ function paintFin(): Layers<Canvas> {
     L(12.5, 7.27, 14.05, 9.0, 0.48, -0.1, 3);      // low leaf aft
     // BANANA CO. — brown, heavy, reads left→right from each side
     // lettering sits clear above the stabiliser root so it reads whole from below (target art)
-    stencil(c, "BANANA CO.", X(11.75), Y(6.72), 0.52 * sy, 1, 1, BROWN, 3.4 * sx);
+    stencil(c, "THE FEED", X(11.75), Y(6.72), 0.52 * sy, 1, 1, BROWN, 3.4 * sx);
     c.restore(); P.h.restore(); P.r.restore();
   }
   // leading-edge wear along both halves
@@ -485,7 +485,7 @@ function paintCrate(): Layers<Canvas> {
     c.fillStyle = "#9c6d36"; c.fillRect(x, y, w, h); P.h.fillStyle = gray(0.7); P.h.fillRect(x, y, w, h);
   }
   for (const [x, y] of [[17, 17], [W - 17, 17], [17, H - 17], [W - 17, H - 17]]) { c.fillStyle = "#3a3632"; c.beginPath(); c.arc(x, y, 5, 0, TAU); c.fill(); }
-  stencil(c, "BANANA CO.", W / 2, H / 2, 58, 1, 1, "rgba(60,32,12,0.88)", W * 0.8);
+  stencil(c, "THE FEED", W / 2, H / 2, 58, 1, 1, "rgba(60,32,12,0.88)", W * 0.8);
   P.chips(0, 0, W, H, 120, 92, "230,200,150");
   return P.tex(4);
 }

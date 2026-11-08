@@ -1,4 +1,4 @@
-// poi-coast painted signage: "BANANA CO." lettering etc. rendered on a canvas (never baked by image gen), one cached
+// poi-coast painted signage: "THE FEED" lettering etc. rendered on a canvas (never baked by image gen), one cached
 // material per (text, colours, font) so decals merge into the Batch like any other surface.
 import * as THREE from "three";
 import { Batch } from "./coast-kit";

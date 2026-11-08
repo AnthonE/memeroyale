@@ -43,7 +43,7 @@ export interface TownBuilding {
   stripe?: number;
   tank?: "blue" | "teal" | "olive" | "steel" | "tower" | null;
   ac?: boolean;
-  /** painted board text (only "BANANA CO." / "CNVS.DEV" / fruit words allowed) */
+  /** painted board text (only "THE FEED" / "CNVS.DEV" / fruit words allowed) */
   sign?: string | null;
   shop?: boolean;
   roofAccess?: boolean;

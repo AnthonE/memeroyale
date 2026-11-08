@@ -304,7 +304,7 @@ function faceStencil(P: Painter, r: () => number, rect: Rect, col: string, o: { 
   const s = (o.size ?? 0.34) * w;
   const [bu, bv] = o.bunchAt ?? [0.36, 0.34], [tu, tv] = o.textAt ?? [0.36, 0.62];
   if (o.outline) outlineBunch(x, bu * w, bv * h, s, col); else stencilBunch(x, bu * w, bv * h, s, col, col);
-  stencilText(x, o.text ?? "BANANA CO.", tu * w, tv * h, o.textSize ? o.textSize * w : s * 0.24, w * (o.maxW ?? 0.42), col, o.box ?? true);
+  stencilText(x, o.text ?? "THE FEED", tu * w, tv * h, o.textSize ? o.textSize * w : s * 0.24, w * (o.maxW ?? 0.42), col, o.box ?? true);
   distress(x, r, 0, 0, w, h, 380);
   P.A.drawImage(c, x0, y0);
   // burnt stencils sit a hair lower (the burn eats the grain) and are rougher
@@ -468,7 +468,7 @@ function paintSupplyFace(P: Painter, r: () => number, rect: Rect, boards: Rect[]
   } else if (decal === "side") {
     x.save(); x.translate(w * 0.5, h * 0.5); x.rotate(0.08);
     x.font = `900 ${Math.round(w * 0.12)}px "Arial Black", Impact, sans-serif`; x.textAlign = "center"; x.textBaseline = "middle";
-    x.fillStyle = "rgba(92,58,34,.85)"; x.fillText("BANANA CO.", 0, 0, w * 0.86); x.restore();
+    x.fillStyle = "rgba(92,58,34,.85)"; x.fillText("THE FEED", 0, 0, w * 0.86); x.restore();
   }
   distress(x, r, 0, 0, w, h, 1600);
   // edge wear to the wood beneath: knock the paint out along board edges

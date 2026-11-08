@@ -45,7 +45,7 @@ function tankSkin(idx: number, circumference: number, h: number): THREE.MeshStan
   // a yellow product band + BANANA CO. (the only signage allowed) centred at u = 0.2 of the wrap (the lathe angle that
   // faces the view camera + the yard, south-east in harbor-local terms)
   c.fillStyle = "#f2b92a"; c.fillRect(0, H * 0.47, W, 16);
-  stencilText(c, "BANANA CO.", W * 0.2, H * 0.43, { size: 64, color: "#2b2a28", align: "center", weight: 800, letterSpacing: 6 });
+  stencilText(c, "THE FEED", W * 0.2, H * 0.43, { size: 64, color: "#2b2a28", align: "center", weight: 800, letterSpacing: 6 });
   const map = tex(el, { aniso: 8 });
   map.wrapS = THREE.RepeatWrapping; map.wrapT = THREE.ClampToEdgeWrapping;
   // (LatheGeometry: u grows with phi, which runs left → right seen from outside — a POSITIVE repeat reads correctly;

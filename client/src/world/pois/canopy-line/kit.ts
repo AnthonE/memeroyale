@@ -38,9 +38,9 @@ function labelTexture(): THREE.CanvasTexture {
   g.strokeStyle = "rgba(38,24,10,0.9)"; g.lineWidth = 16; g.strokeRect(36, 36, W - 72, H - 72);
   g.textAlign = "center"; g.textBaseline = "middle";
   g.font = "900 236px Impact, 'Arial Black', sans-serif";
-  g.save(); g.translate(W / 2, 220); g.scale(1, 1.05); g.fillText("BANANA", 0, 0); g.restore();
+  g.save(); g.translate(W / 2, 220); g.scale(1, 1.05); g.fillText("THE", 0, 0); g.restore();
   g.font = "900 200px Impact, 'Arial Black', sans-serif";
-  g.save(); g.translate(W / 2, 455); g.fillText("CO.", 0, 0); g.restore();
+  g.save(); g.translate(W / 2, 455); g.fillText("FEED", 0, 0); g.restore();
   // stencil bridges: thin vertical gaps through the letters
   g.globalCompositeOperation = "destination-out";
   for (let x = 120; x < W - 100; x += 118) { g.fillRect(x, 120, 7, 180); }

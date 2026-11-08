@@ -7,7 +7,7 @@
 // frozen frame's flashes and rounds come from their real muzzles (kong.muzzle()).
 //
 // Containers come from the poi-harbor kit (client/src/world/pois/_kit/containers.ts). Everything else is procedural:
-// geometry + canvas-painted colour / normal maps (text only "BANANA CO.").
+// geometry + canvas-painted colour / normal maps (text only "THE FEED").
 //
 // Layout frame ("shot frame"): origin = the shot camera's ground point, yaw = the shot heading (0 = looking north /
 // −Z, like KongPose.yaw). a = metres to the camera's right, d = metres forward. The group sits at the origin rotated by
@@ -227,10 +227,10 @@ function woodTextures() {
   const crate = ["#c79a5c", "#bf8f52", "#cfa56a", "#b98a4e"];
   paintPlanks(c, h, WOOD.plank, 5, crate, 11);
   paintPlanks(c, h, WOOD.stencil, 5, crate, 12);
-  // stencil: "BANANA CO." + banana, dark brown, worn
+  // stencil: "THE FEED" + banana, dark brown, worn
   const s = WOOD.stencil;
-  stencilText(c, "BANANA", s.x + s.w / 2, s.y + s.h * 0.47, { size: 92, color: "rgba(58,36,18,0.86)", align: "center", wear: 0.45, seed: 5, letterSpacing: 4 });
-  stencilText(c, "CO.", s.x + s.w / 2, s.y + s.h * 0.72, { size: 92, color: "rgba(58,36,18,0.86)", align: "center", wear: 0.45, seed: 6, letterSpacing: 6 });
+  stencilText(c, "THE", s.x + s.w / 2, s.y + s.h * 0.47, { size: 92, color: "rgba(58,36,18,0.86)", align: "center", wear: 0.45, seed: 5, letterSpacing: 4 });
+  stencilText(c, "FEED", s.x + s.w / 2, s.y + s.h * 0.72, { size: 92, color: "rgba(58,36,18,0.86)", align: "center", wear: 0.45, seed: 6, letterSpacing: 6 });
   drawBanana(c, s.x + s.w / 2, s.y + s.h * 0.2, 150, -0.25, { color: "rgba(58,36,18,0.82)", wear: 0.35, seed: 7 });
   // battens: one board, lengthwise grain
   paintPlanks(c, h, WOOD.batten, 2, ["#b0824c", "#a97a44"], 13, { nails: false, grain: 1.4 });
@@ -420,7 +420,7 @@ function bananaTexture() {
   return banCache;
 }
 
-// ---- container decal atlas (1024²): the yellow box's brown "BANANA CO." + banana-bunch stencil, the blue box's text
+// ---- container decal atlas (1024²): the yellow box's brown "THE FEED" + banana-bunch stencil, the blue box's text
 const DEC_S = 1024;
 const DEC = { yellow: { x: 0, y: 0, w: 1024, h: 512 }, blue: { x: 0, y: 512, w: 1024, h: 300 } };
 let decCache: THREE.Texture | null = null;
@@ -430,7 +430,7 @@ function decalAtlas() {
   const brown = "rgba(74,42,16,0.94)";
   // yellow: text along the bottom, a 3-finger bunch above-right (target art: stencilled, weathered)
   const Y = DEC.yellow;
-  stencilText(c, "BANANA CO.", Y.x + 36, Y.y + Y.h * 0.86, { size: 150, color: brown, wear: 0.28, seed: 21, letterSpacing: 4, font: "Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif", weight: 400 });
+  stencilText(c, "THE FEED", Y.x + 36, Y.y + Y.h * 0.86, { size: 150, color: brown, wear: 0.28, seed: 21, letterSpacing: 4, font: "Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif", weight: 400 });
   {
     // stencilled bunch: 3 crescent fingers fanned from one crown, a stencil gap between them, worn like the text
     const [bel, bc] = cnv(420, 420);
@@ -447,7 +447,7 @@ function decalAtlas() {
   }
   // blue: yellow text, centred
   const B = DEC.blue;
-  stencilText(c, "BANANA CO.", B.x + B.w / 2, B.y + B.h * 0.74, { size: 170, color: "rgba(244,206,40,0.95)", align: "center", wear: 0.22, seed: 22, letterSpacing: 6, font: "Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif", weight: 400 });
+  stencilText(c, "THE FEED", B.x + B.w / 2, B.y + B.h * 0.74, { size: 170, color: "rgba(244,206,40,0.95)", align: "center", wear: 0.22, seed: 22, letterSpacing: 6, font: "Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif", weight: 400 });
   decCache = ctex(el);
   return decCache;
 }
@@ -1197,7 +1197,7 @@ const CORNER: Array<[number, number, number, number, number, number, keyof typeo
   [2.05, 2.1, -1.05, 0.85, 0.8, 0.66, "monstera", 0.3, 0.2],
 ];
 /** the yellow box's stencil: x range along its side (m from the centre, + = toward the doors) + height range. Only the
- *  box's right ~4 m is in frame (the rest is left of the camera): the target art reads "BANANA CO." left of the hero's head
+ *  box's right ~4 m is in frame (the rest is left of the camera): the target art reads "THE FEED" left of the hero's head
  *  with the bunch behind it */
 // (the bunch sat right behind the hero's head and read as antlers — the stencil moved 1.3 m left, a touch smaller)
 const DECAL_X = [1.5, 3.7], DECAL_Y = [1.25, 2.3];
@@ -1285,8 +1285,8 @@ export async function createFirefightSet(ctx: WorldCtx, origin: { x: number; z: 
   const containerGroup = kit.build({ name: "firefight-containers", cell: 4096 });
   object.add(containerGroup);
 
-  // custom decals: "BANANA CO." + banana at the yellow's LEFT end of side A (the target art reads it left of the hero, the
-  // kit puts it by the doors), "BANANA CO." on the blue 20 ft (the kit decals 40 ft only)
+  // custom decals: "THE FEED" + banana at the yellow's LEFT end of side A (the target art reads it left of the hero, the
+  // kit puts it by the doors), "THE FEED" on the blue 20 ft (the kit decals 40 ft only)
   {
     // ONE decal mesh (own atlas): the yellow box's brown stencil at its left end (target art), the blue box's yellow text
     const parts: THREE.BufferGeometry[] = [];

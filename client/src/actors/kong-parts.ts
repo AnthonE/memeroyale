@@ -641,8 +641,8 @@ function packMap() {
   c.save(); c.translate(S * 0.5, S * 0.28); c.scale(0.8, 0.8); c.rotate(-0.35); c.fillStyle = "#4a2a10";
   c.beginPath(); c.moveTo(-150, -20); c.quadraticCurveTo(0, 110, 150, -20); c.quadraticCurveTo(0, 40, -150, -20); c.fill();
   c.fillRect(140, -44, 22, 30); c.restore();
-  stencil(c, "BANANA", S * 0.5, S * 0.5, 176, "#4a2a10", { font: "Impact, Haettenschweiler, 'Arial Black', sans-serif" });
-  stencil(c, "CO.", S * 0.5, S * 0.66, 160, "#4a2a10", { font: "Impact, Haettenschweiler, 'Arial Black', sans-serif" });
+  stencil(c, "THE", S * 0.5, S * 0.5, 176, "#4a2a10", { font: "Impact, Haettenschweiler, 'Arial Black', sans-serif" });
+  stencil(c, "FEED", S * 0.5, S * 0.66, 160, "#4a2a10", { font: "Impact, Haettenschweiler, 'Arial Black', sans-serif" });
   // stencil bridges (gaps) for the painted-stencil look
   c.fillStyle = "#eec433"; for (let i = 0; i < 6; i++) c.fillRect(S * (0.2 + i * 0.12), S * 0.44, 6, 110);
   grain(c, S, S, r, 0.07, 9000);

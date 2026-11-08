@@ -669,7 +669,7 @@ export function bananaLogo(style: "flat" | "badge" = "flat"): TexSet {
       g.fillStyle = "#3a8f3e"; g.beginPath(); g.arc(S / 2, S / 2, S * 0.36, 0, 7); g.fill();
       g.fillStyle = "#f7e9b8"; g.font = `900 ${S * 0.085}px "Arial Black", Impact, sans-serif`; g.textAlign = "center"; g.textBaseline = "middle";
       g.save(); g.translate(S / 2, S / 2);
-      const txt = "BANANA CO. • BANANA CO. • ";
+      const txt = "THE FEED • THE FEED • ";
       for (let i = 0; i < txt.length; i++) { g.save(); g.rotate((i / txt.length) * Math.PI * 2); g.fillStyle = "#2b2418"; g.fillText(txt[i], 0, -S * 0.4); g.restore(); }
       g.restore();
     }
@@ -764,13 +764,13 @@ export function screens(): TexSet {
     g.fillStyle = "#2f7a3a"; g.beginPath(); g.moveTo(300, 60); g.bezierCurveTo(360, 20, 460, 40, 480, 110); g.bezierCurveTo(490, 190, 400, 230, 330, 210); g.bezierCurveTo(280, 190, 270, 110, 300, 60); g.fill();
     g.strokeStyle = "#e8d890"; g.lineWidth = 3; g.stroke();
     g.strokeStyle = "#f2f2f2"; g.lineWidth = 5; g.beginPath(); g.moveTo(340, 150); g.lineTo(400, 100); g.stroke();
-    g.fillStyle = "#ffcc33"; g.font = "bold 22px monospace"; g.fillText("PEEL STRIP", 318, 236);
+    g.fillStyle = "#ffcc33"; g.font = "bold 22px monospace"; g.fillText("RUNWAY 404", 318, 236);
     g.fillStyle = "rgba(255,255,255,0.08)"; for (let y = 0; y < Hh; y += 4) g.fillRect(0, y, W, 1);
     return { a: A.c, repeat: false };
   });
 }
 
-/** "BANANA CO." stencil crate side: planks + frame + stamped text. U across the side, V up. */
+/** "THE FEED" stencil crate side: planks + frame + stamped text. U across the side, V up. */
 export function crateSide(): TexSet {
   return make("crate", () => {
     const W = 512, Hh = 320, A = cv(W, Hh), H = cv(W, Hh), r = rng(191), grain = fbm(192, 6, 4);
@@ -794,7 +794,7 @@ export function crateSide(): TexSet {
     // stamped text, slightly worn
     A.g.save();
     A.g.fillStyle = "rgba(40,30,22,0.9)"; A.g.font = `900 64px "Arial Black", Impact, sans-serif`; A.g.textAlign = "center"; A.g.textBaseline = "middle";
-    A.g.fillText("BANANA CO.", W / 2, Hh / 2 + 4);
+    A.g.fillText("THE FEED", W / 2, Hh / 2 + 4);
     A.g.globalCompositeOperation = "destination-out";
     for (let k = 0; k < 260; k++) { A.g.fillStyle = `rgba(0,0,0,${0.1 + r() * 0.15})`; A.g.fillRect(W * 0.15 + r() * W * 0.7, Hh * 0.3 + r() * Hh * 0.4, 2 + r() * 5, 2 + r() * 3); }
     A.g.restore();

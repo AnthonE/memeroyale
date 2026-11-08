@@ -349,8 +349,8 @@ export function rainbowTex(): THREE.CanvasTexture {
   }, { repeat: false });
 }
 
-/** "BANANA CO." stencil crate side, painted in code */
-export function crateTex(label = "BANANA CO."): THREE.CanvasTexture {
+/** "THE FEED" stencil crate side, painted in code */
+export function crateTex(label = "THE FEED"): THREE.CanvasTexture {
   return canvasTex(512, 512, (g, w, h) => {
     g.fillStyle = "#b8823f"; g.fillRect(0, 0, w, h);
     const rnd = mulberry(5);

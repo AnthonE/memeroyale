@@ -331,7 +331,7 @@ export function addTikiBar(bins: TownBins, at: THREE.Matrix4, R = 3.2, rng: () =
   }
   // lanterns under the eave
   for (let i = 0; i < 3; i++) { const a = i * 2.1; addLantern(bins, at.clone().multiply(M(Math.cos(a) * (R - 0.6), ph - 0.6, Math.sin(a) * (R - 0.6)))); }
-  // sign board "BANANA CO." hung from the eave is added by the POI (needs the sign material)
+  // sign board "THE FEED" hung from the eave is added by the POI (needs the sign material)
   void rng;
 }
 export { leafGeo, quadGeo, boxGeo };

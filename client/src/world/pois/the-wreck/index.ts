@@ -31,7 +31,7 @@ const views: Record<string, CamSpec> = {
   "wip-wreck-sea": { pos: [-977, 3.5, 94.3], target: [-944.7, 3, 120], fov: 55, note: "from the sea: the stern's counter, rudder + propeller" },
   "wip-wreck-spill": { pos: [-834, 3.2, 80], target: [-850, 0.8, 104], fov: 60, note: "open containers + banana heaps on the beach" },
   "wip-wreck-heap": { pos: [-845, 3.5, 102], target: [-872, 1.5, 127], fov: 58, note: "the heap under the break" },
-  "wip-wreck-letters": { pos: [-846, 3.4, 118], target: [-862, 8, 150], fov: 50, note: "BANANA CO. letters on the bow flank, 35 m" },
+  "wip-wreck-letters": { pos: [-846, 3.4, 118], target: [-862, 8, 150], fov: 50, note: "THE FEED letters on the bow flank, 35 m" },
 };
 
 // eye level inside the stern house (section-local corner → opposite corner)

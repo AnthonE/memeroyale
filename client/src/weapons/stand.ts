@@ -206,7 +206,7 @@ function drawSign(c: HTMLCanvasElement) {
   rr(22, 20, 980, 216, 36); x.fillStyle = "#fff0bf"; x.fill(); x.lineWidth = 9; x.strokeStyle = "#d39a1c"; x.stroke();
   for (let i = 0; i < 160; i++) { x.fillStyle = `rgba(150,100,40,${0.05 + r() * 0.1})`; x.beginPath(); x.arc(40 + r() * 944, 36 + r() * 184, 1 + r() * 3, 0, Math.PI * 2); x.fill(); }
   x.font = SIGN_FONT; x.textAlign = "center"; x.textBaseline = "middle";
-  const text = "BANANA STAND", w = x.measureText(text).width, sx = Math.min(1, 640 / w);
+  const text = "MERCH TABLE", w = x.measureText(text).width, sx = Math.min(1, 640 / w);
   x.save(); x.translate(512, 136); x.scale(sx, 1);
   x.fillStyle = "#e39a12"; x.fillText(text, 5, 6);
   x.fillStyle = "#5a2a0c"; x.fillText(text, 0, 0);

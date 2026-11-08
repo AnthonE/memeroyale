@@ -37,7 +37,7 @@ export interface HullSection {
   beachSide: 1 | -1;
 }
 
-export const SHIP = { name: "BANANA CO.", beam: 18, depth: 11 };
+export const SHIP = { name: "THE FEED", beam: 18, depth: 11 };
 
 /** the composition anchor: the view camera stands on the upper beach here looking SW. Spill and
  *  dressing are placed by bearing (deg, + = right) and distance from it so the frame keeps its composition. */

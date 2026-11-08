@@ -292,7 +292,7 @@ const mod: WorldModule = {
     {
       const at = M(TIKI.x, Y, TIKI.z);
       R.addTikiBar(Mn(TIKI.x, TIKI.z), at, TIKI.r, rng, { gap: -Math.PI * 0.35 });
-      const sign = new THREE.Mesh(boxGeo(1.9, 0.48, 0.05), mats.sign("BANANA CO.", "#3d6a4e", "#f2e6cc"));
+      const sign = new THREE.Mesh(boxGeo(1.9, 0.48, 0.05), mats.sign("THE FEED", "#3d6a4e", "#f2e6cc"));
       const a = Math.PI * 0.85;
       sign.position.set(TIKI.x + Math.cos(a) * (TIKI.r + 0.25), Y + 2.55, TIKI.z + Math.sin(a) * (TIKI.r + 0.25));
       sign.rotation.y = -a + Math.PI / 2; sign.castShadow = true; sign.name = "cove:sign";

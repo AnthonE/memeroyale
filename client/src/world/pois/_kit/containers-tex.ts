@@ -5,7 +5,7 @@
 //              dust, rubber, castings, floor boards… are painted in their real colours.
 //   roughMask  R = TINT MASK (1 = painted steel → multiplied by the instance colour, 0 = keep the painted RGB),
 //              G = roughness (three.js reads .g). NoColorSpace, 1024².
-// A decal STAMP atlas (2048×1024) carries "BANANA CO." + the banana logos; the container shader stamps them onto the
+// A decal STAMP atlas (2048×1024) carries "THE FEED" + the banana logos; the container shader stamps them onto the
 // side walls from a per-instance decal id (containers.ts), so decals cost no extra draws and follow the LOD box.
 // Regions are in canvas pixels (y down). containers-geo.ts maps geometry into them.
 import * as THREE from "three";
@@ -465,7 +465,7 @@ function paintAtlas(): Record<string, HTMLCanvasElement> {
 // ------------------------------------------------------------------------------------------------ decal stamps
 /**
  * Stamp atlas 2048×1024 (sRGB, straight alpha):
- *   text   (0,0)–(2048,300): "BANANA CO." white mask (tinted per decal type)
+ *   text   (0,0)–(2048,300): "THE FEED" white mask (tinted per decal type)
  *   bananaMask   (0,320) 512²: banana silhouette, white mask (tinted: dark on yellow containers)
  *   bananaColor  (520,320) 512²: yellow banana logo with outline, shade, highlight, stem + tip (not tinted)
  *   bananaWhite  (1040,320) 512²: faded white banana logo with ridge line (the wreck's containers)
@@ -488,9 +488,9 @@ export function decalStamps(): THREE.Texture {
 function paintStamps(): Record<string, HTMLCanvasElement> {
   const [el, c] = canvas(STAMPS.w, STAMPS.h);
   c.clearRect(0, 0, STAMPS.w, STAMPS.h);
-  // "BANANA CO." fills the stamp: measure + scale to width
+  // "THE FEED" fills the stamp: measure + scale to width
   const T = STAMPS.text;
-  stencilText(c, "BANANA CO.", T.x + T.w / 2, T.y + 262, { size: 290, color: "#ffffff", align: "center", wear: 0.05, seed: 7, letterSpacing: 10, font: CONTAINER_FONT, weight: 800 });
+  stencilText(c, "THE FEED", T.x + T.w / 2, T.y + 262, { size: 290, color: "#ffffff", align: "center", wear: 0.05, seed: 7, letterSpacing: 10, font: CONTAINER_FONT, weight: 800 });
   // edge wear instead of holes: a few thin horizontal scrapes through the print (brush / chassis rub), no camo blotches
   { const R = rng(71); c.save(); c.globalCompositeOperation = "destination-out"; for (let i = 0; i < 22; i++) { const y = T.y + 40 + R() * 230, x = T.x + R() * T.w, l = 30 + R() * 160; c.globalAlpha = 0.5 + R() * 0.5; c.fillRect(x, y, l, 1.5 + R() * 3); } c.restore(); }
   const B = STAMPS.bananaMask;

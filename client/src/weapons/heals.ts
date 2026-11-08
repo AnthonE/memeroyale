@@ -122,7 +122,7 @@ function smoothie(): Built {
     x.strokeStyle = ink; x.lineWidth = 9; shieldPath(x, cx, cy, 76); x.stroke();
     x.fillStyle = ink; bunchPath(x, cx, cy - 22, 70, 0.1);
     x.font = "900 34px Arial Black, Arial, sans-serif"; x.textAlign = "center"; x.textBaseline = "middle";
-    x.fillText("BANANA", cx, cy + 40); x.font = "900 32px Arial Black, Arial, sans-serif"; x.fillText("CO.", cx, cy + 74);
+    x.fillText("THE", cx, cy + 40); x.font = "900 32px Arial Black, Arial, sans-serif"; x.fillText("FEED", cx, cy + 74);
     // distress: erase specks + a couple of worn streaks so it reads stamped, not printed
     x.globalCompositeOperation = "destination-out";
     for (let i = 0; i < 300; i++) { x.fillStyle = `rgba(0,0,0,${0.25 + r() * 0.6})`; x.beginPath(); x.arc(cx - 95 + r() * 190, cy - 95 + r() * 210, 0.6 + r() * 2, 0, Math.PI * 2); x.fill(); }

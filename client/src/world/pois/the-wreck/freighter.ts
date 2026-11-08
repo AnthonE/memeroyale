@@ -651,7 +651,7 @@ function mast(b: Builder, M: WreckMats, s: HullSection) {
 }
 
 function letters(group: THREE.Group, M: WreckMats, s: HullSection) {
-  // "BANANA CO." ~3 m letters mid-flank on the beach side (the name sits well inside the hull, half-way down
+  // "THE FEED" ~3 m letters mid-flank on the beach side (the name sits well inside the hull, half-way down
   // from the deck, the whole word clear of the break) — the plane is a grid that follows the hull's half-breadth, so
   // the paint sits ON the plating
   // (4.5 m toward the break + 0.8 m up — further aft and lower the "B" runs into the sand)
