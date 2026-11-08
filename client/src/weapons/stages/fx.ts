@@ -11,7 +11,7 @@ import type { WorldCtx } from "../../engine/engine";
 import type { WeaponId } from "../../../../shared/world/map";
 import type { Surface } from "../../../../shared/world/colliders";
 import { createWeaponsKit, type FxEx } from "../index";
-import { gunSpec } from "../guns/index";
+import { gunFit } from "../guns/index";
 import type { StageDef, StageFile, OnUpdate } from "../studio";
 import { flag } from "../../flags";
 
@@ -78,13 +78,13 @@ const stages: Record<string, StageDef> = {
       for (let i = 0; i < ids.length; i++) {
         const g = await kit.createHeldWeapon(ids[i], "rare");
         const holder = new THREE.Group(); holder.add(g);
-        // life size (the held models are already ×1.4) and turned ~50° toward the camera — at ×1.6 side-on the six
+        // life size and turned ~50° toward the camera — at ×1.6 side-on the six
         // guns overlapped end to end and every flash hid inside the next gun
         const x = (i - 2.5) * 1.3;
         holder.position.set(x, yAt(ctx, x, -1.5) + 1.3, -1.5); holder.rotation.y = Math.PI / 2 + 0.45; holder.scale.setScalar(1.15);
         root.add(holder);
         root.updateMatrixWorld(true);
-        const spec = gunSpec(ids[i]);
+        const spec = gunFit(ids[i]);
         const mz = spec.muzzle.clone().sub(spec.gripAnchor).applyMatrix4(holder.matrixWorld);
         muzzles.push([ids[i], mz, new THREE.Vector3(0, 0, -1).transformDirection(holder.matrixWorld)]);
       }

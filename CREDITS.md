@@ -16,6 +16,11 @@ The player, Triple T, is the Gates and oneshot character, commissioned from Mesh
 operator. He is **not covered by the MIT licence**: play and modify the game with him, but ask before reusing him
 anywhere else. Files: `public/assets/actors/tt/`, `tools/actors/src/triple-t.glb`.
 
+## The guns
+
+The guns, the rocket and the frag (RATIO BOMB) are oneshot's, commissioned from Meshy and owned outright by the Elo
+Pros operator. Like Triple T they are **not covered by the MIT licence**. Files: `public/assets/weapons/`.
+
 ## The announcer
 
 The announcer's voice, Kallixis, was recorded with ElevenLabs on the Elo Pros operator's paid plan: fifteen lines by

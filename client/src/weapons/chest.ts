@@ -17,7 +17,7 @@ import { addGlint, C } from "./lib/mats";
 import { bananaGeometry, filletCyl, lathe, rbox, ringGeo, tf, alignY } from "./lib/geo";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { bananaPath } from "./lib/mats";
-import { gunInstance } from "./guns/index";
+import { gunInstance, gunsReady } from "./guns/index";
 import type { ChestView } from "./api";
 import { CHEST_CRATE } from "../../../shared/sim/crate";
 import { flag } from "../flags";
@@ -888,6 +888,8 @@ function dressing(tall: boolean): THREE.Group {
   // ---- the gun: lying ON TOP of the heap like the target art — seen from its LEFT side, muzzle up to the right toward
   // the lid's far corner, its top rolled toward the camera so the magazine + fore-grip sink BEHIND the ammo boxes into
   // the straw; the receiver rests on the back box's rounds, the barrel on the shield's upper rim
+  // (a dressed chest built before the guns' models are in shows no gun)
+  if (!gunsReady()) return g;
   const gun = gunInstance(GUN_ID);
   gun.root.scale.setScalar(GUN_POSE.s);
   const fwd = (GUN_REV ? new THREE.Vector3(-0.92, -GUN_POSE.pitch, 0.14) : new THREE.Vector3(0.92, GUN_POSE.pitch, -0.14)).normalize(); // muzzle direction (gun −Z)

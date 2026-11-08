@@ -1,5 +1,5 @@
 {
-  "about": "memory.mts --budgets: what the game holds at the playable title on SwiftShader (the CI no-GPU boot smoke job runs it after boot). A number over its budget fails; a number more than underPct under fails until the budget is lowered (the failure names the new value, measured plus headroomPct), so budgets only go down. Set 2026-11-07 after Triple T replaced the kong (lighter: two real textures where kong2 had about twelve), from two local runs of the CI command (identical: WebGL 1213.9 MB, textures 1059.2 MB in 240, buffers 133.1, geometry CPU 164.9 MB, texture CPU 258.6 MB). WebGL and textures carry 4% headroom, because upstream measured about 2% run-to-run spread in the title's texture set on CI; the rest headroomPct.",
+  "about": "memory.mts --budgets: what the game holds at the playable title on SwiftShader (the CI no-GPU boot smoke job runs it after boot). A number over its budget fails; a number more than underPct under fails until the budget is lowered (the failure names the new value, measured plus headroomPct), so budgets only go down. Set 2026-11-07 after Triple T replaced the kong (lighter: two real textures where kong2 had about twelve), from two local runs of the CI command (identical: WebGL 1213.9 MB, textures 1059.2 MB in 240, buffers 133.1, geometry CPU 164.9 MB, texture CPU 258.6 MB). WebGL and textures carry 4% headroom, because upstream measured about 2% run-to-run spread in the title's texture set on CI; the rest headroomPct. Raised 2026-11-08 for oneshot's textured guns (public/assets/weapons, loaded with the weapons kit at boot; trimmed to their base-colour and normal maps first): measured WebGL 1264.7 MB, textures 1105.8 MB in 250, texture CPU 288.9 MB, each set at measured + headroomPct.",
   "config": {
     "url": "/?seed=42&vegsplat=0",
     "profile": "nogpu",
@@ -11,12 +11,12 @@
   "headroomPct": 2,
   "budgets": {
     "title": {
-      "webglMB": 1263,
-      "textureMB": 1102,
+      "webglMB": 1290,
+      "textureMB": 1128,
       "bufferMB": 140,
-      "textureCount": 249,
+      "textureCount": 255,
       "geometryCpuMB": 169,
-      "textureCpuMB": 264
+      "textureCpuMB": 295
     }
   }
 }

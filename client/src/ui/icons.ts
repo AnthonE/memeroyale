@@ -115,7 +115,15 @@ export function drawGlyph(g: CanvasRenderingContext2D, id: GlyphId, x: number, y
 
 // ------------------------------------------------------------------------------------------------ items
 const imgCache = new Map<string, HTMLImageElement>();
-export const itemIconUrl = (id: string) => uiAsset(`icons/${id}.webp`);
+/** icons drawn at runtime from an item's own model (weapons/gun-icons.ts): served instead of the painted file */
+const drawn = new Map<string, string>();
+/** an item's icon is now this URL (a blob from its model); later lookups get it, and the cached <img> / silhouette follow */
+export function setItemIcon(id: string, url: string) {
+  drawn.set(id, url);
+  const im = imgCache.get(id); if (im) im.src = url;
+  silCache.forEach((_, k) => { if (k.startsWith(id + "/")) silCache.delete(k); });
+}
+export const itemIconUrl = (id: string) => drawn.get(id) ?? uiAsset(`icons/${id}.webp`);
 /** shared, preloaded <img> for an item (decode() it before drawing to a canvas) */
 export function itemImage(id: string): HTMLImageElement {
   let im = imgCache.get(id);
@@ -157,7 +165,7 @@ export function weaponSilhouette(id: string, w: number, h: number, color = "#fbf
   tmp.width = w; tmp.height = h;
   const t = tmp.getContext("2d")!;
   t.save();
-  if (FACES_LEFT.has(id)) { t.translate(w, 0); t.scale(-1, 1); }
+  if (FACES_LEFT.has(id) && !drawn.has(id)) { t.translate(w, 0); t.scale(-1, 1); }
   t.drawImage(im, (w - dw) / 2, (h - dh) / 2, dw, dh);
   t.restore();
   t.globalCompositeOperation = "source-in";

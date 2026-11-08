@@ -4,7 +4,7 @@
 import * as THREE from "three";
 import type { WorldCtx } from "../../engine/engine";
 import type { WeaponId } from "../../../../shared/world/map";
-import { gunInstance, GUN_ORDER } from "../guns/index";
+import { gunInstance, GUN_ORDER, loadGuns } from "../guns/index";
 import { fitToBox, squareBox, stageCam, type StageDef, type StageFile } from "../studio";
 
 export const SHEET_BOX: Record<WeaponId, [number, number, number, number]> = {
@@ -49,12 +49,13 @@ function stageGun(ctx: WorldCtx, root: THREE.Group, id: WeaponId, box: [number, 
 const finish = (_root: THREE.Group) => { /* nothing */ };
 
 const stages: Record<string, StageDef> = {
-  weapons: { origin: "studio", build(ctx, root) { for (const id of GUN_ORDER) stageGun(ctx, root, id, SHEET_BOX[id]); finish(root); } },
+  weapons: { origin: "studio", async build(ctx, root) { await loadGuns((p) => ctx.assets.model(p)); for (const id of GUN_ORDER) stageGun(ctx, root, id, SHEET_BOX[id]); finish(root); } },
 };
 for (const id of GUN_ORDER) {
   stages[`gun-${id}`] = {
     origin: "studio",
-    build(ctx, root) {
+    async build(ctx, root) {
+      await loadGuns((p) => ctx.assets.model(p));
       const [u0, v0, u1, v1] = SHEET_BOX[id];
       const w = u1 - u0, h = v1 - v0;
       const k = Math.min(0.9 / w, 0.86 / h);

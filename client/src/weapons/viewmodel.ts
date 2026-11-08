@@ -56,10 +56,12 @@ interface Hold {
 // 0.11-0.13, nearly on the crosshair, the pistol's / sniper's at 0.19-0.23), solved by moving the grip out
 // — the centre of the view stays clear; the SMG / AR / shotgun a touch smaller and
 // a little less turned in (yaw 0.25 → 0.21) so they keep their length above the hotbar
+// oneshot's guns (weapons/guns/glb.ts): each scale is the banana gun's × its length / the new gun's (the same size on
+// screen), the left hand on the new fore-end (gunFit's foreAnchor, a little under it)
 export const VM_HOLD: Record<WeaponId, Hold> = {
   pistol: {
     // right of centre, barrel converging on the crosshair, forearms down
-    pos: [0.242, -0.198, -0.5], rot: [0.02, 0.22, -0.18], scale: 0.822, elR: [0.1, -1.0, -0.4], adsScale: 0.587,
+    pos: [0.242, -0.198, -0.5], rot: [0.02, 0.22, -0.18], scale: 0.97, elR: [0.1, -1.0, -0.4], adsScale: 0.693,
     r: { at: [0, -0.07, 0.046], up: [0, 0.884, -0.467], palm: [1, 0, 0], a: 0.031, b: 0.046 },
     l: null, recoil: [0.045, 0.08, 0.025, 0.012, 26],   // calmer kicks (less random roll / yaw)
     ads: { sight: [0, 0.075, 0.05], dist: 0.3 }, reload: "pistol",
@@ -67,29 +69,29 @@ export const VM_HOLD: Record<WeaponId, Hold> = {
   },
   smg: {
     // right of centre, barrel converging on the crosshair, forearms down
-    pos: [0.314, -0.272, -0.53], rot: [-0.03, 0.21, -0.2], scale: 0.92, elR: [0.1, -1.0, -0.4], adsScale: 0.559,
+    pos: [0.314, -0.272, -0.53], rot: [-0.03, 0.21, -0.2], scale: 1.037, elR: [0.1, -1.0, -0.4], adsScale: 0.63,
     r: { at: [0, -0.063, 0.042], up: [0, 0.953, -0.302], palm: [1, 0, 0], a: 0.028, b: 0.04 },
-    l: { at: [0, -0.06, -0.362], up: [0, 1, -0.06], palm: [-1, 0, 0], a: 0.02, b: 0.02 },
+    l: { at: [0, -0.043, -0.192], up: [0, 1, -0.06], palm: [-1, 0, 0], a: 0.02, b: 0.02 },
     recoil: [0.022, 0.026, 0.01, 0.006, 34],
     ads: { sight: [0, 0.1, 0.02], dist: 0.3 }, reload: "mag",
     magGrip: { at: [0, -0.142, -0.189], up: [0, 0.923, 0.384], palm: [-1, 0, 0], a: 0.025, b: 0.036 },
   },
   ar: {
     // right of centre, barrel converging on the crosshair, forearms down
-    pos: [0.337, -0.243, -0.53], rot: [0.11, 0.21, -0.2], scale: 0.62, elR: [0.1, -1.0, -0.4], adsScale: 0.464,
+    pos: [0.337, -0.243, -0.53], rot: [0.11, 0.21, -0.2], scale: 0.795, elR: [0.1, -1.0, -0.4], adsScale: 0.595,
     r: { at: [0, -0.063, 0.031], up: [0, 0.923, -0.385], palm: [1, 0, 0], a: 0.025, b: 0.034 },
     // the left palm on the NEAR side of the lower tube, fingers over the top, forearm down —
     // the back of the glove faces the camera (hidden under the tube behind the drum it read as an open C-ring)
-    l: { at: [-0.012, -0.035, -0.43], up: [0, 0.08, 1], palm: [-1, 0, 0], a: 0.04, b: 0.045 },
+    l: { at: [-0.012, -0.082, -0.16], up: [0, 0.08, 1], palm: [-1, 0, 0], a: 0.04, b: 0.045 },
     recoil: [0.03, 0.03, 0.01, 0.006, 30],
     ads: { sight: [0, 0.13, 0.0], dist: 0.32 }, reload: "mag",
     magGrip: { at: [0, -0.14, -0.2], up: [0, 1, 0], palm: [-1, 0, 0], a: 0.07, b: 0.07 },
   },
   shotgun: {
     // right of centre, barrel converging on the crosshair, forearms down
-    pos: [0.316, -0.197, -0.53], rot: [0.08, 0.21, -0.2], scale: 1.0, elR: [0.1, -1.0, -0.4], adsScale: 0.561,
+    pos: [0.316, -0.197, -0.53], rot: [0.08, 0.21, -0.2], scale: 1.04, elR: [0.1, -1.0, -0.4], adsScale: 0.584,
     r: { at: [0, -0.06, 0.047], up: [0, 0.827, -0.562], palm: [1, 0, 0], a: 0.039, b: 0.048 },
-    l: { at: [0, -0.085, -0.265], up: [0, 0.05, -1], palm: [0, -1, 0], a: 0.05, b: 0.075 },
+    l: { at: [0, -0.04, -0.3], up: [0, 0.05, -1], palm: [0, -1, 0], a: 0.05, b: 0.075 },
     recoil: [0.09, 0.2, 0.04, 0.02, 16],
     ads: { sight: [0, 0.07, 0.02], dist: 0.34 }, reload: "shell",
     port: [0.07, 0.03, -0.06],
@@ -98,9 +100,9 @@ export const VM_HOLD: Record<WeaponId, Hold> = {
     // the butt must not cover the ammo counter + hotbar: less muzzle-left yaw and a little left,
     // so the stock runs back under the view instead of out to the lower-right HUD corner
     // right of centre, barrel converging on the crosshair, forearms down
-    pos: [0.281, -0.222, -0.55], rot: [0.06, 0.22, -0.12], scale: 0.509, elR: [0.1, -1.0, -0.4], adsScale: 0.424,
+    pos: [0.281, -0.222, -0.55], rot: [0.06, 0.22, -0.12], scale: 0.8, elR: [0.1, -1.0, -0.4], adsScale: 0.6,
     r: { at: [0, -0.03, 0.118], up: [0, 0.88, -0.48], palm: [1, 0, 0], a: 0.036, b: 0.034 },
-    l: { at: [0, 0.03, -0.22], up: [0, 0.05, -1], palm: [0, -1, 0], a: 0.05, b: 0.058 },
+    l: { at: [0, -0.039, -0.3], up: [0, 0.05, -1], palm: [0, -1, 0], a: 0.05, b: 0.058 },
     recoil: [0.09, 0.15, 0.03, 0.015, 12],
     ads: { sight: [0, 0.25, 0.07], dist: 0.34 }, reload: "bolt",
     port: [0.02, 0.13, 0.04],
@@ -108,9 +110,9 @@ export const VM_HOLD: Record<WeaponId, Hold> = {
   rocket: {
     // a BIG launcher up on the right shoulder — tube high and nearly parallel to the view, its rear running off the right
     // edge (a small tube at the hip shows its open bore); aimed, it stays shouldered at the same size beside the sight line
-    pos: [0.3, -0.085, -0.5], rot: [-0.02, 0.13, -0.04], scale: 0.75, elR: [0.1, -1.0, -0.4], adsScale: 0.75,
+    pos: [0.36, -0.16, -0.55], rot: [-0.02, 0.13, -0.04], scale: 0.45, elR: [0.1, -1.0, -0.4], adsScale: 0.45,
     r: { at: [0, -0.09, 0.12], up: [0, 0.957, -0.287], palm: [1, 0, 0], a: 0.03, b: 0.036 },
-    l: { at: [0, -0.095, -0.08], up: [0, 1, 0], palm: [-1, 0, 0], a: 0.022, b: 0.022 },
+    l: { at: [0, -0.059, -0.261], up: [0, 1, 0], palm: [-1, 0, 0], a: 0.022, b: 0.022 },
     recoil: [0.13, 0.16, 0.03, 0.025, 10],
     ads: { sight: [0, 0.2, 0.1], dist: 0.36 }, reload: "warhead",
   },

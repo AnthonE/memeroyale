@@ -54,9 +54,6 @@
       "import { bindingText, lookText, onLabelsChange, padText } from \"../settings/labels\";",
       "import { device } from \"../settings/device\";"
     ],
-    "client/src/weapons/guns/common.ts": [
-      "import { PartBuilder } from \"../lib/builder\";"
-    ],
     "client/src/weapons/guns/index.ts": [
       "import * as THREE from \"three\";"
     ],
@@ -250,9 +247,6 @@
       "shieldTex = new THREE.CanvasTexture(c); shieldTex.colorSpace = THREE.SRGBColorSpace; shieldTex.anisotropy = 8;",
       "strawT = new THREE.CanvasTexture(c); strawT.colorSpace = THREE.SRGBColorSpace; strawT.wrapS = strawT.wrapT = THREE.RepeatWrapping; strawT.repeat.set(3, 3);",
       "ammoT = new THREE.CanvasTexture(c); ammoT.colorSpace = THREE.SRGBColorSpace; ammoT.anisotropy = 8;"
-    ],
-    "client/src/weapons/guns/rocket.ts": [
-      "tubeTex = new THREE.CanvasTexture(c); tubeTex.colorSpace = THREE.SRGBColorSpace; tubeTex.anisotropy = 8; tubeTex.wrapS = THREE.RepeatWrapping;"
     ],
     "client/src/weapons/hands.ts": [
       "const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = 4;",

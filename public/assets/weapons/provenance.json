@@ -1,0 +1,4 @@
+{
+  "source": "oneshot's guns, rocket and frag (crates/client/assets/models: magnum, smg, ar, shotgun, sniper, rocket-launcher, rocket, frag), each commissioned from Meshy on a paid plan and owned outright by the Elo Pros operator; copied with smaller maps by tools/models/import_oneshot.py",
+  "licence": "All rights reserved by the Elo Pros operator; not covered by the MIT licence (CREDITS.md). Play and modify the game with them; ask before reusing them anywhere else."
+}

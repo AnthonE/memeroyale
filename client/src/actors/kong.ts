@@ -26,7 +26,7 @@ import type { WeaponsKit } from "../weapons/api";
 import type { Rarity, WeaponId } from "../../../shared/world/map";
 import { heldMuzzle, HELD_SCALE } from "../weapons/held";
 import { UNBOUNCE_GLSL } from "./look";
-import { gunSpec } from "../weapons/guns/index";
+import { gunFit } from "../weapons/guns/index";
 import { loadAccessories, type AccPiece, type Outfit } from "./outfits";
 import { flag } from "../flags";
 
@@ -35,7 +35,7 @@ const foreCache = new Map<WeaponId, THREE.Vector3 | null>();
 function heldFore(id: WeaponId): THREE.Vector3 | null {
   if (foreCache.has(id)) return foreCache.get(id)!;
   let v: THREE.Vector3 | null = null;
-  try { const s = gunSpec(id); if (s.foreAnchor && id !== "pistol") v = s.foreAnchor.clone().sub(s.gripAnchor).multiplyScalar(HELD_SCALE); } catch { v = null; }
+  try { const s = gunFit(id); if (s.foreAnchor && id !== "pistol") v = s.foreAnchor.clone().sub(s.gripAnchor).multiplyScalar(HELD_SCALE); } catch { v = null; }
   foreCache.set(id, v);
   return v;
 }

@@ -4,7 +4,7 @@
 import * as THREE from "three";
 import { mergeGeometries, mergeVertices } from "three/addons/utils/BufferGeometryUtils.js";
 import type { Rarity, WeaponId } from "../../../shared/world/map";
-import { gunSpec } from "./guns/index";
+import { gunFit, gunSpec } from "./guns/index";
 import { accentMaterial } from "./rarity";
 import { camoMaterial, MYTHIC_TINT } from "./camo";
 
@@ -117,11 +117,11 @@ function heldGeo(id: WeaponId): HeldGeo {
   return h;
 }
 
-/** third-person scale: the kong fist is huge — at 1:1 the guns vanish behind it */
-export const HELD_SCALE = 1.4;
+/** third-person scale: oneshot's guns are life size, and so is Triple T's hand (the kong's huge fist needed 1.4) */
+export const HELD_SCALE = 1.0;
 /** muzzle point of a held weapon in its own (socket) space, incl. HELD_SCALE — for kong muzzle flashes / tracers */
 export function heldMuzzle(id: WeaponId, out = new THREE.Vector3()): THREE.Vector3 {
-  const s = gunSpec(id);
+  const s = gunFit(id);
   return out.copy(s.muzzle).sub(s.gripAnchor).multiplyScalar(HELD_SCALE);
 }
 

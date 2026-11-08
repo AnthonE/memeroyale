@@ -7,6 +7,7 @@ import * as THREE from "three";
 import type { WorldCtx } from "../engine/engine";
 import type { ConsumableId, Rarity, WeaponId } from "../../../shared/world/map";
 import type { ChestView, Fx, LootView, WeaponsKit } from "./api";
+import { loadGuns } from "./guns/index";
 import { createViewModel, type VmFx } from "./viewmodel";
 import { createHeld, setHeldCamo } from "./held";
 import { tickCamo } from "./camo";
@@ -98,7 +99,12 @@ export function createWeaponsKit(ctx: WorldCtx): WeaponsKitEx {
   // the far-LOD bakes of every floor-loot item (~1-2 s of main thread) are left to the game's prefab warm-up after the title;
   // ?lootlater=0 runs them one item per macrotask right after boot (done long before the deferred prefab prewarm compiles them)
   let lootPrep: Promise<THREE.Object3D> | null = null;
+  // the guns are oneshot's models (weapons/guns/glb.ts): every builder below that shows a gun waits for them
+  const guns = loadGuns((path) => ctx.assets.model(path)).catch((e) => { console.error("[weapons] the gun models failed to load", e); throw e; });
+  // …and their icons are drawn from them (weapons/gun-icons.ts; the painted files show until then). Not in Node tools
+  if (typeof document !== "undefined") void guns.then(() => import("./gun-icons")).then((m) => m.drawGunIcons(ctx.renderer)).catch((e) => console.warn("[weapons] gun icons not drawn", e));
   const prepareLoot = (next: () => Promise<void> = () => new Promise<void>((r) => setTimeout(r, 0))) => (lootPrep ??= (async () => {
+    await guns;
     let spent = 0;
     for (const item of [...WEAPONS, ...CONSUMABLES, "ammo"] as const) {
       await next();
@@ -117,6 +123,7 @@ export function createWeaponsKit(ctx: WorldCtx): WeaponsKitEx {
 
   const kit: WeaponsKitEx = {
     async createViewModel() {
+      await guns;
       const t0 = performance.now();
       const vm = await createViewModel(() => real, (o) => patchTree(o));
       patchTree(vm.object);
@@ -138,11 +145,13 @@ export function createWeaponsKit(ctx: WorldCtx): WeaponsKitEx {
       return view;
     },
     async createLoot(item: WeaponId | ConsumableId | "ammo" | "cash", rarity: Rarity, skin?: string | null): Promise<LootView> {
+      if ((WEAPONS as readonly string[]).includes(item)) await guns;
       const v = createLootView(ctx, 0, item, rarity, { grounded: false, skin }, lootSys);
       patchTree(v.object);
       return v;
     },
     async createHeldWeapon(id: WeaponId, rarity: Rarity) {
+      await guns;
       const o = createHeld(id, rarity);
       patchTree(o);
       return o;
@@ -162,7 +171,7 @@ export function createWeaponsKit(ctx: WorldCtx): WeaponsKitEx {
       return d;
     },
     async createRocket() {
-      await fxLoad;
+      await Promise.all([fxLoad, guns]);
       if (!fxMod?.createRocketView || !real) return null;
       const r = fxMod.createRocketView(ctx, real);
       patchTree(r.object);
